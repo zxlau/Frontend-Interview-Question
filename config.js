@@ -1,22 +1,16 @@
 var CONFIG = {
   // 网页 title
-  title: 'Book-Cli',
-  
+  title: '最全前端面试题汇总',
   // 网页 keywords
-  keywords: 'book, book-cli, doc, example',
-
+  keywords: '前端、frontend、面试、interview',
   // 网页 description
-  description: 'Init html book with markdown files.',
-
+  description: 'frontend-interview-question',
   // 链接是否打开新的窗口
   openNewWindow: true,
-
   // 页面右上角的 github 链接
-  github: 'https://github.com/vvpvvp/book-cli',
-
+  github: 'https://github.com/zxlau/Frontend-Interview-Question',
   // 左侧目录的md文件
   summaryMd: 'SUMMARY.md',
-
   // 网页默认访问的md文件
   index: 'README.md'
 }
