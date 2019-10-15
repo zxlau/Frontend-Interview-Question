@@ -26,6 +26,40 @@
 4、`localStorage`：将数据保存在客户端本地的硬件设备(通常指硬盘，也可以是其他硬件设备)中，即使浏览器被关闭了，该数据仍然存在，下次打开浏览器访问网站时仍然可以继续使用。<br/>
 这两者的区别在于，`sessionStorage`为临时保存，而`localStorage`为永久保存。`sessionStorage`和`localStorage` 虽然也有存储大小的限制，但比`cookie`大得多，可以达到`5M`或更大。<br/>
 有期时间： `localStorage` 存储持久数据，浏览器关闭后数据不丢失除非主动删除数据； `sessionStorage` 数据在当前浏览器窗口关闭后自动删除。 `cookie` 设置的`cookie`过期时间之前一直有效，即使窗口或浏览器关闭。
+#### 如何实现浏览器内多个标签页之间的通信?
+`WebSocket、SharedWorker`。 也可以调用`localstorge、cookies`等本地存储方式。<br/>
+`localStorage`另一个浏览上下文里被添加、修改或删除时，它都会触发一个事件， 我们通过监听事件，控制它的值来进行页面信息通信。<br/>
+监听`localStorage`事件:
+```js
+window.onstorage = (e) => {console.log(e)}
+// 或者这样
+window.addEventListener('storage', (e) => console.log(e))
+```
+`onstorage`以及`storage`事件，针对都是非当前页面对`localStorage`进行修改时才会触发，当前页面修改`localStorage`不会触发监听函数。<br/>
+然后就是在对原有的数据的值进行修改时才会触发，比如原本已经有一个`key`会`a`值为`b`的`localStorage`，你再执行：`localStorage.setItem('a', 'b')`代码，同样是不会触发监听函数的。<br/>
+
+`shareWorker`
+```js
+// 这段代码是必须的，打开页面后注册SharedWorker，显示指定worker.port.start()方法建立与worker间的连接
+if (typeof Worker === "undefined") {
+  alert('当前浏览器不支持webworker')
+} else {
+  let worker = new SharedWorker('worker.js')
+  worker.port.addEventListener('message', (e) => {
+    console.log('来自worker的数据：', e.data)
+  }, false)
+  worker.port.start()
+  window.worker = worker
+}
+// 获取和发送消息都是调用postMessage方法，我这里约定的是传递'get'表示获取数据。
+window.worker.port.postMessage('get')
+window.worker.port.postMessage('发送信息给worker')
+```
+页面`A`发送数据给`worker`，然后打开页面`B`，调用`window.worker.port.postMessage('get')`，即可收到页面`A`发送给`worker`的数据。
+
+
+
+
 
 
 
