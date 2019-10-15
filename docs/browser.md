@@ -56,8 +56,9 @@ window.worker.port.postMessage('get')
 window.worker.port.postMessage('发送信息给worker')
 ```
 页面`A`发送数据给`worker`，然后打开页面`B`，调用`window.worker.port.postMessage('get')`，即可收到页面`A`发送给`worker`的数据。
-
-
+#### `HTML5`的离线储存怎么使用，工作原理能不能解释一下？
+在用户没有与因特网连接时，可以正常访问站点或应用，在用户与因特网连接时，更新用户机器上的缓存文件。<br/>
+原理：`HTML5`的离线存储是基于一个新建的`.appcache`文件的缓存机制(不是存储技术)，通过这个文件上的解析清单离线存储资源，这些资源就会像`cookie`一样被存储了下来。之后当网络在处于离线状态下时，浏览器会通过被离线存储的数据进行页面展示。
 
 
 
