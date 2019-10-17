@@ -100,13 +100,36 @@ div {
 线性渐变       `gradient`<br/>
 旋转          `transform`<br/>
 缩放,定位,倾斜,动画,多背景<br/>
+#### 为什么要初始化`CSS`样式？
+因为浏览器的兼容问题，不同浏览器对有些标签的默认值是不同的，如果没对`CSS`初始化往往会出现浏览器之间的页面显示差异。
 
+当然，初始化样式会对SEO有一定的影响，但鱼和熊掌不可兼得，但力求影响最小的情况下初始化。
+#### 盒子模型
+盒子模型包括`content+padding+border+margin`<br/>
+标准盒子模型：宽度=内容的宽度（`content`）即默认模型：`content-box`<br/>
+低版本IE盒子模型：宽度=`content+border+padding`即`border-box`<br/>
+一般都设置为`border-box`<br/>
+#### 弹性盒模型`flex`
+`CSS3`弹性盒（`Flexible Box` 或 `flexbox`），是一种当页面需要适应不同的屏幕大小以及设备类型时确保元素拥有恰当的行为的布局方式。设为 `Flex` 布局以后，子元素的`float、clear`和`vertical-align`属性将失效。<br/>
+弹性盒子由弹性容器`Flex container`和弹性子元素`Flex item`组成。<br/>
+弹性容器通过设置`display`属性的值为`flex`或`inline-flex`将其定义为弹性容器。<br/>
 
+属性 | 描述 | 取值
+-|-
+`flex-direction` | 指定弹性容器中子元素排列方式 | `row`<br/>`row-reverse`<br/>`column`<br/>`column-reverse`
+`flex-wrap` | 设置弹性盒子的子元素超出父容器时是否换行 | `nowrap`<br/>`wrap`<br/>`wrap-reverse`
+`flex-flow` | `flex-direction`属性和`flex-wrap`属性的简写形式 | 默认为`row nowrap`
+`justify-content` | 设置弹性盒子元素在主轴（横轴）方向上的对齐方式 | `flex-start`<br/>`flex-end`<br/>`center`<br/>`space-between`<br/>`space-around`
+`align-items` | 设置弹性盒子元素在侧轴（纵轴）方向上的对齐方式 | `flex-start`<br/>`flex-end`<br/>`center`<br/>`baseline `<br/>`stretch`
+`align-content` | 属性定义了多根轴线的对齐方式 | `flex-start`<br/>`flex-end`<br/>`center`<br/>`space-between`<br/>`space-around`<br/>`stretch`
 
+设置在项目`item`上的属性
 
-
-
-
-
-
-
+属性 | 描述 | 取值
+-|-
+`order` | 属性定义项目的排列顺序,数值越小，排列越靠前 | 默认为`0`
+`flex-grow` | 定义项目的放大比例 | 默认为`0`<br/>(存在剩余空间，也不放大)
+`flex-shrink` | 定义了项目的缩小比例 | 默认为`1`<br/>(如果空间不足，该项目将缩小)
+`flex-basis` | 定义了在分配多余空间之前，项目占据的主轴空间 | 默认值是`auto`
+`flex` | `flex-grow`、`flex-shrink`和`flex-basis`的简写 | 默认值`0 1 auto`<br/>后两个属性可选
+`align-self` | 允许单个项目有与其他项目不一样的对齐方式,align-items | 默认值`auto`

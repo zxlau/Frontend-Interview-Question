@@ -1,6 +1,6 @@
 var CONFIG = {
   // 网页 title
-  title: '最全前端面试题汇总',
+  title: '前端面试题汇总',
   // 网页 keywords
   keywords: '前端、frontend、面试、interview',
   // 网页 description
