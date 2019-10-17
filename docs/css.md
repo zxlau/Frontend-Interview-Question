@@ -90,8 +90,16 @@ div {
   background-color: pink;     /* 方便看效果 */
 }
 ```
-
-
+#### `CSS3`有哪些新特性？
+新增各种`CSS`选择器  `:not(.input)`：所有 `class` 不是`input`的节点）<br/>
+圆角           `border-radius:8px`<br/>
+多列布局       `multi-column`<br/>
+阴影和反射     `Shadow\Reflect`<br/>
+文字特效       `text-shadow`<br/>
+文字渲染       `Text-decoration`<br/>
+线性渐变       `gradient`<br/>
+旋转          `transform`<br/>
+缩放,定位,倾斜,动画,多背景<br/>
 
 
 
