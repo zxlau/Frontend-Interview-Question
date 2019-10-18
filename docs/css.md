@@ -133,3 +133,25 @@ div {
 `flex-basis` | 定义了在分配多余空间之前，项目占据的主轴空间 | 默认值是`auto`
 `flex` | `flex-grow`、`flex-shrink`和`flex-basis`的简写 | 默认值`0 1 auto`<br/>后两个属性可选
 `align-self` | 允许单个项目有与其他项目不一样的对齐方式,align-items | 默认值`auto`
+#### `display:none`与`visibility:hidden`
+很多前端的同学认为`visibility: hidden`和`display: none`的区别仅仅在于`display: none`隐藏后的元素不占据任何空间，而`visibility: hidden`隐藏后的元素空间依旧保留<br/>
+实际上没那么简单，`visibility`是一个非常有故事性的属性<br/>
+`visibility`具有继承性，给父元素设置`visibility:hidden`;子元素也会继承这个属性。<br/>
+但是如果重新给子元素设置`visibility:visible`,则子元素又会显示出来。这个和`display: none`有着质的区别<br/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
