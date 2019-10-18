@@ -1,4 +1,18 @@
 # CSS相关
+#### `BFC(Block Formatting Context))`块级格式化上下文
+`BFC`有以下特性：<br/>
+1、内部的Box会在垂直方向，从顶部开始一个接一个地放置。<br/>
+2、Box垂直方向的距离由margin决定。属于同一个BFC的两个相邻Box的margin会发生叠加。<br/>
+3、每个元素的margin box的左边， 与包含块border box的左边相接触(对于从左往右的格式化，否则相反)。即使存在浮动也是如此。<br/>
+4、BFC的区域不会与float box叠加。<br/>
+5、BFC就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素，反之亦然。<br/>
+6、计算BFC的高度时，浮动元素也参与计算。<br/>
+
+怎样触发`BFC`:<br/>
+1、`float`除了`none`之外的属性。
+2、`overflow`除了`visible`之外的属性`(auto, hidden, scroll)`。
+3、`display` `(table-cell，table-caption，inline-block, flex, inline-flex)`
+4、`position` `(abslute、fixed)`
 #### `link`和`@import`的区别
 两者都是外部引用 `CSS` 的方式，但是存在一定的区别：<br/>
 1、`link`是`XHTML`标签，除了能够加载`CSS`，还可以定义`RSS`等其他事务；而`@import`属于`CSS`范畴，只可以加载`CSS`。<br/>
@@ -138,12 +152,44 @@ div {
 实际上没那么简单，`visibility`是一个非常有故事性的属性<br/>
 `visibility`具有继承性，给父元素设置`visibility:hidden`;子元素也会继承这个属性。<br/>
 但是如果重新给子元素设置`visibility:visible`,则子元素又会显示出来。这个和`display: none`有着质的区别<br/>
-
-
-
-
-
-
+#### 清除浮动
+```css
+.clear-fix:after {
+  display:block;
+  clear:both;
+  content:"";
+  visibility:hidden;
+  height:0
+}
+.clear-fix:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+```
+#### `css`三角形
+```css
+.triangle-up {
+  width: 0;
+  height: 0;
+  border-bottom: 100px solid #000;
+  border-left: 50px solid #000;
+  border-right: 50px solid #000;
+}
+.triangle-down {
+  width: 0;
+  height: 0;
+  border-top: 100px solid #000;
+  border-left: 50px solid #000;
+  border-right: 50px solid #000;
+}
+```
+#### `rgba`和`opacity`的透明有何不同？
+`opacity`会继承父元素的`opacity`属性，而`RGBA`设置的元素的后代元素不会继承不透明属性。简单来说就是`opacity`作用于元素和元素所有内容的透明。
+#### 怎么让浏览器支持小于`12px`的文字
+```css
+tranform: scale()
+```
 
 
 
