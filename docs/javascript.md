@@ -113,7 +113,43 @@ b.push(4);
 console.log(b);//1,2,3,4
 console.log(a)//1,2,3
 ```
-#### 组合式继承
+#### 原型继承的原理
+**原型链**
+```js
+function BasicType() {
+     this.property=true;
+     this.getBasicValue = function(){
+     return this.property;
+      };
+}
+function NewType() {
+     this.subproperty=false;
+}
+NewType.prototype = new BasicType(); 
+var test = new NewType();
+alert(test.getBasicValue());   //true
+```
+由上面可以知道，其本质上是重写了原型对象，代之一个新类型的实例。在通过原型链继承的情况下，要访问一个实例属性时，要经过三个步骤： 
+1、搜索实例；<br/>
+2、搜索`NewType.prototype`；<br/>
+3、搜索`BasicType.prototype`,此时才找到方法。如果找不到属性或者方法，会一直向上回溯到末端才会停止。<br/>
+要想确定实例和原型的关系，可以使用`instanceof`和`isPrototypeof()`测试，只要是原型链中出现过的原型，都可以说是该原型链所派生实例的原型。还有一点需要注意，通过原型链实现继承时，不能使用对象字面量创建原型方法，因为这时会重写原型链，原型链会被截断<br/>
+**借用构造函数继承**
+```js
+function BasicType(name) {
+     this.name=name;
+     this.color=["red","blue","green"];
+}
+function NewType() {
+     BasicType.call(this,"syf");
+     this.age=23;
+}
+var test = new NewType(); 
+
+alert(text.name); //syf
+alert(text.age);   //23
+```
+**组合式继承**
 ```js
 function BasicType(name) {
      this.name=name;
