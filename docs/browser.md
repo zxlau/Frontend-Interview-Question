@@ -70,9 +70,19 @@ window.worker.port.postMessage('发送信息给worker')
 `w3c`的方法是`e.stopPropagation()`，IE则是使用`e.cancelBubble = true`。例如： 
 `window.event? window.event.cancelBubble = true : e.stopPropagation();`
 `return false`也可以阻止冒泡。
-
-
-
+#### 如何阻止默认事件？
+`w3c`的方法是`e.preventDefault()`，`IE`则是使用`e.returnValue = false`，比如：
+```js
+function stopDefault( e ) { 
+    //阻止默认浏览器动作(W3C) 
+    if ( e && e.preventDefault ) 
+        e.preventDefault(); 
+    //IE中阻止函数器默认动作的方式 
+    else 
+        window.event.returnValue = false; 
+}
+//return false也能阻止默认行为。
+```
 
 
 
