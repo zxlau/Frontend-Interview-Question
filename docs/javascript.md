@@ -62,10 +62,57 @@ arr.sort(() => {
 声明变量时不同的内存分配：前者由于占据的空间大小固定且较小，会被存储在栈当中，也就是变量访问的位置；后者则存储在堆当中，变量访问的其实是一个指针，它指向存储对象的内存地址。<br/>
 也正是因为内存分配不同，在复制变量时也不一样。前者复制后2个变量是独立的，因为是把值拷贝了一份；后者则是复制了一个指针，2个变量指向的值是该指针所指向的内容，一旦一方修改，另一方也会受到影响。<br/>
 参数传递不同：虽然函数的参数都是按值传递的，但是引用值传递的值是一个内存地址，实参和形参指向的是同一个对象，所以函数内部对这个参数的修改会体现在外部。原始值只是把变量里的值传递给参数，之后参数和这个变量互不影响。
+#### 深拷贝和浅拷贝
+如何区分深拷贝与浅拷贝，简单点来说，就是假设`B`复制了`A`，当修改`A`时，看`B`是否会发生变化，如果`B`也跟着变了，说明这是浅拷贝，拿人手短，如果B没变，那就是深拷贝，自食其力。
+```js
+function deepClone(obj) {
+  let objClone = Array.isArray(obj) ? [] : {};
+  if(obj && typeof obj === 'object') {
+    for(let key in obj) {
+      if(obj.hasOwnProperty(key)) {
+        if(obj[key] && typeof obj[key] === 'object') {
+          objClone[key] = deepClone(obj[key]);
+        } else {
+          objClone[key] = obj[key];
+        }
+      }
+    }
+  }
+  return objClone;
+}
+```
+数组深拷贝方法：
+```js
+// ...
+var a=[1,2,3]
+var [...b]=a;//或b=[...a]
+b.push(4);
+console.log(b);//1,2,3,4
+console.log(a)//1,2,3
 
+// concat
+var a=[1,2,3]
+var c=[];
+var b=c.concat(a);
+b.push(4);
+console.log(b);//1,2,3,4
+console.log(a)//1,2,3
 
+// slice
+var a=[1,2,3]
+var b=a.slice(0);
+b.push(4);
+console.log(b);//1,2,3,4
+console.log(a)//1,2,3
 
-
+// JSON
+var a=[1,2,3]
+var c=JSON.stringify(a);
+var b=JSON.parse(c);
+b.push(4);
+console.log(b);//1,2,3,4
+console.log(a)//1,2,3
+```
 
 
 
