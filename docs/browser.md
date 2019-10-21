@@ -83,6 +83,8 @@ function stopDefault( e ) {
 }
 //return false也能阻止默认行为。
 ```
-
+#### 原生对象和宿主对象
+原生对象是`ECMAScript`规定的对象，所有内置对象都是原生对象，比如`Array、Date、RegExp`等；<br/>
+宿主对象是宿主环境比如浏览器规定的对象，用于完善是`ECMAScript`的执行环境，比如`Document、Location、Navigator`等。
 
 
