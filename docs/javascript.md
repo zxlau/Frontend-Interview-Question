@@ -113,7 +113,26 @@ b.push(4);
 console.log(b);//1,2,3,4
 console.log(a)//1,2,3
 ```
+#### 组合式继承
+```js
+function BasicType(name) {
+     this.name=name;
+     this.colors=["red","blue","green"];
+}
+BasicType.prototype.sayName=function(){
+     alert(this.name);
+}
+function NewType(name,age) {
+     BasicType.call(this,name);
+     this.age=age;
+}
+var test = new NewType("syf","23");
+test.colors.push("black");
+alert(test.colors);  //"red,blue,green,black"
+alert(test.name);   //"syf"
+alert(test.age);   //23
 
-
+// 组合式继承避免了原型链和借用构造函数继承方式的缺陷，融合了他们的优点，成为了js中最常用的继承方式。
+```
 
 
