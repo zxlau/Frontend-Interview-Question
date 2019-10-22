@@ -170,21 +170,83 @@ alert(test.age);   //23
 
 // 组合式继承避免了原型链和借用构造函数继承方式的缺陷，融合了他们的优点，成为了js中最常用的继承方式。
 ```
-#### 请尽可能详尽的解释`AJAX`的优缺点
-1、最大的一点是页面无刷新，在页面内与服务器通信，给用户的体验非常好。<br/>
-2、使用异步方式与服务器通信，不需要打断用户的操作，具有更加迅速的响应能力。<br/>
-3、可以把以前一些服务器负担的工作转嫁到客户端，利用客户端闲置的能力来处理，减轻服务器和带宽的负担，节约空间和宽带租用成本，`ajax`的原则是“按需取数据”，可以最大程度的减少冗余请求。<br/>
-4、基于标准化的并被广泛支持的技术，不需要下载插件或者小程序。<br/>
+#### `JavaScript`里`arguments`究竟是什么？
+`Javascript`中每个函数都会有一个`Arguments`对象实例`arguments`，它引用着函数的实参，可以用数组下标的方式"[]"引用`arguments`的元素。`arguments.length`为函数实参个数，`arguments.callee`引用函数自身。<br/>
+`arguments`虽然有一些数组的性质，但其并非真正的数组，只是一个类数组对象。其并没有数组的很多方法，不能像真正的数组那样调用`.jion(),.concat(),.pop()`等方法。
+#### 通过`new`创建一个对象的时候，构造函数内部有哪些改变？
+创建一个空对象，并且`this`变量引用该对象，同时还继承了该函数的原型。<br/>
+属性和方法被加入到 `this` 引用的对象中。<br/>
+新创建的对象由 `this` 所引用，并且最后隐式的返回 `this` 。
+#### 基本类型转换
+```js
+// 请在问号处填写你的答案,使下方等式成立
+let a = ?;
+if(a == 1 && a == 2 && a == 3) {
+  console.log("Hi, I'm Echi");
+}
+```
+```js
+let a = {
+  i: 1,
+  valueOf() {
+    return this.i++;
+  }
+}
+```
+对象在转换基本类型时，会调用`valueOf`和`toString`，并且这两个方法你是可以重写的。<br/>
+调用哪个方法，主要是要看这个对象倾向于转换为什么。如果倾向于转换为`Number`类型的，就优先调用`valueOf`;如果倾向于转换为`String`类型，就只调用`toString`。
+```js
+let obj = {
+  toString () {
+    console.log('toString')
+    return 'string'
+  },
+  valueOf () {
+    console.log('valueOf')
+    return 'value'
+  }
+}
 
-`ajax`的缺点:<br/>
-`ajax`对浏览器后退机制造成了破坏；安全问题；对搜索引擎的支持比较弱；破坏了程序的异常机制
-#### `get`和`post`有什么区别？
-其实，`GET`和`POST`本质上两者没有任何区别。他们都是`HTTP`协议中的请求方法。底层实现都是基于`TCP/IP`协议。所谓区别，只是浏览器厂家根据约定，做得限制而已。<br/>
-`get`是通过明文发送数据请求，而`post`是通过密文；<br/>
-`get`传输的数据量有限，因为`url`的长度有限，`post`则不受限；<br/>
-`GET`请求的参数只能是`ASCII`码，所以中文需要`URL`编码，而`POST`请求传参没有这个限制<br/>
-`GET`产生一个`TCP`数据包；`POST`产生两个`TCP`数据包。<br/>
-对于`GET`方式的请求，浏览器会把`http header`和`data`一并发送出去，服务器响应`200`（返回数据）；而对于`POST`，浏览器先发送`header`，服务器响应`100 continue`，浏览器再发送`data`，服务器响应`200 ok`（返回数据）。
+alert(obj) // string
+console.log(1 + obj) // 1value
+```
+如果重写了`toString`方法，而没有重写`valueOf`方法，则会调用`toString`方法
+```js
+var obj = {
+  toString () {
+    return 'string'
+  }
+}
+console.log(1 + obj) // 1string
+```
+调用上述两个方法的时候，需要 `return` 原始类型的值 `(primitive value)`，不能是`object、array`等非原始类型的值，不然的话就会去调用另外一个没有返回非原始类型的方法，如果都没有的话就会报错<br/>
+如果有`Symbol.toPrimitive`属性的话，会优先调用，它的优先级最高<br/>
+```js
+let obj = {
+  toString () {
+    console.log('toString')
+    return {}
+  },
+  valueOf () {
+    console.log('valueOf')
+    return {}
+  },
+  [Symbol.toPrimitive] () {
+    console.log('primitive')
+    return 'primi'
+  }
+}
+console.log(1 + obj) // 1primi
+```
+
+
+
+
+
+
+
+
+
 
 
 
