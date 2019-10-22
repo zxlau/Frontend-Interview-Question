@@ -238,13 +238,59 @@ let obj = {
 }
 console.log(1 + obj) // 1primi
 ```
-
-
-
-
-
-
-
+#### 解析 `['1', '2, '3'].map(parseInt)`
+```js
+let new_array = arr.map(function callback(currentValue,index,array)
+```
+这个 `callback` 一共可以接收三个参数，其中第一个参数代表当前被处理的元素，而第二个参数代表该元素的索引。<br/>
+而 `parseInt` 则是用来解析字符串的，使字符串成为指定基数的整数。 `parseInt(string, radix)`接收两个参数，第一个表示被处理的值（字符串），第二个表示为解析时的基数。<br/>
+了解这两个函数后，我们可以模拟一下运行情况 `parseInt(‘1’, 0) //radix` 为 `0` 时，且 `string` 参数不以`“0x”`和`“0”`开头时，按照 `10` 为基数处理。这个时候返回 `1`；<br/>
+`parseInt('2', 1)` // 基数为 `1`（`1` 进制）表示的数中，最大值小于 `2`，所以无法解析，返回 `NaN`；<br/>
+`parseInt('3', 2)` // 基数为 `2`（`2` 进制）表示的数中，最大值小于 `3`，所以无法解析，返回 `NaN`。<br/>
+`map` 函数返回的是一个数组，所以最后结果为 `[1, NaN, NaN]`。
+#### 什么是防抖和节流？有什么区别？如何实现？
+防抖：触发高频事件后 `n` 秒内函数只会执行一次，如果 `n` 秒内高频事件再次被触发，则重新计算时间。<br/>
+思路：每次触发事件时都取消之前的延时调用方法
+```js
+function debounce(fn) {
+  let timeout =  null;
+  return function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      fn.apply(null, arguments)
+    },500)
+  }
+}
+```
+示例： 
+```js
+function sayHi() { console.log('防抖成功'); } 
+var inp = document.getElementById('inp'); 
+inp.addEventListener('input', debounce(sayHi)); // 防抖
+```
+节流：高频事件触发，但在 `n` 秒内只会执行一次，所以节流会稀释函数的执行频率。<br/>
+思路：每次触发事件时都判断当前是否有等待执行的延时函数<br/>
+```js
+function throttle(fn) {
+  let canRun = true;
+  return function() {
+    if(!canRun) return;
+    canRun = false;
+    setTimeout(() => {
+      fn.apply(null, arguments);
+      canRun = true;
+    }, 500)
+  }
+}
+```
+示例:
+```js
+function sayHi(e) {
+  console.log(e.target.innerWidth, e.target.innerHeight);
+} 
+window.addEventListener('resize', throttle(sayHi));
+```
+#### 介绍下 `Set、Map、WeakSet` 和 `WeakMap` 的区别？
 
 
 
