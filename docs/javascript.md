@@ -299,6 +299,67 @@ window.addEventListener('resize', throttle(sayHi));
 本质上是键值对的集合，类似集合； 可以遍历，方法很多，可以跟各种数据格式转换。<br/>
 `WeakMap`<br/>
 只接受对象为键名（`null` 除外），不接受其他类型的值作为键名； 键名是弱引用，键值可以是任意的，键名所指向的对象可以被垃圾回收，此时键名是无效的； 不能遍历，方法有 `get、set、has、delete`。<br/>
+#### 介绍下深度优先遍历和广度优先遍历
+**深度优先遍历`(DFS)`**<br/>
+`DFS` 就是从图中的一个节点开始追溯，直到最后一个节点，然后回溯，继续追溯下一条路径，直到到达所有的节点，如此往复，直到没有路径为止。<br/>
+**广度优先遍历`(BFS)`**<br/>
+`BFS`从一个节点开始，尝试访问尽可能靠近它的目标节点。本质上这种遍历在图上是逐层移动的，首先检查最靠近第一个节点的层，再逐渐向下移动到离起始节点最远的层。
+#### 将数组扁平化并去除其中重复数据，最终得到一个升序且不重复的数组
+```js
+Array.from(new Set(arr.flat(Infinity))).sort((a,b)=>{ return a-b})
+```
+#### `JS`异步解决方案的发展历程以及优缺点
+**1、回调函数`(callback)`**<br/>
+缺点：回调地狱，不能用 `try catch` 捕获错误，不能`return`<br/>
+回调地狱的根本问题在于：<br/>
+缺乏顺序性： 回调地狱导致的调试困难，和大脑的思维方式不符； 嵌套函数存在耦合性，一旦有所改动，就会牵一发而动全身，即（控制反转）； 嵌套函数过多的多话，很难处理错误。
+**2、`Promise`**<br>
+`Promise` 就是为了解决 `callback` 的问题而产生的。<br>
+`Promise` 实现了链式调用，也就是说每次`then`后返回的都是一个全新`Promise`，如果我们在`then`中`return`，`return`的结果会被`Promise.resolve()`包装。
+优点：解决了回调地狱的问题。<br>
+缺点：无法取消 Promise ，错误需要通过回调函数来捕获。<br>
+**3、`Generator`**
+特点：可以控制函数的执行，可以配合`co`函数库使用。
+```js
+function * fetch() {
+    yield ajax('XXX1', () = >{}) 
+    yield ajax('XXX2', () = >{}) 
+    yield ajax('XXX3', () = >{})
+}
+let it = fetch() 
+let result1 = it.next() 
+let result2 = it.next() 
+let result3 = it.next()
+```
+**4、`Async/await`**
+`async、await` 是异步的终极解决方案。<br>
+优点是：代码清晰，不用像 `Promise` 写一大堆 `then` 链，处理了回调地狱的问题；<br>
+缺点：`await` 将异步代码改造成同步代码，如果多个异步操作没有依赖性而使用 `await` 会导致性能上的降低。
+```js
+let a = 0;
+let b = async () = >{
+    a = a + await 10;
+    console.log('2', a); // -> '2' 10
+}
+b();
+a++;
+console.log('1', a); // -> '1' 1
+```
+首先函数`b`先执行，在执行到`await 10`之前变量`a`还是`0`，因为`await`内部实现了`generator` ，`generator`会保留堆栈中东西，所以这时候`a = 0`被保存了下来；<br>
+因为`await`是异步操作，后来的表达式不返回`Promise`的话，就会包装成`Promise.reslove`(返回值)，然后会去执行函数外的同步代码；<br>
+同步代码执行完毕后开始执行异步代码，将保存下来的值拿出来使用，这时候 `a = 0 + 10`。<br>
+上述解释中提到了 `await` 内部实现了 `generator`，其实 `await` 就是 `generator` 加上 `Promise`的语法糖，且内部实现了自动执行 `generator`
+
+
+
+
+
+
+
+
+
+
+
 
 
 
