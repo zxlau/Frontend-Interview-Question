@@ -26,6 +26,85 @@
 `beforeDestroy` (销毁前） 在实例销毁之前调用。实例仍然完全可用。
 
 `destroyed` (销毁后） 在实例销毁之后
+#### `Vue`的双向数据绑定原理是什么
+`vue.js`是采用数据劫持结合发布者-订阅者模式的方式，通过`Object.defineProperty()`来劫持各个属性的`setter、getter`，读取数据会触发`getter`，修改数据会触发`setter`。在数据变动时发布消息给订阅者，触发相应的监听回调。
+
+专门收集依赖的类`Dep`,它用来收集依赖、删除依赖、通过`notify`方法向依赖发送消息等
+
+收集的依赖就是`watcher`,通过哪个`wathcher`触发了`getter`,就会把哪个`watcher`收集到`Dep`中。当数据发生变化时，会循环依赖列表，把所有的`watcher`都通知一遍。
+
+`Data、Observe、Dep`和`Watcher`之间的关系：`Data`通过`Observe`转换成`getter/setter`的形式来追踪变化。当外界通过`watcher`读取数据时，会触发`getter`从而将`watcher`添加到依赖中。当数据发生了变化时， 会触发`setter`，从而向`Dep`中的依赖`(watcher)`发送通知。`watcher`接收到通知后，会向外界发送通知，变化通知到外界后可能触发视图更新，也有可能触发用户的某个回调函数等。
+#### `Proxy`相比于`defineProperty`的优势
+`defineProperty`属性主要有三个缺点:<br>
+不能监听数组的变化<br>
+必须遍历对象的每个属性<br>
+必须深层遍历嵌套的对象<br>
+`Proxy`：针对整个对象，而不是对象的某个属性，所以也就不需要对 `keys` 进行遍历。<br>
+支持数组：`Proxy`不需要对数组的方法进行重载
+#### `vue-router` 有哪几种导航守卫?
+**vue-router全局有三个守卫***<br>
+`router.beforeEach` 全局前置守卫 进入路由之前<br>
+`router.beforeResolve` 全局解析守卫`(2.5.0+)` 在`beforeRouteEnter`调用之后调用<br>
+`router.afterEach` 全局后置钩子 进入路由之后<br>
+```js
+// main.js 入口文件
+import router from './router'; // 引入路由
+router.beforeEach((to, from, next) => { 
+  next();
+});
+router.beforeResolve((to, from, next) => {
+  next();
+});
+router.afterEach((to, from) => {
+  console.log('afterEach 全局后置钩子');
+});
+```
+**路由独享守卫**<br/>
+如果你不想全局配置守卫的话，你可以为某些路由单独配置守卫：
+```js
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/foo',
+      component: Foo,
+      beforeEnter: (to, from, next) => { 
+        // 参数用法什么的都一样,调用顺序在全局前置守卫后面，所以不会被全局守卫覆盖
+        // ...
+      }
+    }
+  ]
+})
+```
+**路由组件内的守卫**
+`beforeRouteEnter` 进入路由前, 在路由独享守卫后调用不能获取组件实例`this`，组件实例还没被创建<br>
+`beforeRouteUpdate(2.2)` 路由复用同一个组件时, 在当前路由改变，但是该组件被复用时调用 可以访问组件实例`this`<br
+`beforeRouteLeave`离开当前路由时, 导航离开该组件的对应路由时调用，可以访问组件实例`this`
+#### `Vue`的路由实现：`hash`模式和`history`模式
+**hash模式**<br>
+在浏览器中符号`“#”`，#以及#后面的字符称之为`hash`，用`window.location.hash`读取。<br>
+特点：`hash`虽然在`URL`中，但不被包括在`HTTP`请求中；用来指导浏览器动作，对服务端安全无用，`hash`不会重加载页面。 `hash`模式下，仅`hash`符号之前的内容会被包含在请求中，如 `http://www.xiaogangzai.com`，因此对于后端来说，即使没有做到对路由的全覆盖，也不会返回 `404` 错误。<br>
+
+**history模式**<br>
+`history`采用`HTML5`的新特性；且提供了两个新方法：`pushState()`,`replaceState()`可以对浏览器历史记录栈进行修改，以及`popState`事件的监听到状态变更。 `history`模式下，前端的`URL`必须和实际向后端发起请求的`URL`一致，如 `http://www.xxx.com/items/id`。后端如果缺少对 `/items/id` 的路由处理，将返回 `404` 错误。`Vue-Router` 官网里如此描述：“不过这种模式要玩好，还需要后台配置支持……所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 `URL` 匹配不到任何静态资源，则应该返回同一个 `index.html` 页面，这个页面就是你 `app` 依赖的页面。”
+#### `vuex`是什么？怎么使用？哪种功能场景使用它？
+`vuex`就是一个仓库，仓库里放了很多对象。其中`state`就是数据源存放地，对应于一般`vue`对象里面的`data`<br>
+`state`里面存放的数据是响应式的，`vue` 组件从 `store` 读取数据，若是 `store` 中的数据发生改变，依赖这相数据的组件也会发生更新<br/>
+```js
+import { mapGetters, mapActions } from 'vuex'
+
+computed() {
+  ...mapGetters({
+    // getter数据
+  })
+}
+methods: {
+  ...mapActions({
+    // action方法
+  })
+}
+```
+
+
 
 
 
