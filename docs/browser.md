@@ -113,6 +113,3 @@ function stopDefault( e ) {
 
 
 
-
-
-
