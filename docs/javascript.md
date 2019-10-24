@@ -491,11 +491,99 @@ list.forEach(item => {
 ```
 #### 串行`promise`,使用`async/await`
 ```js
+let urls = [1, 2, 3, 4, 5];
+let promises = [];
+for(let i = 0; i < urls.length; i++) {
+  promises.push(
+    async function() {
+      return new Promise((resolve, reject) => {
+        setTimeout(_ => {
+          console.log(i);
+          resolve(i);
+        }, 500)
+      })
+    }
+  )
+}
 
+(async function(){
+  for(let i = 0; i < promises.length; i++) {
+    await promises[i]()
+  }
+})()
 ```
+#### 实现一个`promiseAll`
+```js
+function promiseAll(promises) {
+  if(!Array.isArray(promises)) return;
+  return new Promise((resolve, reject) => {
+    let result = [];
+    let index = 0;
+    for(let i = 0; i < promises.length; i++) {
+      Promise.resolve(promises[i]).then(res => {
+        result.push(res)
+      })
+      index++;
+      if(index === promises.length) {
+        resolve(result)
+      }
+    }
+  })
+}
+```
+#### 输出结果
+```js
+let inner = 'window';
 
+function say() {
+	console.log(inner);
+	console.log(this.inner);
+}
 
+let obj1 = (function(){
+	let inner = '1-1';
+	return {
+		inner: '1-2',
+		say: function() {
+			console.log(inner);
+			console.log(this.inner)
+		}
+  }
+})();
+let obj2 = (function(){
+	let inner = '2-1';
+	return {
+		inner: '2-2',
+		say: function() {
+			console.log(inner);
+			console.log(this.inner)
+		}
+  }
+})();
+say(); // window    undefined 因为let 不会变量提升
+obj1.say() // 1-1 闭包   1-2 this指向
 
+obj1.say = say;
+obj1.say()  // window 闭包 1-2 this指向
+
+obj1.say = obj2.say;
+obj1.say()  // 2-1 闭包 2-2 this指向
+```
+#### 数组中增加一个方法`findDuplicate(n)`数组元素出现频率大于`n`，返回这些元素组成的数组
+```js
+Array.prototype.findDuplicate = function(count) {
+  let result = this.reduce((res, item) => {
+    let index = res.findIndex(i => i.name == item.name);
+    if(index > 0) {
+      res[index].count++;
+    } else {
+      res.push({name: item, count: 1})
+    }
+    return res;
+  }, []);
+  return result.filter(item => item.count > count).map(item => item.name);
+}
+```
 
 
 
