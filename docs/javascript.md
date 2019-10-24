@@ -349,6 +349,156 @@ console.log('1', a); // -> '1' 1
 因为`await`是异步操作，后来的表达式不返回`Promise`的话，就会包装成`Promise.reslove`(返回值)，然后会去执行函数外的同步代码；<br>
 同步代码执行完毕后开始执行异步代码，将保存下来的值拿出来使用，这时候 `a = 0 + 10`。<br>
 上述解释中提到了 `await` 内部实现了 `generator`，其实 `await` 就是 `generator` 加上 `Promise`的语法糖，且内部实现了自动执行 `generator`
+#### `js`实现继承
+```js
+(function(){
+  function Person() {
+    this.name = 'person name'
+  }
+  Person.prototype.move = function() {
+    console.log('person move')
+  }
+  function Man() {
+    Person.call(this);
+    this.name = 'man name'
+  }
+  Man.prototype = Object.create(Person.prototype)
+  // 或者 Man.prototype = new Person()
+  let man = new Man();
+  man.name // man name
+  man.move // person move
+})()
+```
+#### `bind`实现
+```js
+Function.prototype.bind = function() {
+  let self = this;
+  let context = Array.prototype.shift.call(arguments);
+  let args = Array.prototype.slice.call(arguments);
+  return function() {
+    let finalArgs = args.concat(Array.prototype.slice.call(arguments));
+    self.appy(context, finalArgs)
+  }
+}
+```
+#### 宏任务/微任务执行顺序
+```js
+console.log('begin');
+setTimeout(() => {
+    console.log('setTimeout 1');
+    Promise.resolve()
+        .then(() => {
+            console.log('promise 1');
+            setTimeout(() => {
+                console.log('setTimeout2');
+            });
+        })
+        .then(() => {
+            console.log('promise 2');
+        });
+    new Promise(resolve => {
+        console.log('a');
+        resolve();
+    }).then(() => {
+        console.log('b');
+    });
+}, 0);
+console.log('end');
+
+// begin -> end -> setTimeout 1 -> a -> promise1 -> b -> promise 2 -> setTimeout2
+```
+#### `this`指向
+```js
+let a = {
+  b: function() { 
+    console.log(this) 
+  }, 
+  c: () => {
+    console.log(this)
+  }
+}
+a.b()  // a对象
+a.c() // window对象
+
+let d = a.b;
+d() // window对象
+```
+#### 补全代码
+```js
+function repeat(func, times, wait) {}
+// 输入
+const repeatFunc = repeat(alert, 4, 3000);
+// 输出
+// 会alert4次 helloworld, 每次间隔3秒
+repeatFunc('hellworld');
+// 会alert4次 worldhello, 每次间隔3秒
+repeatFunc('worldhello')
+```
+```js
+function repeat(func, times, s) {
+  return async function(...args) {
+    for(let i = 0; i < times; i++) {
+      func.apply(null, args);
+      await wait(s);
+    }
+  }
+}
+async function wait(seconds) {
+  return new Promise((resolve,reject) => {
+    setTimeout(resolve, seconds);
+  })
+} 
+```
+#### 如何在页面中改变另一个`iframe`的样式
+```js
+window.onload = function() {
+  document.getElementById('frame的id').contentWindow.getElementById('frame里面的元素')
+}
+```
+#### `require`和`import`的区别
+**遵循规范**<br>
+`require` 是 `AMD`规范引入方式<br>
+`import`是`es6`的一个语法标准，如果要兼容浏览器的话必须转化成`es5`的语法
+
+**调用时间**<br>
+`require`是运行时调用，所以`require`理论上可以运用在代码的任何地方<br>
+`import`是编译时调用，所以必须放在文件开头
+
+**本质**<br>
+`require`是赋值过程，其实`require`的结果就是对象、数字、字符串、函数等，再把`require`的结果赋值给某个变量<br>
+`import`是解构过程，但是目前所有的引擎都还没有实现`import`，我们在`node`中使用`babel`支持`ES6`，也仅仅是将`ES6`转码为`ES5`再执行，`import`语法会被转码为`require`
+#### `async await`
+`async`函数就是`generator`函数的语法糖。`async`函数，就是将`generator`函数的`*`换成`async`，将`yield`替换成`await`。<br>【`async`函数对`generator`的改进】<br>
+(1)内置执行器，不需要使用`next()`手动执行。<br>
+(2)`await`命令后面可以是`Promise`对象或原始类型的值，`yield`命令后面只能是`Thunk`函数或`Promise`对象。<br>
+(3)返回值是`Promise`。返回非`Promise`时，`async`函数会把它包装成`Promise`返回。`(Promise.resolve(value))`<br>
+#### `Apply call`的区别
+`call`和`apply`都是调用一个对象的一个方法，用另一个对象替换当前对象。而不同之处在于传递的参数，`apply`最多只能有两个参数——新`this`对象和一个数组`argArray`，如果`arg`不是数组则会报错`TypeError`。
+#### 串行`promise`
+```js
+let list = [1, 2, 3, 4, 5];
+let result = Promise.resolve();
+list.forEach(item => {
+  result = result.then(res => {
+    return new Promise((resolve, reject) => {
+      setTimeout(_ => {
+        console.log(item)
+        resolve(item)
+      }, 500)
+    })
+  })
+})
+```
+#### 串行`promise`,使用`async/await`
+```js
+
+```
+
+
+
+
+
+
 
 
 

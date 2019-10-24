@@ -148,7 +148,37 @@ function add() {
   )
 }
 ```
+#### 二分法查找代码
+```js
+function indexOfSorted(arr, n) {
+    let st = 0,
+        end = arr.length,
+        m = Math.floor(st + end) / 2;
+    while(end - st > 1) {
+        if(n == arr[st]) {
+            return st;
+        }
+        if(n == arr[end]) {
+            return end
+        }
+        if(n == arr[m]) {
+            return m
+        }
+        if(n > arr[m]) {
+            st = m;
+            m = Math.floor(st + end) / 2;
+        }
+        if(n < arr[m]) {
+            end = m;
+            m = Math.floor(st + end) / 2;
+        }
+    }
+    return -1;
+}
 
+let array = [1, 4, 7, 8, 12, 34, 67, 88, 99, 100];
+console.log(getIndex(array, 12))
+```
 
 
 

@@ -190,11 +190,36 @@ div {
 ```css
 tranform: scale()
 ```
+#### 尽可能多的方法隐藏一个`html`元素
+```css
+opacity: 0;
+display: none;
+visibility: hidden;
 
+width: 0;
+height: 0;
 
-
-
-
+<input type="hidden" name="看不见我">
+```
+#### `less`等预处理器好处
+文件切分 模块化 选择符嵌套 变量 运算 函数 `Mixin` 工程化<br/>
+能够更快速的编写代码 结构清晰，便于维护
+#### 什么要浮动，什么时候需要清除浮动，清除浮动都有哪些方法
+使用浮动之后，父元素的高度会塌陷，变成0，导致布局有问题，这个时候需要清除浮动。
+```css
+.clearfix:after {
+  content: '';
+  display: bolck;
+  height: 0;
+  visibility: hidden;
+  clear: both
+}
+.clearfix:after {
+  content: '';
+  display: table;
+  clear: both
+}
+```
 
 
 
