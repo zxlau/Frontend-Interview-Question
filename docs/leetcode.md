@@ -179,12 +179,63 @@ function indexOfSorted(arr, n) {
 let array = [1, 4, 7, 8, 12, 34, 67, 88, 99, 100];
 console.log(getIndex(array, 12))
 ```
-
-
-
-
-
-
+#### 已知如下数组： `var arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10]`; 编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组
+```js
+function flatten(arr) {
+    let result = arr.reduce((res, item) => {
+        res.concat(Array.isArray(item) ? flatten(item) : item);
+        return res;
+    }, []);
+    return result;
+}
+function format(arr) {
+    let flattenArray = flatten(arr);
+    return Array.from(new Set(flattenArray)).sort((a, b) => a-b)
+}
+```
+#### 数组中增加一个方法`findDuplicate(n)`数组元素出现频率大于`n`，返回这些元素组成的数组
+```js
+Array.prototype.findDuplicate = function(count) {
+  let result = this.reduce((res, item) => {
+    let index = res.findIndex(i => i.name == item.name);
+    if(index > 0) {
+      res[index].count++;
+    } else {
+      res.push({name: item, count: 1})
+    }
+    return res;
+  }, []);
+  return result.filter(item => item.count > count).map(item => item.name);
+}
+```
+#### #### 请把两个数组 `['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'D1', 'D2']` 和 `['A', 'B', 'C', 'D']`，合并为 `['A1', 'A2', 'A', 'B1', 'B2', 'B', 'C1', 'C2', 'C', 'D1', 'D2', 'D']`
+```js
+let a1 = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'D1', 'D2'];
+let a2 = ['A', 'B', 'C', 'D'].map(item => item + '3');
+let a3 = [...a1, ...a2].sort().map(item => {
+    if(item.includes('3')) {
+        return item.split('')[0] 
+    }
+    return item
+})
+```
+#### 使用迭代的方式实现 `flatten` 函数。
+```js
+// 迭代
+let arr = [1, 2, [3, 4, 5, [6, 7], 8], 9, 10, [11, [12, 13]]];
+const flatten = function(arr) {
+    while(arr.some(i => Array.isArray(i))) {
+        arr = [].concat(...arr);
+    }
+    return arr
+}
+// 递归
+const flatten = function(arr) {
+    return arr.reduce((res, item) => {
+        return res.concat(Array.isArray(item) ? flatten(item) : item);
+    }, [])
+}
+```
 
 
 

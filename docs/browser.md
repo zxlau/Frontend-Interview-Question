@@ -130,4 +130,85 @@ function stopDefault( e ) {
 `js`中的运行机制，来解决单线程运行带来的一些问题。`js`是一种单线程语言，所有任务都在一个线程下完成，一旦遇到大量任务或者遇到一个耗时的任务，网页就会出现假死的状态，因为`JavaScript`停不下来，也就无法响应用户的行为。<br>
 `EventLoop`是一个程序结构，用于等待和发送消息和事件。<br>
 简单说，就是在程序中设置两个线程：一个负责程序本身的运行，称为"主线程"；另一个负责主线程与其他进程（主要是各种`I/O`操作）的通信，被称为"`EventLoop`线程"（可以译为"消息线程"）
+#### 浏览器优化
+现代浏览器大多都是通过队列机制来批量更新布局，浏览器会把修改操作放在队列中，至少一个浏览器刷新（即`16.6ms`）才会清空队列，但当你获取布局信息的时候，队列中可能有会影响这些属性或方法返回值的操作，即使没有，浏览器也会强制清空队列，触发回流与重绘来确保返回正确的值。
+
+主要包括以下属性或方法：<br>
+`offsetTop、offsetLeft、offsetWidth、offsetHeight scrollTop、scrollLeft、scrollWidth、scrollHeight clientTop、clientLeft、clientWidth、clientHeight width、height getComputedStyle() getBoundingClientRect()`<br>
+所以，我们应该避免频繁的使用上述的属性，他们都会强制渲染刷新队列。
+#### 减少重绘与回流
+使用 `transform` 替代 `top`<br>
+使用 `visibility` 替换 `display: none` ，因为前者只会引起重绘，后者会引发回流（改变了布局 避免使用`table`布局，可能很小的一个小改动会造成整个 `table` 的重新布局。<br>
+尽可能在`DOM`树的最末端改变`class`，回流是不可避免的，但可以减少其影响。尽可能在`DOM`树的最末端改变`class`，可以限制了回流的范围，使其影响尽可能少的节点。<br>
+避免设置多层内联样式，`CSS` 选择符从右往左匹配查找，避免节点层级过多。<br>
+将动画效果应用到`position`属性为`absolute`或`fixed`的元素上<br>
+避免使用`CSS`表达式，可能会引发回流。<br>
+`CSS3` 硬件加速（`GPU`加速）
+#### 浏览器和`Node`事件循环的区别
+其中一个主要的区别在于浏览器的`event loop` 和`nodejs`的`event loop` 在处理异步事件的顺序是不同的,`nodejs`中有`micro event`;其中`Promise`属于`micro event` 该异步事件的处理顺序就和浏览器不同。`nodejs V11.0`以上 这两者之间的顺序就相同了。
+
+`Node 10`以前：<br>
+执行完一个阶段的所有任务<br>
+执行完`nextTick`队列里面的内容<br>
+然后执行完微任务队列的内容<br>
+
+`Node 11`以后：<br>
+和浏览器的行为统一了，都是每执行一个宏任务就执行完微任务队列。
+```js
+function test () {
+   console.log('start')
+    setTimeout(() => {
+        console.log('children2')
+        Promise.resolve().then(() => {console.log('children2-1')})
+    }, 0)
+    setTimeout(() => {
+        console.log('children3')
+        Promise.resolve().then(() => {console.log('children3-1')})
+    }, 0)
+    Promise.resolve().then(() => {console.log('children1')})
+    console.log('end') 
+}
+
+test()
+
+// 以上代码在node11以下版本的执行结果(先执行所有的宏任务，再执行微任务)
+// start
+// end
+// children1
+// children2
+// children3
+// children2-1
+// children3-1
+
+// 以上代码在node11及浏览器的执行结果(顺序执行宏任务和微任务)
+// start
+// end
+// children1
+// children2
+// children2-1
+// children3
+// children3-1
+```
+#### `cookie` 和 `token` 都存放在 `header` 中，为什么不会劫持 `token`？
+题目可能有点问题，在劫持面前，不管`cookie`还有`token`，都能劫持。<br>
+只是说： `cookie`会自动携带上，而`token`需要设置`header`才可。<br>
+具体说一下`xss`层面的劫持和`csxf`层面的劫持：<br>
+`xss`: 劫持`cookie`或者`localStorage`，从而伪造用户身份相关信息。前端层面`token`会存在哪儿？不外乎`cookie localStorage` sessionStorage,这些东西都是通过js代码获取到的。<br>
+解决方案：过滤标签`<>`,不信任用户输入， 对用户身份等`cookie`层面的信息进行`http-only`处理。<br>
+
+`csxf`：是后端过于乐观的将`header`区的`cookie`取到（所以这才是主要原因，不是因为会自动携带`cookie`所以不安全，是后端代码不安全而已），并当作用户信息进行相关操作。解决方案也很简单，对于`cookie`不信任，对每次请求都进行身份验证，比如`token`的处理。
+#### `Virtual DOM` 真的比操作原生 `DOM` 快吗？谈谈你的想法。
+没有任何框架可以比纯手动的优化 `DOM` 操作更快，因为框架的 `DOM` 操作层需要应对任何上层 `API` 可能产生的操作，它的实现必须是普适的。在构建一个实际应用的时候，你难道为每一个地方都去做手动优化吗？出于可维护性的考虑，这显然不可能。框架给你的保证是，你在不需要手动优化的情况下，我依然可以给你提供过得去的性能。
+#### 可以分成 `Service Worker`、`Memory Cache`、`Disk Cache` 和 `Push Cache`，那请求的时候 `from memory cache` 和 `from disk cache` 的依据是什么，哪些数据什么时候存放在 `Memory Cache` 和 `Disk Cache`中？
+如果开启了`Service Worker`首先会从`Service Worker`中拿。<br>
+如果新开一个以前打开过的页面缓存会从`Disk Cache`中拿（前提是命中强缓存）<br>
+刷新当前页面时浏览器会根据当前运行环境内存来决定是从 `Memory Cache` 还是从`Disk Cache`中拿<br>
+对于大文件来说，大概率是不存储在内存中的，反之优先<br>
+当前系统内存使用率高的话，文件优先存储进硬盘
+
+
+
+
+
+
 

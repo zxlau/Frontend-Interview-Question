@@ -26,6 +26,8 @@
 `beforeDestroy` (销毁前） 在实例销毁之前调用。实例仍然完全可用。
 
 `destroyed` (销毁后） 在实例销毁之后
+#### `vue`中子组件为什么不能修改父组件传进来的`props`
+为了保证数据的单向流动，便于对数据进行追踪，避免数据混乱
 #### `Vue`的双向数据绑定原理是什么
 `vue.js`是采用数据劫持结合发布者-订阅者模式的方式，通过`Object.defineProperty()`来劫持各个属性的`setter、getter`，读取数据会触发`getter`，修改数据会触发`setter`。在数据变动时发布消息给订阅者，触发相应的监听回调。
 
@@ -103,8 +105,61 @@ methods: {
   })
 }
 ```
+#### `Vuex`的设计思想
+每一个`Vuex`里面有一个全局的`Store`，包含着应用中的状态`State`，这个`State`只是需要在组件中共享的数据，不用放所有的`State`，没必要。这个`State`是单一的，和 `Redux` 类似，所以，一个应用仅会包含一个 `Store` 实例。单一状态树的好处是能够直接地定位任一特定的状态片段，在调试的过程中也能轻易地取得整个当前应用状态的快照。<br>
+`Vuex`通过 `store` 选项，把 `state` 注入到了整个应用中，这样子组件能通过 `this.$store` 访问到 `state`了。
+```js
+const app = new Vue({
+  el: '#app',
+  // 把 store 对象提供给 “store” 选项，这可以把 store 的实例注入所有的子组件
+  store,
+  components: { Counter },
+  template: `
+    <div class="app">
+      <counter></counter>
+    </div>
+  `
+})
+const Counter = {
+  template: `<div>{{ count }}</div>`,
+  computed: {
+    count () {
+      return this.$store.state.count
+    }
+  }
+}
+```
+`Mutation`<br>
+显而易见，`State` 不能直接改，需要通过一个约定的方式，这个方式在 `Vuex` 里面叫做 `mutation`，更改 `Vuex` 的 `store` 中的状态的唯一方法是提交 `mutation`。`Vuex` 中的 `mutation` 非常类似于事件：每个 `mutation` 都有一个字符串的 事件类型 (`type`) 和 一个 回调函数 (`handler`)。
+```js
+const store = new Vuex.Store({
+  state: {
+    count: 1
+  },
+  mutations: {
+    increment (state) {
+      // 变更状态
+      state.count++
+    }
+  }
+})
+```
+触发 `mutation` 事件的方式不是直接调用，比如 `increment(state)` 是不行的，而要通过 `store.commit` 方法：
+```js
+store.commit('increment')
+```
+`mutation` 都是同步事务。<br/>
 
+`Action`<br>
+到这里又该处理异步这块儿了。`Vuex` 加入了 `Action` 这个东西来处理异步，`Vuex`的想法是把同步和异步拆分开，异步操作想咋搞咋搞，但是不要干扰了同步操作。
+#### 聊聊 `Vue` 的双向数据绑定，`Model` 如何改变 `View`，`View` 又是如何改变 `Model` 的
+`VM` 主要做了两件事情：
 
+从 `M` 到 `V` 的映射`（Data Binding）`，这样可以大量节省你人肉来 `update View` 的代码。`Object.defineProperty`<br>
+从 `V` 到 `M` 的事件监听`（DOM Listeners）`，这样你的`Model` 会随着 `View` 触发事件而改变<br>
+从 `V` 到 `M` 主要由两类（ 虽然本质上都是监听 `DOM` ）构成，一类是用户自定义的 `listener`， 一类是 `VM` 自动处理的含有 `value` 属性元素的 `listener`<br>
+第一类类似于你在 `Vue` 里用 `v-on` 时绑定的那样，`VM` 在实例化得时候可以将所有用户自定义的 `listener` 一次性代理到根元素上，这些 `listener` 可以访问到你的 `model` 对象，这样你就可以在 `listener` 中改变 `model`<br>
+第二类类似于对含有 `v-model` 与 `value` 元素的自动处理，我们期望的是例如在一个输入框内,输入值，那么我与之对应的 `model` 属性 `message` 也会随之改变，相当于 `VM` 做了一个默认的 `listener`，它会监听这些元素的改变然后自动改变 `model`<br>
 
 
 

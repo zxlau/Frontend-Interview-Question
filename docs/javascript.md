@@ -173,10 +173,6 @@ alert(test.age);   //23
 #### `JavaScript`里`arguments`究竟是什么？
 `Javascript`中每个函数都会有一个`Arguments`对象实例`arguments`，它引用着函数的实参，可以用数组下标的方式"[]"引用`arguments`的元素。`arguments.length`为函数实参个数，`arguments.callee`引用函数自身。<br/>
 `arguments`虽然有一些数组的性质，但其并非真正的数组，只是一个类数组对象。其并没有数组的很多方法，不能像真正的数组那样调用`.jion(),.concat(),.pop()`等方法。
-#### 通过`new`创建一个对象的时候，构造函数内部有哪些改变？
-创建一个空对象，并且`this`变量引用该对象，同时还继承了该函数的原型。<br/>
-属性和方法被加入到 `this` 引用的对象中。<br/>
-新创建的对象由 `this` 所引用，并且最后隐式的返回 `this` 。
 #### 基本类型转换
 ```js
 // 请在问号处填写你的答案,使下方等式成立
@@ -569,35 +565,152 @@ obj1.say()  // window 闭包 1-2 this指向
 obj1.say = obj2.say;
 obj1.say()  // 2-1 闭包 2-2 this指向
 ```
-#### 数组中增加一个方法`findDuplicate(n)`数组元素出现频率大于`n`，返回这些元素组成的数组
+#### `Promise` 构造函数是同步执行还是异步执行，那么 `then` 方法呢？
 ```js
-Array.prototype.findDuplicate = function(count) {
-  let result = this.reduce((res, item) => {
-    let index = res.findIndex(i => i.name == item.name);
-    if(index > 0) {
-      res[index].count++;
-    } else {
-      res.push({name: item, count: 1})
-    }
-    return res;
-  }, []);
-  return result.filter(item => item.count > count).map(item => item.name);
+const promise = new Promise((resolve, reject) => {
+  console.log(1)
+  resolve()
+  console.log(2)
+})
+
+promise.then(() => {
+  console.log(3)
+})
+
+console.log(4)
+
+// 1243
+// 说明Promise构造函数是同步的，then方法是异步的
+```
+#### 通过`new`创建一个对象的时候，构造函数内部有哪些改变？
+创建一个空对象，将它的引用赋给 `this`，继承函数的原型。
+通过 `this` 将属性和方法添加至这个对象
+最后返回 `this` 指向的新对象，也就是实例
+#### 实现一个`new`
+```js
+function _new(parent, ...args) {
+   // 1.以构造器的prototype属性为原型，创建新对象；
+  let child = Object.create(parent.prototype);
+  // 2.将this和调用参数传给构造器执行
+  parent.apply(child, args);
+  // 3.返回第一步的对象
+  return child;
 }
 ```
+#### 前端中的模块化开发发展历史
+模块化主要是用来抽离公共代码，隔离作用域，避免变量冲突等。
 
+`IIFE`： 使用自执行函数来编写模块化。特点：在一个单独的函数作用域中执行代码，避免变量冲突。<br>
+`AMD`： 使用`requireJS` 来编写模块化，特点：依赖必须提前声明好。<br>
+`CMD`： 使用`seaJS`来编写模块化，特点：支持动态引入依赖文件。<br>
+`CommonJS`： `nodejs`中自带的模块化。<br>
+`UMD`：兼容`AMD`，`CommonJS` 模块化语法。<br>
+`webpack(require.ensure)`：`webpack 2.x` 版本中的代码分割。<br>
+`ES Modules`： `ES6`引入的模块化，支持`import`来引入另一个`js` 。
+#### 改造下面的代码，使之输出`0 - 9`，写出你能想到的所有解法
+```js
+for (var i = 0; i< 10; i++){
+	setTimeout(() => {
+		console.log(i);
+  }, 1000)
+}
+```
+```js
+// 利用 setTimeout 函数的第三个参数，会作为回调函数的第一个参数传入
+for (var i = 0; i< 10; i++){
+	setTimeout((i) => {
+		console.log(i);
+  }, 1000， i)
+}
+```
+```js
+// 利用 bind 函数部分执行的特性
+for (var i = 0; i< 10; i++){
+	setTimeout(console.log.bind(null, i), 1000);
+}
+```
+```js
+// let
+for (let i = 0; i< 10; i++){
+	setTimeout(() => {
+		console.log(i);
+  }, 1000)
+}
+```
+```js
+for (var i = 0; i< 10; i++){
+  (i => {
+    setTimeout(() => {
+      console.log(i);
+    }, 1000)
+  })(i)
+}
+```
+```js
+// 利用 eval 或者 new Function 执行字符串
+for (var i = 0; i < 10; i++) {
+  setTimeout(eval('console.log(i)'), 1000)
+}
+for (var i = 0; i < 10; i++) {
+  setTimeout(new Function('i', 'console.log(i)')(i), 1000)
+}
+for (var i = 0; i < 10; i++) {
+  setTimeout(new Function('console.log(i)')(), 1000)
+}
+```
+#### 下面的代码打印什么内容，为什么？
+```js
+var b = 10;
+(function b(){
+    b = 20;
+    console.log(b); 
+})();
+```
+函数名`b`只在该函数内部有效，并且此绑定是常量绑定。<br>
+对于一个常量进行赋值，在 `strict` 模式下会报错，非 `strict` 模式下静默失败。所以函数内部`b=20`应该是无效的。<br>
+`b`函数是一个相当于用`const`定义的常量，内部无法进行重新赋值，如果在严格模式下，会报错`"Uncaught TypeError: Assignment to constant variable."`
+#### 输出
+```js
+var a = 10;
+(function () {
+    console.log(a)
+    a = 5
+    console.log(window.a)
+    var a = 20;
+    console.log(a)
+})()
+// undefined 10 20
+```
+在立即执行函数中，`var a = 20`; 语句定义了一个局部变量 `a`，由于`js`的变量声明提升机制，局部变量`a`的声明会被提升至立即执行函数的函数体最上方，且由于这样的提升并不包括赋值，因此第一条打印语句会打印`undefined`，最后一条语句会打印`20`。<br>
 
-
-
-
-
-
-
-
-
-
-
-
-
+由于变量声明提升，`a = 5`; 这条语句执行时，局部的变量`a`已经声明，因此它产生的效果是对局部的变量`a`赋值，此时`window.a` 依旧是最开始赋值的`10`。
+#### 实现一个 `sleep` 函数
+比如 `sleep(1000)` 意味着等待`1000`毫秒，可从 `Promise、Generator、Async/Await` 等角度实现
+```js
+function wait(time) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, time);
+  })
+}
+function sleep(time) {
+  await wait(time);
+}
+```
+```js
+function sleep(time) {
+  function *gen() {
+    yield new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve()
+      }, time)
+    })
+  }
+  return gen.next().value;
+}
+sleep(1000).then(_ => {
+  console.log('sleep end')
+})
+```
 
 
 
