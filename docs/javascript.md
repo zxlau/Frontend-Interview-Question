@@ -572,7 +572,98 @@ const promise = new Promise((resolve, reject) => {
   resolve()
   console.log(2)
 })
+Array.prototype.findDuplicate = function(count) {
+  let result = this.reduce((res, item) => {
+    let index = res.findIndex(i => i.name == item.name);
+    if(index > 0) {
+      res[index].count++;
+    } else {
+      res.push({name: item, count: 1})
+    }
+    return res;
+  }, []);
+  return result.filter(item => item.count > count).map(item => item.name);
+}
+```
+#### 实现一个`promise`
+```js
+function Promise(fn) {
+  let status = 'pending';
+  let successArray = [];
+  let errorArray = [];
+  function successNotify() {
+    status = 'resolve';
+    handleThen.apply(undefined, arguments);
+  }
+  function errorNotify() {
+    status = 'reject';
+    handleThen.apply(undefined, arguments);
+  }
+  function handleThen() {
+    setTimeout(_ => {
+      if(status == 'resolve') {
+        for(let i = 0 ;i < successArray.length; i++) {
+          successArray[i].apply(undefined, arguments);
+        }
+      } else if(status == 'reject') {
+        for(let i = 0 ;i < successArray.length; i++) {
+          errorArray[i].apply(undefined, arguments);
+        }
+      }
+    }, 0)
+  }
+  fn.call(undefined, successNotify, errorNotify);
+  return {
+    then: (successFn, errorFn) => {
+      successArray.push(successFn);
+      errorArray.push(errorFn);
+      return undefined;
+    }
+  }
+}
+```
+#### `ES5/ES6`的继承除了写法以外还有什么区别？
+```js
+class Foo {}
+```
+1、`class`声明会提升，但不会初始化值,`Foo`进入暂时性死区，类似`let`和`const`的特点；
+2、`class`声明内部会启动严格模式；
+3、`class`中的所有方法都是不可枚举的；
+4、`class`中的所有方法没有原型对象，不能使用`new`关键字来调用；
+5、`class`必须使用`new`关键字调用
+6、`class`内部的方法不能重写
+#### `setTimeout、Promise、Async/Await` 的区别
+这题主要是考察这三者在事件循环中的区别，事件循环中分为宏任务队列和微任务队列。<br>
+其中`setTimeout`的回调函数放到宏任务队列里，等到执行栈清空以后执行；<br>
+`promise.then`里的回调函数会放到相应宏任务的微任务队列里，等宏任务里面的同步代码执行完再执行；<br>
+`async`函数表示函数里面可能会有异步方法，`await`后面跟一个表达式，`async`方法执行时，遇到`await`会立即执行表达式，然后把表达式后面的代码放到微任务队列里，让出执行栈让同步代码先执行。
+#### 执行顺序
+```js
+async function async1() {
+    console.log('async1 start');
+    await async2();
+    console.log('async1 end');
+}
+async function async2() {
+    console.log('async2');
+}
+console.log('script start');
+setTimeout(function() {
+    console.log('setTimeout');
+}, 0)
+async1();
+new Promise(function(resolve) {
+    console.log('promise1');
+    resolve();
+}).then(function() {
+    console.log('promise2');
+});
+console.log('script end');
 
+// script start -> async1 start -> async2 -> promise1 -> script end -> async1 end  -> promise 2 -> setTimeout
+// await async2() 这句中，遇到await会立即执行async2();
+// 然后把await后面的语句 console.log('async1 end')加入到微任务中，
+//所以等同步代码输出promise1 和 script end才会输出async1 end
 promise.then(() => {
   console.log(3)
 })
