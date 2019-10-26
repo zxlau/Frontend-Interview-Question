@@ -237,8 +237,38 @@ const flatten = function(arr) {
 }
 ```
 #### 冒泡排序以及改进
-
-
+```js
+function bubbleSort(arr) {
+    for(let i = 0; i < arr.length; i++) {
+        for(let j = 0; j < arr.length; j++) {
+            if(arr[j] > arr[j+1]) {
+                let temp = arr[j];
+                arr[j] = arr[j+1];
+                a[j+1] = temp
+            }
+        }
+    }
+    return arr;
+}
+```
+```js
+// 改进
+function bubbleSort(arr) {
+    let len = arr.length-1;
+    while(i > 0) {
+        let pos = 0;
+        for(let i = 0; i < len; i++) {
+            if(arr[j] > arr[j+1]) {
+                pos = j;
+                let temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+        i = pos;
+    }
+}
+```
 
 
 
