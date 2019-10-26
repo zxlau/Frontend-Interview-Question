@@ -802,6 +802,43 @@ sleep(1000).then(_ => {
   console.log('sleep end')
 })
 ```
+#### 输出以下代码执行的结果并解释为什么
+```js
+var obj = {
+    '2': 3,
+    '3': 4,
+    'length': 2,
+    'splice': Array.prototype.splice,
+    'push': Array.prototype.push
+}
+obj.push(1)
+obj.push(2)
+console.log(obj)
+// [,,1,2], length为4
+// 伪数组（ArrayLike）
+```
+这个`obj`中定义了两个`key`值，分别为`splice`和`push`分别对应数组原型中的`splice`和`push`方法，因此这个`obj`可以调用数组中的`push`和`splice`方法，调用对象的`push`方法：`push(1)`，因为此时`obj`中定义`length`为`2`，所以从数组中的第二项开始插入，也就是数组的第三项（下表为`2`的那一项），因为数组是从第`0`项开始的，这时已经定义了下标为`2`和`3`这两项，所以它会替换第三项也就是下标为`2`的值，第一次执行`push`完，此时`key`为`2`的属性值为`1`，同理：第二次执行`push`方法，`key`为`3`的属性值为`2`。此时的输出结果就是：
+```js
+Object(4) [empty × 2, 1, 2, splice: ƒ, push: ƒ]---->
+[
+2: 1,
+3: 2,
+length: 4,
+push: ƒ push(),
+splice: ƒ splice()
+]
+```
+#### `call` 和 `apply` 的区别是什么，哪个性能更好一些
+第一个参数都是，指定函数体内`this`的指向；<br>
+第二个参数开始不同，`apply`是传入带下标的集合，数组或者类数组，`apply`把它传给函数作为参数，`call`从第二个开始传入的参数是不固定的，都会传给函数作为参数。<br>
+`call`比`apply`的性能要好，平常可以多用`call`, `call`传入参数的格式正是内部所需要的格式,`apply`比`call`多了一个结构第二个参数的过程
+#### 为什么通常在发送数据埋点请求的时候使用的是 `1x1` 像素的透明 `gif` 图片？
+没有跨域问题，一般这种上报数据，代码要写通用的；（排除`ajax`）<br>
+不会阻塞页面加载，影响用户的体验，只要`new Image`对象就好了<br>
+在所有图片中，体积最小。
+
+
+
 
 
 
