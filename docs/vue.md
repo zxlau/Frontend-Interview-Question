@@ -160,8 +160,12 @@ store.commit('increment')
 从 `V` 到 `M` 主要由两类（ 虽然本质上都是监听 `DOM` ）构成，一类是用户自定义的 `listener`， 一类是 `VM` 自动处理的含有 `value` 属性元素的 `listener`<br>
 第一类类似于你在 `Vue` 里用 `v-on` 时绑定的那样，`VM` 在实例化得时候可以将所有用户自定义的 `listener` 一次性代理到根元素上，这些 `listener` 可以访问到你的 `model` 对象，这样你就可以在 `listener` 中改变 `model`<br>
 第二类类似于对含有 `v-model` 与 `value` 元素的自动处理，我们期望的是例如在一个输入框内,输入值，那么我与之对应的 `model` 属性 `message` 也会随之改变，相当于 `VM` 做了一个默认的 `listener`，它会监听这些元素的改变然后自动改变 `model`<br>
-
-
+#### 双向绑定和 `vuex` 是否冲突
+当在严格模式中使用 `Vuex` 时，在属于 `Vuex` 的 `state` 上使用 `v-model` 会比较棘手：
+```html
+<input v-model="obj.message">
+```
+假设这里的 `obj` 是在计算属性中返回的一个属于 `Vuex store` 的对象，在用户输入时，`v-model` 会试图直接修改 `obj.message`。在严格模式中，由于这个修改不是在 `mutation` 函数中执行的, 这里会抛出一个错误。
 
 
 
