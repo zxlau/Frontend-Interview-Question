@@ -874,5 +874,34 @@ let result = Array.from({length: 12}).map((item, index) => {
 4、不可以使用 `new` 命令，因为：没有自己的 `this`，无法调用 `call，apply`。 没有 `prototype` 属性 ，而 `new` 命令在执行时需要将构造函数的 `prototype` 赋值给新的对象的 `__proto__`
 #### 给定两个数组，写一个方法来计算它们的交集。
 例如：给定 `nums1 = [1, 2, 2, 1]，nums2 = [2, 2]`，返回 `[2, 2]`。
+```js
+function intersection(arr1, arr2) {
+  let result = [];
+  let map = arr1.reduce((res, item) => {
+    if(res[item]) {
+      res[item]++;
+    } else {
+      res[item] = 1;
+    }
+    return res
+  }, {});
+  arr2.forEach(item => {
+    if(map[item] &&map[item] > 0) {
+      resutlt.push(item);
+      map[item]--;
+    }
+  })
+}
+```
+
+
+
+
+
+
+
+
+
+
 
 

@@ -221,11 +221,23 @@ height: 0;
 }
 ```
 #### 分析比较 `opacity: 0、visibility: hidden、display: none`优劣和适用场景
-`display: none` (不占空间，不能点击)（场景，显示出原来这里不存在的结构）
-
-`visibility: hidden`（占据空间，不能点击）（场景：显示不会导致页面结构发生变动，不会撑开）
-
+`display: none` (不占空间，不能点击)（场景，显示出原来这里不存在的结构）<br>
+`visibility: hidden`（占据空间，不能点击）（场景：显示不会导致页面结构发生变动，不会撑开）<br>
 `opacity: 0`（占据空间，可以点击）（场景：可以跟`transition`搭配）
+#### 已知如下代码，如何修改才能让图片宽度为 `300px` ？注意下面代码不可修改。
+```html
+<img src="1.jpg" style="width:480px!important;”>
+```
+```html
+<img src="1.jpg" style="width:480px!important; max-width: 300px">
+<img src="1.jpg" style="width:480px!important; transform: scale(0.625, 1);" >
+<img src="1.jpg" style="width:480px!important; width:300px!important;">
+```
+
+
+
+
+
 
 
 
