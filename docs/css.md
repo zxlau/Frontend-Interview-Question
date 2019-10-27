@@ -233,8 +233,14 @@ height: 0;
 <img src="1.jpg" style="width:480px!important; transform: scale(0.625, 1);" >
 <img src="1.jpg" style="width:480px!important; width:300px!important;">
 ```
-
-
+#### 如何解决移动端 `Retina` 屏 `1px` 像素问题
+```css
+viewport + rem
+background-image
+scale
+border-image
+box-shadow
+```
 
 
 

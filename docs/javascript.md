@@ -893,8 +893,29 @@ function intersection(arr1, arr2) {
   })
 }
 ```
+#### 介绍下如何实现 `token` 加密
+需要一个`secret`随机数<br>
+后端根据`secret` 和加密算法生成一个字符串，返回给前端<br>
+前端每次`request`都在`header`中带上`token`<br>
+后端用同样的算法解密
 
-
+#### 实现一个`promise.finally`
+```js
+Promise.prototype.finally = function(callback) {
+  return Promise.then(
+    value => Promise.resolve(callback()).then(() => value),
+    error => Promise.resolve(callback()).then(() => {throw error;})
+  )
+}
+```
+#### `a.b.c.d` 和 `a['b']['c']['d']`，哪个性能更高？
+```js
+应该是 `a.b.c.d` 比 `a['b']['c']['d']` 性能高点，后者还要考虑 `[ ]` 中是变量的情况，再者，从两种形式的结构来看，显然编译器解析前者要比后者容易些，自然也就快一点。
+```
+#### `ES6` 代码转成 `ES5`代码的实现思路是什么
+解析：解析代码字符串，生成 `AST`<br>
+转换： 按一定的规则转换、修改`AST`<br>
+生成：将修改后的`AST`转换成普通代码
 
 
 

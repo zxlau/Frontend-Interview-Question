@@ -293,4 +293,106 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 // 等待了10秒...
 // I am eating junk food
 ```
+```js
+class LazyManClass {
+    constructor(name) {
+        console.log(`Hi I am ${name}`);
+        setTimeout(() => {
+            this.next();
+        }, 0);
+        this.taskList = [];
+    }
+    sleep(time) {
+        let fn = (() => {
+            return () => {
+                setTimeout(() => {
+                    this.next();
+                }, time)
+            }
+        })(time);
+        this.taskList.push(fn);
+        return this;
+    },
+    eat(name) {
+        let fn = (() => {
+            return () => {
+                console.log(`I am eating ${name}`)
+            }
+        })(name);
+        this.taskList.push(fn);
+        return this;
+    },
+    sleepFirst(time) {
+        let fn = (() => {
+            return () => {
+                setTimeout(() => {
+                    this.next();
+                }, time)
+            }
+        })(time);
+        this.taskList.unshift(fn);
+        return this;
+    },
+    next() {
+        let fn = taskList.unshift();
+        fn && fn();
+    }
+}
+function LazyMan(name) {
+    return new LazyManClass(name);
+}
+```
+#### 随机生成一个长度为 `10` 的整数类型的数组，例如 `[2, 10, 3, 4, 5, 11, 10, 11, 20]`，将其排列成一个新数组，要求新数组形式如下，例如 `[[2, 3, 4, 5], [10, 11], [20]]`
+```js
+function getRandomInclusive(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+let initArr = Array.from({length: 10}).map(item => getRandomInclusive(0, 99));
+initArr.sort((a, b) => a-b);
+initArr = [...new Set(initArr)];
+
+let obj = {};
+initArr.forEach(item => {
+    const initNum = Math.floor(item / 10);
+    if(!obj[initNum]) obj[initNum] = [];
+    obj[initNum].push(item)
+});
+
+let result = [];
+for(let i in obj) {
+    result.push(obj[i]);
+}
+```
+#### 如何把一个字符串的大小写取反（大写变小写小写变大写），例如 ’AbC' 变成 'aBc'
+```js
+function processString(s) {
+    let arr = s.split('');
+    let arr2 = arr.map(item => {
+        return item === item.toUpperCase() ? item.toLowerCase() : item.toUpperCase()
+    });
+    return arr2.join('')
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
