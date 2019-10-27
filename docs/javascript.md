@@ -916,12 +916,69 @@ Promise.prototype.finally = function(callback) {
 解析：解析代码字符串，生成 `AST`<br>
 转换： 按一定的规则转换、修改`AST`<br>
 生成：将修改后的`AST`转换成普通代码
+#### 使用 `JavaScript Proxy` 实现简单的数据绑定
+```html
+<body>
+  hello,world
+  <input type="text" id="model">
+  <p id="word"></p>
+</body>
+```
+```js
+ const model = document.getElementById("model")
+  const word = document.getElementById("word")
+  var obj= {};
 
+  const newObj = new Proxy(obj, {
+      get: function(target, key, receiver) {
+        console.log(`getting ${key}!`);
+        return Reflect.get(target, key, receiver);
+      },
+      set: function(target, key, value, receiver) {
+        console.log('setting',target, key, value, receiver);
+        if (key === "text") {
+          model.value = value;
+          word.innerHTML = value;
+        }
+        return Reflect.set(target, key, value, receiver);
+      }
+    });
 
+  model.addEventListener("keyup",function(e){
+    newObj.text = e.target.value
+  })
+```
+#### 数组里面有`10`万个数据，取第一个元素和第`10`万个元素的时间相差多少
+数组可以直接根据索引取的对应的元素，所以不管取哪个位置的元素的时间复杂度都是 `O(1)`<br>
+得出结论：消耗时间几乎一致，差异可以忽略不计
+#### 输出以下代码运行结果
+```js
+// example 1
+var a={}, b='123', c=123;  
+a[b]='b';
+a[c]='c';  
+console.log(a[b]);
 
+// example 2
+var a={}, b=Symbol('123'), c=Symbol('123');  
+a[b]='b';
+a[c]='c';  
+console.log(a[b]);
 
+// example 3
+var a={}, b={key:'123'}, c={key:'456'};  
+a[b]='b';
+a[c]='c';  
+console.log(a[b]);
 
-
+// example1
+// c 的键名会被转换成字符串'123'，这里会把 b 覆盖掉。所以输出 c
+// example2
+// c 是 Symbol 类型，不需要转换。任何一个 Symbol 类型的值都是不相等的，所以不会覆盖掉 b。所以输出 b
+// example3
+// b 不是字符串也不是 Symbol 类型，需要转换成字符串。对象类型会调用 toString 方法转换成字符串 [object Object]。
+// c 不是字符串也不是 Symbol 类型，需要转换成字符串。对象类型会调用 toString 方法转换成字符串 [object Object]。所以会覆盖。所以输出 c
+```
 
 
 
