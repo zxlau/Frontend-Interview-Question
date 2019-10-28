@@ -193,6 +193,32 @@ mutations: {
 `Object.defineProperty`无法监控到数组下标的变化，导致通过数组下标添加元素，不能实时响应；无法监控到对象属性的添加和删除；<br>
 `Object.defineProperty`只能劫持对象的属性，从而需要对每个对象，每个属性进行遍历，如果，属性值是对象，还需要深度遍历。`Proxy`可以劫持整个对象，并返回一个新的对象。<br>
 `Proxy`不仅可以代理对象，还可以代理数组。还可以代理动态增加的属性。
+#### `vue` 中父组件和子组件的生命周期函数的执行顺序
+**加载渲染过程**<br>
+父 `beforeCreate` -> 父 `created` -> 父 `beforeMount` -> 子 `beforeCreate` -> 子 `created` -> 子 `beforeMount` -> 子 `mounted` -> 父 `mounted` 
+
+**子组件更新过程**<br>
+父 `beforeUpdate` -> 子 `beforeUpdate` -> 子 `updated` -> 父 `updated`
+
+**父组件更新过程**<br>
+父 `beforeUpdate` -> 父 `updated`
+
+**销毁过程**
+父 `beforeDestroy` -> 子 `beforeDestroy` -> 子 `destroyed` -> 父 `destroyed`
+#### `input` 如何处理中文输入
+中文输入问题，其实看过`elementui`框架源码的童鞋都应该知道，`elementui`是通过`compositionstart & compositionend`做的中文输入处理。 相关代码：
+```html
+<input
+ref="input"
+@compositionstart="handleComposition"
+@compositionupdate="handleComposition"
+@compositionend="handleComposition"
+>
+```
+这3个方法是原生的方法，这里简单介绍下，官方定义如下`compositionstart` 事件触发于一段文字的输入之前（类似于 `keydown` 事件，但是该事件仅在若干可见字符的输入之前，而这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词） 简单来说就是切换中文输入法时在打拼音时(此时`input`内还没有填入真正的内容)，会首先触发`compositionstart`，然后每打一个拼音字母，触发`compositionupdate`，最后将输入好的中文填入`input`中时触发`compositionend`。触发`compositionstart`时，文本框会填入 “虚拟文本”（待确认文本），同时触发`input`事件；在触发`compositionend`时，就是填入实际内容后（已确认文本）,所以这里如果不想触发`input`事件的话就得设置一个`bool`变量来控制。
+
+
+
 
 
 

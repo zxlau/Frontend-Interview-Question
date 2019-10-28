@@ -393,8 +393,13 @@ const find = (S, T) => {
 向右旋转 `1` 步: `[7, 1, 2, 3, 4, 5, 6]`<br>
 向右旋转 `2` 步: `[6, 7, 1, 2, 3, 4, 5]`<br>
 向右旋转 `3` 步: `[5, 6, 7, 1, 2, 3, 4]`
-
-
+```js
+function fn(arr, k) {
+    let t = k % arr.length;
+    return arr.slice(-t).concat(arr.slice(0, arr.length - t));
+}
+```
+#### 打印出 1 - 10000 之间的所有对称数
 
 
 
