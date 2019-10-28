@@ -399,10 +399,39 @@ function fn(arr, k) {
     return arr.slice(-t).concat(arr.slice(0, arr.length - t));
 }
 ```
-#### 打印出 1 - 10000 之间的所有对称数
-
-
-
+#### 打印出 `1 - 10000` 之间的所有对称数
+```js
+[...Array(10000).keys()].filter(item => {
+    return item.toString().length > 1 && item === Number(item.toString().split('').reverse().join(''))
+})
+```
+#### 给定一个数组 `nums`，编写一个函数将所有 `0` 移动到数组的末尾，同时保持非零元素的相对顺序。
+示例:<br>
+输入: `[0,1,0,3,12]`<br>
+输出: `[1,3,12,0,0]`<br>
+复制代码说明:<br>
+必须在原数组上操作，不能拷贝额外的数组。<br>
+尽量减少操作次数。<br>
+```js
+// 算法思维
+function moveZeroToLast(arr) {
+    let index = 0;
+    for (let i = 0, length = arr.length; i < length; i++) {
+        if (arr[i] === 0) {
+            index++;
+        } else if (index !== 0) {
+            arr[i - index] = arr[i];
+            arr[i] = 0;
+        }
+    }
+    return arr;
+}
+// js思维
+function fn(arr) {
+    let zeroLen = arr.filter(i => i == 0)[length];
+    return arr.filter(i => i != 0).concat(Array(zeroLen).map(item => 0))
+}
+```
 
 
 

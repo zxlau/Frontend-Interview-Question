@@ -987,5 +987,44 @@ console.log(a[b]);
 2、如果`p1,p2,p3`中有一个`Promise`对象变为`rejected`状态的话，`p`也会变成`rejected`状态，第一个被`rejected`的对象的返回值会传递给`p`的回调函数。
 
 `Promise.all()`方法生成的`Promise`对象也会有一个`catch`方法来捕获错误处理，但是如果数组中的`Promise`对象变成`rejected`状态时，并且这个对象还定义了`catch`的方法，那么`rejected`的对象会执行自己的`catch`方法，并且返回一个状态为`fullfilled`的`Promise`对象，`Promise.all()`生成的对象会接受这个`Promise`对象，不会返回`rejected`状态。
+#### `var let const` 实现原理
+`var`的话会直接在栈内存里预分配内存空间，然后等到实际语句执行的时候，再存储对应的变量，如果传的是引用类型，那么会在堆内存里开辟一个内存空间存储实际内容，栈内存会存储一个指向堆内存的指针。
+
+`let`的话，是不会在栈内存里预分配内存空间，而且在栈内存分配变量时，做一个检查，如果已经有相同变量名存在就会报错。
+
+`const`的话，也不会预分配内存空间，在栈内存分配变量时也会做同样的检查。不过`const`存储的变量是不可修改的，对于基本类型来说你无法修改定义的值，对于引用类型来说你无法修改栈内存里分配的指针，但是你可以修改指针指向的对象里面的属性。
+#### 函数柯里化
+```js
+function currying(fn, length) {
+  length = length || fn.length; 	// 注释 1
+  return function (...args) {			// 注释 2
+    return args.length >= length	// 注释 3
+    	? fn.apply(this, args)			// 注释 4
+      : currying(fn.bind(this, ...args), length - args.length) // 注释 5
+  }
+}
+/*
+注释 1：第一次调用获取函数 fn 参数的长度，后续调用获取 fn 剩余参数的长度
+注释 2：currying 包裹之后返回一个新函数，接收参数为 ...args
+注释 3：新函数接收的参数长度是否大于等于 fn 剩余参数需要接收的长度
+注释 4：满足要求，执行 fn 函数，传入新函数的参数
+注释 5：不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度
+*/
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
