@@ -527,6 +527,17 @@ function promiseAll(promises) {
   })
 }
 ```
+#### 实现`promise.race`
+```js
+function promiseRace(promises) {
+  if(!Array.isArray(promises)) return;
+  return new Promise((resolve, reject) => {
+    promises.forEach(p => {
+      Promise.resolve(p).then(resolve, reject);
+    })
+  })
+}
+```
 #### 输出结果
 ```js
 let inner = 'window';
@@ -572,6 +583,17 @@ const promise = new Promise((resolve, reject) => {
   resolve()
   console.log(2)
 })
+romise.then(() => {
+  console.log(3)
+})
+
+console.log(4)
+
+// 执行结果是 1243
+// 表明promise构造函数是同步执行的，then方法是异步执行的
+```
+#### 数组中增加一个方法 findDuplicate(n) 数组元素出现频率大于n，返回这些元素组成的数组
+```js
 Array.prototype.findDuplicate = function(count) {
   let result = this.reduce((res, item) => {
     let index = res.findIndex(i => i.name == item.name);
@@ -993,25 +1015,83 @@ console.log(a[b]);
 `let`的话，是不会在栈内存里预分配内存空间，而且在栈内存分配变量时，做一个检查，如果已经有相同变量名存在就会报错。
 
 `const`的话，也不会预分配内存空间，在栈内存分配变量时也会做同样的检查。不过`const`存储的变量是不可修改的，对于基本类型来说你无法修改定义的值，对于引用类型来说你无法修改栈内存里分配的指针，但是你可以修改指针指向的对象里面的属性。
-#### 函数柯里化
+#### 实现模糊搜索结果的关键词高亮显示
 ```js
-function currying(fn, length) {
-  length = length || fn.length; 	// 注释 1
-  return function (...args) {			// 注释 2
-    return args.length >= length	// 注释 3
-    	? fn.apply(this, args)			// 注释 4
-      : currying(fn.bind(this, ...args), length - args.length) // 注释 5
-  }
-}
-/*
-注释 1：第一次调用获取函数 fn 参数的长度，后续调用获取 fn 剩余参数的长度
-注释 2：currying 包裹之后返回一个新函数，接收参数为 ...args
-注释 3：新函数接收的参数长度是否大于等于 fn 剩余参数需要接收的长度
-注释 4：满足要求，执行 fn 函数，传入新函数的参数
-注释 5：不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度
-*/
-```
+// 考虑节流、缓存。其实还可以上列表diff+定时清理缓存,正则替换掉关键词
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>auto complete</title>
+  <style>
+    bdi {
+      color: rgb(0, 136, 255);
+    }
 
+    li {
+      list-style: none;
+    }
+  </style>
+</head>
+<body>
+  <input class="inp" type="text">
+  <section>
+    <ul class="container"></ul>
+  </section>
+</body>
+<script>
+  function debounce(fn, timeout = 300) {
+    let t;
+    return (...args) => {
+      if (t) {
+        clearTimeout(t);
+      }
+      t = setTimeout(() => {
+        fn.apply(fn, args);
+      }, timeout);
+    }
+  }
+
+  function memorize(fn) {
+    const cache = new Map();
+    return (name) => {
+      if (!name) {
+        container.innerHTML = '';
+        return;
+      }
+      if (cache.get(name)) {
+        container.innerHTML = cache.get(name);
+        return;
+      }
+      const res = fn.call(fn, name).join('');
+      cache.set(name, res);
+      container.innerHTML = res;
+    }
+  }
+
+  function handleInput(value) {
+    const reg = new RegExp(`\(${value}\)`);
+    const search = data.reduce((res, cur) => {
+      if (reg.test(cur)) {
+        const match = RegExp.$1;
+        res.push(`<li>${cur.replace(match, '<bdi>$&</bdi>')}</li>`);
+      }
+      return res;
+    }, []);
+    return search;
+  }
+  
+  const data = ["上海野生动物园", "上饶野生动物园", "北京巷子", "上海中心", "上海黄埔江", "迪士尼上海", "陆家嘴上海中心"]
+  const container = document.querySelector('.container');
+  const memorizeInput = memorize(handleInput);
+  document.querySelector('.inp').addEventListener('input', debounce(e => {
+    memorizeInput(e.target.value);
+  }))
+</script>
+</html>
+```
 
 
 

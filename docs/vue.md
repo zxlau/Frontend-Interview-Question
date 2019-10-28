@@ -216,8 +216,10 @@ ref="input"
 >
 ```
 这3个方法是原生的方法，这里简单介绍下，官方定义如下`compositionstart` 事件触发于一段文字的输入之前（类似于 `keydown` 事件，但是该事件仅在若干可见字符的输入之前，而这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词） 简单来说就是切换中文输入法时在打拼音时(此时`input`内还没有填入真正的内容)，会首先触发`compositionstart`，然后每打一个拼音字母，触发`compositionupdate`，最后将输入好的中文填入`input`中时触发`compositionend`。触发`compositionstart`时，文本框会填入 “虚拟文本”（待确认文本），同时触发`input`事件；在触发`compositionend`时，就是填入实际内容后（已确认文本）,所以这里如果不想触发`input`事件的话就得设置一个`bool`变量来控制。
-
-
+#### `router` 里的 `<Link>` 标签和 `a` 标签有什么区别
+有`onclick`那就执行`onclick`<br>
+`click`的时候阻止`a`标签默认事件（这样子点击`123`就不会跳转和刷新页面）<br>
+再取得跳转`href`（即是`to`），用`history`（前端路由两种方式之一，`history` & hash）跳转，此时只是链接变了，并没有刷新页面
 
 
 

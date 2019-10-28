@@ -432,11 +432,175 @@ function fn(arr) {
     return arr.filter(i => i != 0).concat(Array(zeroLen).map(item => 0))
 }
 ```
+#### 函数柯里化
+```js
+function currying(fn, length) {
+  length = length || fn.length; 	// 注释 1
+  return function (...args) {			// 注释 2
+    return args.length >= length	// 注释 3
+    	? fn.apply(this, args)			// 注释 4
+      : currying(fn.bind(this, ...args), length - args.length) // 注释 5
+  }
+}
+/*
+注释 1：第一次调用获取函数 fn 参数的长度，后续调用获取 fn 剩余参数的长度
+注释 2：currying 包裹之后返回一个新函数，接收参数为 ...args
+注释 3：新函数接收的参数长度是否大于等于 fn 剩余参数需要接收的长度
+注释 4：满足要求，执行 fn 函数，传入新函数的参数
+注释 5：不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度
+*/
+```
+#### 请实现一个 `add` 函数，满足以下功能。
+```js
+add(1); 			// 1
+add(1)(2);  	// 3
+add(1)(2)(3)；// 6
+add(1)(2, 3); // 6
+add(1, 2)(3); // 6
+add(1, 2, 3); // 6
+```
+```js
+function add() {
+    let args = [].slice.call(arguments);
+    let fn = function() {
+        let fnArgs = [].slice.call(arguments);
+        return add.apply(null, args.concat(fnArgs))
+    }
+    fn.toString = function() {
+        return args.reduce((a, b) => a+b)
+    }
+    return fn;
+}
+```
+#### 给定一个整数数组和一个目标值，找出数组中和为目标值的两个数。
+你可以假设每个输入只对应一种答案，且同样的元素不能被重复利用。 示例： 给定 `nums = [2, 7, 11, 15], target = 9`
+因为 `nums[0] + nums[1] = 2 + 7 = 9` 所以返回 `[0, 1]`
+```js
+function fn(nums, target) {
+    let res = [];
+    loop:
+    for(let i = 0; i < nums.length; i++) {
+        for(let j = i+1; j < nums.length; j++) {
+            if(nums[i] + nums[j] === target) {
+                res.push(i,j)
+                break loop;
+            }
+        }
+    }
+}
+```
+#### 在输入框中如何判断输入的是一个正确的网址
+```js
+function isUrl(url) {
+    try{
+        new Url(url);
+        return true;
+    } catch(e) {
+        return false
+    }
+}
+```
+#### 实现一个`convert`方法 把`list`转换成`tree`格式
+```js
+// 原始 list 如下
+let list =[
+    {id:1,name:'部门A',parentId:0},
+    {id:2,name:'部门B',parentId:0},
+    {id:3,name:'部门C',parentId:1},
+    {id:4,name:'部门D',parentId:1},
+    {id:5,name:'部门E',parentId:2},
+    {id:6,name:'部门F',parentId:3},
+    {id:7,name:'部门G',parentId:2},
+    {id:8,name:'部门H',parentId:4}
+];
+const result = convert(list, ...);
 
-
-
-
-
+// 转换后的结果如下
+let result = [
+    {
+      id: 1,
+      name: '部门A',
+      parentId: 0,
+      children: [
+        {
+          id: 3,
+          name: '部门C',
+          parentId: 1,
+          children: [
+            {
+              id: 6,
+              name: '部门F',
+              parentId: 3
+            }, {
+              id: 16,
+              name: '部门L',
+              parentId: 3
+            }
+          ]
+        },
+        {
+          id: 4,
+          name: '部门D',
+          parentId: 1,
+          children: [
+            {
+              id: 8,
+              name: '部门H',
+              parentId: 4
+            }
+          ]
+        }
+      ]
+    },
+  ···
+];
+```
+```js
+function convert(list) {
+    let res = [];
+    let map = list.reduce((res, item) => {
+        res[item.id] = item;
+        return res;
+    }, {});
+    list.forEach(item => {
+        if(item.parentId == 0) {
+            res.push(item)
+        } else {
+            if(item.parentId in map) {
+                let parent = map[item.parentId];
+                parent.children = parent.children || [];
+                parent.children.push(item)
+            }
+        }
+    });
+    return res;
+}
+```
+#### 已知数据格式，实现一个函数 `fn` 找出链条中所有的父级 `id`
+```js
+let data = [
+        {
+            id: 1,
+            name: '湖南',
+            children: [
+                {
+                    id: 11,
+                    name: '长沙',
+                    children: [
+                        {
+                            id: 111,
+                            name: '天心区'
+                        }
+                    ]
+                },
+                {
+                    id: 12,
+                    name: '湘潭'
+                }
+            ]
+        }
+    ]
+```
 
 
 
