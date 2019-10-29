@@ -222,9 +222,161 @@ ref="input"
 再取得跳转`href`（即是`to`），用`history`（前端路由两种方式之一，`history` & hash）跳转，此时只是链接变了，并没有刷新页面
 #### `vue` 在 `v-for` 时给每项元素绑定事件需要用事件代理吗？为什么
 没有发现 `vue` 会自动做事件代理，但是一般给 `v-for` 绑定事件时，都会让节点指向同一个事件处理程序（第二种情况可以运行，但是 `eslint` 会警告），一定程度上比每生成一个节点都绑定一个不同的事件处理程序性能好，但是监听器的数量仍不会变，所以使用事件代理会更好一点。
+#### `vue diff`算法原理
+**virtual DOM和真实DOM的区别？**<br>
+`virtual DOM` 是将真实的`DOM`的数据抽取出来，以对象的形式模拟树形结构
+```html
+<div>
+    <p>123</p>
+</div>
+```
+对应的 `virtual DOM`：
+```js
+let Vnode = {
+    tag: 'div',
+    children: [
+        {tag: 'p', text: '123'}
+    ]
+}
+```
+`VNode` 和 `oldVNode` 都是对象。<br>
+
+**diff的比较方式？**<br>
+在采用 `diff` 算法比较新旧节点的时候，比较只会在同层级的进行，不会跨层级比较。
+```html
+<div>
+    <p>123</p>
+</div>
+<div>
+    <span>456</span>
+</div>
+```
+上面的代码会比较同一层级的两个 `div` 以及第二层级的 `p` 和 `span` ，不会拿 `div` 和 `span` 作比较。<br>
+<img width="400" src="../images/level.png" />
+
+**diff流程图**<br>
+当数据发生改变时， `setter` 方法会让调用 `Dep.notify()` 通知所有订阅者 `Watcher`，订阅者就会调用 `patch` 给真实的 `DOM` 打补丁，更新相应的视图。
+<img width="500" src="../images/overflow.png" />
+
+**patch 是怎么打补丁的？(核心部分)**
+```js
+function patch (oldVnode, vnode) {
+    // some code
+    if (sameVnode(oldVnode, vnode)) {
+        patchVnode(oldVnode, vnode)
+    } else {
+        const oEl = oldVnode.el // 当前oldVnode对应的真实元素节点
+        let parentEle = api.parentNode(oEl)  // 父元素
+        createEle(vnode)  // 根据Vnode生成新元素
+        if (parentEle !== null) {
+            api.insertBefore(parentEle, vnode.el, api.nextSibling(oEl)) // 将新元素添加进父元素
+            api.removeChild(parentEle, oldVnode.el)  // 移除以前的旧元素节点
+            oldVnode = null
+        }
+    }
+    // some code 
+    return vnode
+}
+
+function sameVnode (a, b) {
+  return (
+    a.key === b.key &&  // key值
+    a.tag === b.tag &&  // 标签名
+    a.isComment === b.isComment &&  // 是否为注释节点
+    // 是否都定义了data，data包含一些具体信息，例如onclick , style
+    isDef(a.data) === isDef(b.data) &&  
+    sameInputType(a, b) // 当标签是<input>的时候，type必须相同
+  )
+}
+```
+`patch`函数接收两个参数`oldVnode`和`Vnode`分别代表新的节点和之前的旧节点。<br>
+判断两节点是否值得比较，值得比较则执行 `patchVnode`<br>
+不值得比较则用 `Vnode` 替换 `oldVnode`<br>
+如果两个节点都是一样的，那么就深入检查他们的子节点。如果两个节点不一样那就说明`Vnode`完全被改变了，就可以直接替换`oldVnode`。<br>
+虽然这两个节点不一样但是他们的子节点一样怎么办？别忘了，`diff`可是逐层比较的，如果第一层不一样那么就不会继续深入比较第二层了。
+
+确认两个节点值得比较之后会对两个子节点指定 `patchVnode` 方法。
+```js
+patchVnode (oldVnode, vnode) {
+    const el = vnode.el = oldVnode.el
+    let i, oldCh = oldVnode.children, ch = vnode.children
+    if (oldVnode === vnode) return
+    if (oldVnode.text !== null && vnode.text !== null && oldVnode.text !== vnode.text) {
+        api.setTextContent(el, vnode.text)
+    }else {
+        updateEle(el, vnode, oldVnode)
+        if (oldCh && ch && oldCh !== ch) {
+            updateChildren(el, oldCh, ch)
+        }else if (ch){
+            createEle(vnode) //create el's children dom
+        }else if (oldCh){
+            api.removeChildren(el)
+        }
+    }
+}
+```
+这个函数做了以下事情：<br>
+找到对应的真实的 `dom` ，称为 `el`<br>
+判断 `Vnode` 和 `oldVnode` 是否指向同一个对象，如果是，那么直接 `return`<br>
+如果它们都有文本节点且不相等，那么将 `el` 的文本节点设置为 `Vnode` 的文本节点<br>
+如果 `oldVnode` 有子节点而 `Vnode` 没有，则删除 `el` 的子节点<br>
+如果 `oldVnode` 没有子节点而 `Vnode` 有，则将 `Vnode` 的子节点真实化之后添加到 `el`<br>
+如果两者都有子节点，则执行 `updateChildren` 函数比较子节点。
+
+**那么 updateCildren 是什么方法呢？**<br>
+这个函数主要做了：<br>
+将 `Vnode` 的子节点 `Vch` 和 `oldVnode` 的子节点 `oldCh` 提取出来<br>
+`oldCh` 和 `vCh` 各有两个头尾的变量 `StartIdx` 和 `EndIdx`，它们的`2`个变量相互比较，一共有四种比较方式。如果`4`中都没有匹配，如果设置里了 `key` ，就会用 `key` 进行比较，在比较的过程中，变量会往中间靠，一旦 `StartIdx > EndIdx` 表明 `oldCh` 和 `vCh` 至少有一个已经遍历完了，就会结束比较。
+
+<img width="500" src="../images/children.png" />
+
+比如上图中的新旧节点，将它们取出来分别用 `s` 和 `e` 指针指向它们的头 `child` 和尾 `child`
+
+<img width="500" src="../images/oldChvCh.png" />
+
+然后分别对 `oldS、oldE、S、E` 两两做 `sameVnode` 比较，有四种比较方式，当其中两个能匹配上，那么真实 `dom` 中的相应节点会移动到 `Vnode` 相应的位置，比如：<br>
+如果是 `oldS` 和 `E` 匹配上了，那么真实 `dom` 中第一个节点会移到最后；<br>
+如果是 `oldE` 和 `S` 匹配上了，那么真实 `dom` 中的最后一个节点会移到最前，匹配上的两个指针向中间移动；<br>
+如果四种匹配没有一对是成功的，那么遍历 `oldChild`，`S` 挨个和他们匹配，匹配成功就在真实 `dom` 中将成功的节点移到最前面。例如：
+
+<img width="500" src="../images/diff1.png" />
+
+上面的图表示 旧的`oldVnode` 中有 `a b d` 三个节点，新的`Vnode`中有 `a c d b` 四个节点。然后开始比较：<br>
+第一步：<br>
+```js
+ oldS = a , oldE = d;
+ S = a , E = b;
+```
+`oldS` 和 `S` 匹配，则将 真实 `dom` 中的 `a` 节点 放到第一个，这里本来就是第一个，所以就不用管了，此时 `dom` 的位置为  `a b d`
+
+第二步：<br>
+```js
+ oldS = b, oldE = d;
+ S = c, E = b
+```
+`oldS` 和 `E` 匹配，将原本的 `b` 节点移动到最后，因为 `E` 是最后一个节点，它们位置要一致。此时 `dom` 的位置为 `a d b`
+
+第三步：<br>
+```js
+oldS = d, oldE = d;
+S = c, E = d;
+```
+`oldE` 和 `E` 匹配，位置不变此时 `dom` 位置为 `a d b`
+
+第四步：<br>
+```js
+oldS++;
+oldE--;
+oldS > oldE
+```
+表明旧的 `oldCh` 遍历完成。就将剩余的 `vCh` 节点根据自己的 `index` 插入到真实的 `dom`在中去，此时位置为 `a c d b`，一次模拟完成。<br>
+结束条件有两个:<br>
+一个是 `oldS > oldE` 表示 `oldCh` 先遍历完，那么就将多余的 `vCh` 根据 `index` 添加到 `dom` 中去<br>
+`S > E` 表示 `vCh`遍历完，那么就在真实 ``dom` 中将区间为 `[oldS, oldE]` 的多余及诶单删掉
 
 
+<img width="500" src="../images/diff2.png" />
 
+上图中`2`和`3`的顺序应该是反的。
 
-
-
+<img width="500" src="../images/diff3.png" />
