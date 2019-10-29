@@ -380,3 +380,52 @@ oldS > oldE
 上图中`2`和`3`的顺序应该是反的。
 
 <img width="500" src="../images/diff3.png" />
+
+#### `computed` 和 `watch` 的区别
+`computed`： 是计算属性，依赖其它属性值，并且 `computed` 的值有缓存，只有它依赖的属性值发生改变，下一次获取 `computed` 的值时才会重新计算 `computed` 的值；<br>
+`watch`： 更多的是「观察」的作用，类似于某些数据的监听回调 ，每当监听的数据变化时都会执行回调进行后续操作；
+#### 父组件可以监听到子组件的生命周期吗？
+```js
+// Parent.vue
+<Child @mounted="doSomething"/>
+    
+// Child.vue
+mounted() {
+  this.$emit("mounted");
+}
+```
+更简单的方式可以在父组件引用子组件时通过 @hook 来监听即可，如下所示：
+```js
+//  Parent.vue
+<Child @hook:mounted="doSomething" ></Child>
+
+doSomething() {
+   console.log('父组件监听到 mounted 钩子函数 ...');
+},
+    
+//  Child.vue
+mounted(){
+   console.log('子组件触发 mounted 钩子函数 ...');
+},
+    
+// 以上输出顺序为：
+// 子组件触发 mounted 钩子函数 ...
+// 父组件监听到 mounted 钩子函数 ...
+```
+当然 `@hook` 方法不仅仅是可以监听 `mounted`，其它的生命周期事件，例如：`created，updated` 等都可以监听。
+#### 谈谈你对 `keep-alive` 的了解？
+`keep-alive` 是 `Vue` 内置的一个组件，可以使被包含的组件保留状态，避免重新渲染。<br>
+其有以下特性：<br>
+一般结合路由和动态组件一起使用，用于缓存组件；<br>
+提供 `include` 和 `exclude` 属性，两者都支持字符串或正则表达式， `include` 表示只有名称匹配的组件会被缓存，`exclude` 表示任何名称匹配的组件都不会被缓存 ，其中 `exclude` 的优先级比 `include` 高；<br>
+对应两个钩子函数 `activated` 和 `deactivated` ，当组件被激活时，触发钩子函数 `activated`，当组件被移除时，触发钩子函数 `deactivated`。
+#### 组件中 `data` 为什么是一个函数？
+因为组件是用来复用的，且 `JS` 里对象是引用关系，如果组件中 `data` 是一个对象，那么这样作用域没有隔离，子组件中的 `data` 属性值会相互影响，如果组件中 `data` 选项是一个函数，那么每个实例可以维护一份被返回对象的独立的拷贝，组件实例之间的 `data` 属性值不会互相影响；而 `new Vue` 的实例，是不会被复用的，因此不存在引用对象的问题。
+
+
+
+
+
+
+
+
