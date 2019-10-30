@@ -283,16 +283,27 @@ box-shadow
 2、改变书写方式，元素间留白间距出现的原因就是标签段之间的空格，因此，去掉`HTML`中的空格，自然间距就消失了<br>
 3、`margin`负值<br>
 4、设置父元素，`display:table`和`word-spacing`<br>
+#### `viewport`
+`viewport`指视口，浏览器上(或一个`app`中的`webview`)显示网页的区域。`PC`端的视口是浏览器窗口区域，而移动端的则存在三个不同的视口：<br>
+`layout viewport`：布局视口<br>
+`visual viewport`：视觉视口<br>
+`ideal viewport`：理想视口<br>
 
+`layout viewport` 布局视口:在`PC`端的网页的`layout viewport`即浏览器页面显示的整个区域，也可以理解成网页的绘制区域。而在移动端由于其屏幕较小，无法全部显示PC端页面的全部内容，所以默认情况下(不用`<meta name="viewport">`去控制)，移动端会指定一个大于其浏览器显示区域`layout viewport`，一般是`980px`;<br>
 
+ `visual viewport` 视觉视口: `visual viewport`，顾名思义指浏览器可视区域，即我们在移动端设备上看到的区域
 
+ `ideal viewport` 理想视口: 理想视口，即页面绘制区域可以完美适配设备宽度的视口大小，不需要出现滚动条即可正常查看网站的所有内容，且文字图片清晰，如所有`iphone`的理想视口宽度都为`320px`，安卓设备的理想视口有`320px、360px`等等。
+```html
+ <meta name="viewport" content="width=width-device,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">	
+```
+` width`: `width`用来设置`layout viewport`的宽度，即页面具体绘制区域的宽度，在不使用`<meta>`进行控制视口时，以`iphone`为例，其会设置视口宽度为`980px`。<br>
+另外`width`可设置为`width-device`字符串，表示设置视口宽度为设备的`ideal viewport`，如在`iphone`上为`320px`。
 
-
-
-
-
-
-
+`initial-scale`: 指页面初始的缩放值，其值可以通过如下公式进行计算<br>
+```js
+initial-scale = ideal viewport / visual viewport
+```
 
 
 
