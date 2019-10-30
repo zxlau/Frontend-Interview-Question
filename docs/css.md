@@ -304,7 +304,42 @@ box-shadow
 ```js
 initial-scale = ideal viewport / visual viewport
 ```
+#### `A`元素垂直居中,`A`元素距离屏幕左右各边各`10px`,`A`元素里的文字`font—size:20px`,水平垂直居中,`A`元素的高度始终是`A`元素宽度的`50%`
+```html
+<div class="box">
+  <div class="Abox">我是居中元素</div>
+</div>
+```
+```css
+* {
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+}
+.box {
+  position: relative;
+  background: red;
+  width: 100%;
+  height: 100%;
+}
+.Abox {
+  position: absolute;
+  margin-left: 10px;
+  width: calc(100vw - 20px);
+  height: calc(50vw - 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: yellow;
+}
 
+```
 
 
 

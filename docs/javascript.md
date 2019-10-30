@@ -1140,11 +1140,19 @@ Foo.a();
 // 构建方法里已经替换了全局 Foo 上的 a 方法，所以
 // # 输出 1
 ```
-
-
-
-
-
+#### 函数中的`arguments`是数组吗？怎么转数组？
+```js
+Array.from(arguments)
+[...arguments]
+```
+#### 以下打印结果
+```js
+if([]==false){console.log(1)};   // []和false 都被转换成 0
+if({}==false){console.log(2)};   // {}被转换成 NAN, false被转化成 0
+if([]){console.log(3)}           // []被转换成true
+if([1]==[1]){console.log(4)}     // 两者是不同对象，地址不同
+```
+#### 从一个无序，不相等的数组中，选取`N`个数，使其和为`M`实现算法
 
 
 
