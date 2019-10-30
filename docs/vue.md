@@ -3,11 +3,12 @@
 `vue` 和 `react` 都是采用 `diff` 算法来对比新旧虚拟节点，从而更新节点。在 `vue` 的 `diff` 函数中。可以先了解一下 `diff` 算法。<br/>
 在交叉对比的时候，当新节点跟旧节点头尾交叉对比没有结果的时候，会根据新节点的 `key` 去对比旧节点数组中的 `key`，从而找到相应旧节点（这里对应的是一个 `key => index` 的 `map` 映射）。如果没找到就认为是一个新增节点。而如果没有 `key`，那么就会采用一种遍历查找的方式去找到对应的旧节点。一种一个 `map` 映射，另一种是遍历查找。相比而言。`map` 映射的速度更快。
 #### 对于`MVVM`的理解
-`MVVM` 是 `Model-View-ViewModel` 的缩写<br>
-`Model`: 代表数据模型，也可以在`Model`中定义数据修改和操作的业务逻辑。我们可以把`Model`称为数据层，因为它仅仅关注数据本身，不关心任何行为<br/>`
-`View`: 用户操作界面。当`ViewModel`对`Model`进行更新的时候，会通过数据绑定更新到`View`<br>
-`ViewModel`： 业务逻辑层，`View`需要什么数据，`ViewModel`要提供这个数据；`View`有某些操作，`ViewModel`就要响应这些操作，所以可以说它是`Model for View`<br/>
-总结： `MVVM`模式简化了界面与业务的依赖，解决了数据频繁更新。`MVVM`在使用当中，利用双向绑定技术，使得`Model`变化时，`ViewModel`会自动更新，而`ViewModel`变化时，`View`也会自动变化。
+`MVVM`分为`Model、View、ViewModel`三者。<br>
+`Model` 代表数据模型，数据和业务逻辑都在`Model`层中定义；<br>
+`View`代表`UI`视图，负责数据的展示；<br>
+`ViewModel`负责监听 `Model` 中数据的改变并且控制视图的更新，处理用户交互操作；<br>
+`Model` 和 `View` 并无直接关联，而是通过 `ViewModel` 来进行联系的，`Model` 和 `ViewModel` 之间有着双向数据绑定的联系。因此当 `Model` 中的数据改变时会触发 `View` 层的刷新，`View` 中由于用户交互操作而改变的数据也会在 `Model` 中同步。<br>
+这种模式实现了 `Model` 和 `View` 的数据自动同步，因此开发者只需要专注对数据的维护操作即可，而不需要自己操作 `dom`。
 #### 请详细说下你对`vue`生命周期的理解
 `vue`生命周期总共分为`8`个阶段: `beforeCreate/created`、`beforeMount/mounted`、`beforeUpdate/updated`、`beforeDestroy/destroyed`。<br>
 

@@ -241,6 +241,71 @@ scale
 border-image
 box-shadow
 ```
+#### `transform`、`animation`和`transiton`的相关属性
+**transform**<br>
+**2D transform变换方法**<br>
+`translate(x, y)`方法，根据左(`X`轴)和顶部(`Y`轴)位置给定的参数，从当前元素位置移动。`x`, `y`的值可以取正负，分别表示表示向不同的方向偏移。<br>
+`rotate(angle)`方法， 表示旋转`angle`角度。`angle`为正时，按顺时针角度旋转，为负值时，元素逆时针旋转。<br>
+`scale(x, y)`方法，表示元素在`x`轴和`y`轴上的缩放比例，参数大于`1`时，元素放大，小于`1`时，元素缩小。<br>
+`skew(x-angle,y-angle)`方法，用来对元素进行扭曲变行，第一个参数是水平方向扭曲角度，第二个参数是垂直方向扭曲角度。其中第二个参数是可选参数，如果没有设置第二个参数，那么`Y`轴为`0deg`<br>
+`matrix(n,n,n,n,n,n)`方法， 以一个含六值的变换矩阵的形式指定一个`2D`变换，此属性值使用涉及到数学中的矩阵<br>
+**transform-origin 属性**<br>
+`transform`的方法都是基于元素的中心来变换的，也就是元素变换的基点默认是元素的中心。<br>
+
+**transition**
+`transition`允许`css`的属性值在一定的时间区间内平滑地过渡。这种效果可以在鼠标单击、获得焦点、被点击或对元素任何改变中触发，并圆滑地以动画效果改变`CSS`的属性值。<br>
+`transition`属性的值包括以下四个：<br>
+`transition-property`: 指定对`HTML`元素的哪个`css`属性进行过渡渐变处理，这个属性可以是`color、width、height`等各种标准的`css`属性。<br>
+`transition-duration`：指定属性过渡的持续时间<br>
+`transition-timing-function`: 指定渐变的速度(`linear, ease, ease-out, ease-in, ease-in-out`)等<br>
+`transition-delay`：指定延迟时间<br>
+
+**animation**<br>
+要使用`animation`动画，先要熟悉一下`keyframes`,`Keyframes`的语法规则:命名是由”`@keyframes`”开头，后面紧接着是这个“动画的名称”加上一对花括号“{}”，括号中就是一些不同时间段样式规则。不同关键帧是通过`from`（相当于`0%`）、to（相当于`100%`）或百分比来表示（为了得到最佳的浏览器支持，建议使用百分比）<br>
+`animation-name`: 动画名称<br>
+`animation-duration`: 一个动画周期花费的时间<br>
+`animation-timing-function`: `linear, ease, ease-out, ease-in, ease-in-out`等<br>
+`animation-delay`: 规定延时<br>
+`animation-iteration-count`: 动画播放次数<br>
+`animation-direction`: 是否在下一周期逆向播放 `normal, reverse, alternate`等<br>
+
+**区别：**<br>
+`Transform`：对元素进行变形；<br>
+`Transition`：对元素某个属性或多个属性的变化，进行控制（时间等），类似flash的补间动画。但只有两个关键贞。开始，结束。<br>
+`Animation`：对元素某个属性或多个属性的变化，进行控制（时间等），类似`flash`的补间动画。可以设置多个关键贞。<br>
+ 
+`Transition`与`Animation`:<br>
+`transition`需要触发一个事件 ,而`animation`在不需要触发任何事件的情况下也可以显式的随着时间变化来改变元 素`css`的属性值，从而达到一种动画的效果。<br>
+#### 相邻的两个`inline-block`节点出现间隔的原因以及解决方法
+元素被当成行内元素排版的时候，原来`HTML`代码中的回车换行被转成一个空白符，在字体不为`0`的情况下，空白符占据一定宽度，所以`inline-block`的元素之间就出现了空隙。<br>
+解决方法：<br>
+1、给父级元素设置`font-size： 0`；子元素设置相应的`font-size`<br>
+2、改变书写方式，元素间留白间距出现的原因就是标签段之间的空格，因此，去掉`HTML`中的空格，自然间距就消失了<br>
+3、`margin`负值<br>
+4、设置父元素，`display:table`和`word-spacing`<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
