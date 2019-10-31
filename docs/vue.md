@@ -253,11 +253,11 @@ let Vnode = {
 </div>
 ```
 上面的代码会比较同一层级的两个 `div` 以及第二层级的 `p` 和 `span` ，不会拿 `div` 和 `span` 作比较。<br>
-<img width="400" src="../images/level.png" />
+<img width="400" src="/images/level.png" />
 
 **diff流程图**<br>
 当数据发生改变时， `setter` 方法会让调用 `Dep.notify()` 通知所有订阅者 `Watcher`，订阅者就会调用 `patch` 给真实的 `DOM` 打补丁，更新相应的视图。
-<img width="500" src="../images/overflow.png" />
+<img width="500" src="/images/overflow.png" />
 
 **patch 是怎么打补丁的？(核心部分)**
 ```js
@@ -329,18 +329,18 @@ patchVnode (oldVnode, vnode) {
 将 `Vnode` 的子节点 `Vch` 和 `oldVnode` 的子节点 `oldCh` 提取出来<br>
 `oldCh` 和 `vCh` 各有两个头尾的变量 `StartIdx` 和 `EndIdx`，它们的`2`个变量相互比较，一共有四种比较方式。如果`4`中都没有匹配，如果设置里了 `key` ，就会用 `key` 进行比较，在比较的过程中，变量会往中间靠，一旦 `StartIdx > EndIdx` 表明 `oldCh` 和 `vCh` 至少有一个已经遍历完了，就会结束比较。
 
-<img width="500" src="../images/children.png" />
+<img width="500" src="/images/children.png" />
 
 比如上图中的新旧节点，将它们取出来分别用 `s` 和 `e` 指针指向它们的头 `child` 和尾 `child`
 
-<img width="500" src="../images/oldChvCh.png" />
+<img width="500" src="/images/oldChvCh.png" />
 
 然后分别对 `oldS、oldE、S、E` 两两做 `sameVnode` 比较，有四种比较方式，当其中两个能匹配上，那么真实 `dom` 中的相应节点会移动到 `Vnode` 相应的位置，比如：<br>
 如果是 `oldS` 和 `E` 匹配上了，那么真实 `dom` 中第一个节点会移到最后；<br>
 如果是 `oldE` 和 `S` 匹配上了，那么真实 `dom` 中的最后一个节点会移到最前，匹配上的两个指针向中间移动；<br>
 如果四种匹配没有一对是成功的，那么遍历 `oldChild`，`S` 挨个和他们匹配，匹配成功就在真实 `dom` 中将成功的节点移到最前面。例如：
 
-<img width="500" src="../images/diff1.png" />
+<img width="500" src="/images/diff1.png" />
 
 上面的图表示 旧的`oldVnode` 中有 `a b d` 三个节点，新的`Vnode`中有 `a c d b` 四个节点。然后开始比较：<br>
 第一步：<br>
@@ -376,11 +376,11 @@ oldS > oldE
 `S > E` 表示 `vCh`遍历完，那么就在真实 ``dom` 中将区间为 `[oldS, oldE]` 的多余及诶单删掉
 
 
-<img width="500" src="../images/diff2.png" />
+<img width="500" src="/images/diff2.png" />
 
 上图中`2`和`3`的顺序应该是反的。
 
-<img width="500" src="../images/diff3.png" />
+<img width="500" src="/images/diff3.png" />
 
 #### `computed` 和 `watch` 的区别
 `computed`： 是计算属性，依赖其它属性值，并且 `computed` 的值有缓存，只有它依赖的属性值发生改变，下一次获取 `computed` 的值时才会重新计算 `computed` 的值；<br>
