@@ -340,15 +340,65 @@ html, body {
 }
 
 ```
+#### 层？重绘？回流和重布局？图层重组？
+首先要了解`CSS`的图层的概念（`Chrome`浏览器）<br>
+浏览器在渲染一个页面时，会将页面分为很多个图层，图层有大有小，每个图层上有一个或多个节点。在渲染`DOM`的时候，浏览器所做的工作实际上是：<br>
+1、计算需要被加载到节点上的样式结果（`Recalculate style`--样式重计算）<br>
+2、为每个节点生成图形和位置（`Layout`--回流和重布局）<br>
+3、将每个节点填充到图层中（`Paint Setup`和`Paint`--重绘）<br>
+4、组合图层到页面上（`Composite Layers`--图层重组）<br>
+**触发重布局的属性**<br>
+盒子模型相关属性会触发重布局：<br>
+* width
+* height
+* padding
+* margin
+* display
+* border-width
+* border
+* min-height
 
+定位属性及浮动也会触发重布局：
+* top
+* bottom
+* left
+* right
+* position
+* float
+* clear
 
+改变节点内部文字结构也会触发重布局：
+* text-align
+* overflow-y
+* font-weight
+* overflow
+* font-family
+* line-height
+* vertival-align
+* white-space
+* font-size
 
+这么多常用属性都会触发重布局，可以看到，他们的特点就是可能修改整个节点的大小或位置，所以会触发重布局
 
+**触发重绘的属性**<br>
+修改时只触发重绘的属性有：<br>
+* color
+* border-style
+* border-radius
+* visibility
+* text-decoration
+* background
+* background-image
+* background-position
+* background-repeat
+* background-size
+* outline-color
+* outline
+* outline-style
+* outline-width
+* box-shadow
 
-
-
-
-
+`opacity`不会触发重绘。`translate`这个不会触发重布局。
 
 
 
