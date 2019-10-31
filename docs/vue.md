@@ -422,8 +422,65 @@ mounted(){
 对应两个钩子函数 `activated` 和 `deactivated` ，当组件被激活时，触发钩子函数 `activated`，当组件被移除时，触发钩子函数 `deactivated`。
 #### 组件中 `data` 为什么是一个函数？
 因为组件是用来复用的，且 `JS` 里对象是引用关系，如果组件中 `data` 是一个对象，那么这样作用域没有隔离，子组件中的 `data` 属性值会相互影响，如果组件中 `data` 选项是一个函数，那么每个实例可以维护一份被返回对象的独立的拷贝，组件实例之间的 `data` 属性值不会互相影响；而 `new Vue` 的实例，是不会被复用的，因此不存在引用对象的问题。
-
-
+#### 实现 `vue` 中的 `on,emit,off,once`，手写代码。
+```js
+const EventEmiter = function() {
+  this._events = {};
+}
+EventEmiter.prototype.on = function(event, cb) {
+  if(Array.isArray(event)) {
+    event.forEach(item => {
+      this.on(item, cb)
+    });
+  } else {
+    (this._events[event] || (this._events[event] = [])).push(cb);
+  }
+  return this;
+}
+EventEmiter.prototype.off = function(event, cb) {
+  if(!arguments.length) {
+    this._events = null;
+    return this;
+  }
+  if(Array.isArray(event)) {
+    event.forEach(item => {
+      this.off(item ,cb);
+    })
+    return this;
+  }
+  if(!cb) {
+    this._events[event] = null;
+    return this;
+  }
+  if(cb) {
+    let cbs = this._events[event];
+    let i = cbs.length;
+    while(i--) {
+      if(cb === cbs[i] || cb === cbs[i].fn) {
+        cbs.splice(i, 1);
+        break;
+      }
+    }
+    return this;
+  }
+}
+EventEmiter.prototype.once = function(event, cb) {
+  this.on(event, function() {
+    this.off(event, cb);
+    cb.apply(this, arguments)
+  });
+  return this;
+}
+EventEmiter.prototype.emit = function(event) {
+  let cbs = this._events[event];
+  let args = Array.prototype.slice.call(arguments, 1);
+  if(cbs) {
+    cbs.forEach(item => {
+      cbs[i].apply(this, args);
+    })
+  }
+}
+```
 
 
 

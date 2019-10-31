@@ -1152,10 +1152,67 @@ if({}==false){console.log(2)};   // {}被转换成 NAN, false被转化成 0
 if([]){console.log(3)}           // []被转换成true
 if([1]==[1]){console.log(4)}     // 两者是不同对象，地址不同
 ```
-#### 从一个无序，不相等的数组中，选取`N`个数，使其和为`M`实现算法
+#### 获取页面元素的位置和宽高？
 ```js
-//  https://juejin.im/post/5b03e79951882542891913e8
+element.clientWidth = content + padding
+element.clientHeight = content + padding
 ```
+#### `requestAnimationFrame` 原理？是同步还是异步？
+异步。
+
+`window.requestAnimationFrame()` 告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行。<br>
+当你准备更新动画时你应该调用此方法。这将使浏览器在下一次重绘之前调用你传入给该方法的动画函数(即你的回调函数)。回调函数执行次数通常是每秒`60`次，但在大多数遵循`W3C`建议的浏览器中，回调函数执行次数通常与浏览器屏幕刷新次数相匹配。
+
+页面最小化了，或者被`Tab`切换关灯了。页面绘制全部停止，资源高效利用。
+
+`css3`不支持滚动条动画,所以滚动条滚动动画可以用`requestAnimationFrame`：
+```js
+(function smoothscroll(){
+  let currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+  if (currentScroll > 0) {
+    window.requestAnimationFrame(smoothscroll);
+    window.scrollTo (0,currentScroll - (currentScroll/5));
+  }
+})();
+```
+#### 下面代码输出结果？为什么？
+```js
+Function.prototype.a = 'a';
+Object.prototype.b = 'b';
+function Person(){};
+var p = new Person();
+console.log('p.a: '+ p.a); // p.a: undefined
+console.log('p.b: '+ p.b); // p.b: b
+```
+#### 下面代码输出结果？为什么？
+```js
+const person = {
+  namea: 'aaaa',
+  say: function (){
+    return function (){
+      console.log(this.namea);
+    };
+  }
+};
+person.say()(); // undefined
+
+const person = {
+  namea: 'aaaa',
+  say: function (){
+    return () => {
+      console.log(this.namea);
+    };
+  }
+};
+person.say()(); // aaaa
+```
+
+
+
+
+
+
+
 
 
 
