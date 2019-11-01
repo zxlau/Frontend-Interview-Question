@@ -265,6 +265,50 @@ function bubbleSort(array) {
     }
 }
 ```
+#### 快速排序
+```js
+function quickSort(arr) {
+  if(arr.length < 2) {
+    return arr;
+  }
+  let privot = arr[0];
+  let privotArr = [];
+  let leftArr = [];
+  let rightArr = [];
+  arr.forEach(item => {
+    if(item === privot) {
+      privotArr.push(item)
+    } else if(item > privot) {
+      rightArr.push(item)
+    } else {
+      leftArr.push(item)
+    }
+  });
+  return quickSort(leftArr).concat(privotArr).concat(quickSort(rightArr));
+}
+```
+#### 选择排序
+首先在未排序序列中找到最小（大）元素，存放到排序序列的起始位置。 再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。 重复第二步，直到所有元素均排序完毕。
+````js
+function selectionSort(arr) {
+  let len = arr.length;
+  let minIndex;
+  let temp;
+  for(let i = 0; i < len-1; i++) {
+    minIndex = i;
+    for(let j = i + 1; j < len; j++) {
+      if(arr[j] < arr[minIndex]) {
+        // 寻找最小的数
+        minIndex = j; // 将最小的数索引保存
+      }
+    }
+    temp = arr[i];
+    arr[i] = arr[minIndex];
+    arr[minIndex] = temp;
+  }
+  return arr;
+}
+```
 #### 要求设计 `LazyMan` 类，实现以下功能
 ```js
 LazyMan('Tony');
