@@ -288,8 +288,7 @@ function quickSort(arr) {
 }
 ```
 #### 选择排序
-首先在未排序序列中找到最小（大）元素，存放到排序序列的起始位置。 再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。 重复第二步，直到所有元素均排序完毕。
-````js
+```js
 function selectionSort(arr) {
   let len = arr.length;
   let minIndex;
@@ -841,7 +840,105 @@ function DoublyLinkedList() {
 
 ```
 #### 二叉树
-
+```js
+function BinarySearchTree() {
+  let Node = function(key) {
+    this.key = key;
+    this.left = null;
+    this.right = null;
+  }
+  let root = null;
+  this.insert = function(key) {
+    let newNode = new Node(key);
+    if(root == null) {
+      root = newNode;
+    } else {
+      insertNode(root, newNode)
+    }
+  } 
+  // 中序遍历
+  this.inOrderTraverseNode = function(node, callback) {
+    if(node != null) {
+      this.inOrderTraverseNode(node.left, callback);
+      callback(node.key);
+      this.inOrderTraverseNode(node.right, callback);
+    }
+  }
+  // 先序遍历
+  this.inOrderTraverseNode = function(node, callback) {
+    if(node != null) {
+      callback(node.key);
+      this.inOrderTraverseNode(node.left, callback);
+      this.inOrderTraverseNode(node.right, callback);
+    }
+  }
+  // 后序遍历
+  this.inOrderTraverseNode = function(node, callback) {
+    if(node != null) {
+      this.inOrderTraverseNode(node.left, callback);
+      this.inOrderTraverseNode(node.right, callback);
+      callback(node.key);
+    }
+  }
+  //最小值
+  this.minNode = function() {
+    return minNode(root);
+  }
+  //最大值
+  this.maxNode = function() {
+    return maxNode(root);
+  }
+  // 搜索某个值
+  this.search = function(key) {
+    return searchNode(root, key)
+  }
+}
+function searchNode(node, key) {
+  if(node === null) {
+    return false;
+  }
+  if(key < node.key) {
+    return searchNode(node.left, key)
+  } else if(key > node.key) {
+    return searchNode(node.right, key)
+  } else {
+    return true
+  }
+}
+function maxNode(node) {
+  if(node) {
+    while(node && node.right !== null) {
+      node = node.right;
+    }
+    return node.key;
+  }
+  return null;
+}
+function minNode(node) {
+  if(node) {
+    while(node && node.left !== null) {
+      node = node.left;
+    }
+    return node.key;
+  }
+  return null;
+}
+function insertNode(node, newNode) {
+  if(newNode.key < node.key) {
+    if(node.left === null) {
+      node.left = newNode;
+    } else {
+      insertNode(node.left, newNode);
+    }
+  } else {
+    if(node.right === null) {
+      node.right = newNode;
+    } else {
+      insertNode(node.right, newNode);
+    }
+  }
+}
+```
 
 
 
