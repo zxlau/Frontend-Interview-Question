@@ -5,9 +5,9 @@
 
 `performance.navigation`（定义了当前文档的导航信息，比如是重载还是向前向后等）
 
-<img width="700 src='/Frontend-Interview-Question/timing.jpg' />
+<img width="700 src='/Frontend-Interview-Question/images/timing.jpg' />
 
-<img width="700 src='/Frontend-Interview-Question/timing2.jpg' />
+<img width="700 src='/Frontend-Interview-Question/images/timing2.jpg' />
 
 **确定统计起始点 （ `navigationStart vs fetchStart` ）**<br>
 页面性能统计的起始点时间，应该是用户输入网址回车后开始等待的时间。一个是通过`navigationStart`获取，相当于在 `URL` 输入栏回车或者页面按 `F5` 刷新的时间点；另外一个是通过 `fetchStart`，相当于浏览器准备好使用 `HTTP` 请求获取文档的时间。<br>

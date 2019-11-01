@@ -156,7 +156,7 @@ function stopDefault( e ) {
 更新`render`(每一次事件循环，浏览器都可能会去更新渲染)<br>
 重复以上步骤<br>
 
-<img width="500" src="/Frontend-Interview-Question/eventLoop.png" />
+<img width="500" src="/Frontend-Interview-Question/images/eventLoop.png" />
 
 1、将所有任务看成两个队列：执行队列与事件队列。<br>
 2、执行队列是同步的，事件队列是异步的，宏任务放入事件列表，微任务放入执行队列之后，事件队列之前。<br>
