@@ -140,7 +140,6 @@ console.log(o + "")
 // toPrimitive
 // hello
 ```
-#### `JavaScript` 对象的特征
 
 
 
