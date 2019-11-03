@@ -1234,8 +1234,51 @@ console.log(6);
 //console.log(3)其实是在async2函数返回的Promise的then语句中执行的，
 // then语句本身也会返回一个Promise然后追加到微任务队列中，所以在微任务队列中console.log(3)在console.log(4)后面
 ```
+#### 打印结果
+```js
+let a = {a: 10};
+let b = {b: 10};
+let obj = {
+  a: 10
+};
+obj[b] = 20;
+console.log(obj[a]);
 
+// 20  解析：obj[b]的时候b被转换成了 [object Object], obj[a] 同样也是，所以是20
+```
+#### 深拷贝和浅拷贝的实现方式分别有哪些？
+浅拷贝：<br>
+(1) `Object.assign`的方式 <br>
+(2) 通过对象扩展运算符 <br>
+(3) 通过数组的`slice`方法 <br>
+(4) 通过数组的`concat`方法。<br>
+深拷贝：<br>
+(1) 通过JSON.stringify来序列化对象 <br>
+(2) 手动实现递归的方式。<br>
+####  `Object.assign`和对象扩展运算符`...` 浅拷贝还是深拷贝
+第一级属性深拷贝，以后级别属性浅拷贝
+```js
+let a = { b: { c: 1 }, d: 1 };
+let b = Object.assign({}, a); // 或者let b = {...a}
 
+b.d = 2;
+a // { b: { c: 1 }, d: 1 }
+
+b.b.c = 2
+a // { b: { c: 2 }, d: 1 }
+```
+#### 数组的`slice`方法和`concat`方法是浅拷贝还是深拷贝
+第一级属性深拷贝，以后级别属性浅拷贝
+```js
+let a = [{b: 1}, 2,3,4];
+let b = a.slice();
+
+b[0].b = 2
+a[0] // {b: 2}
+
+b[1] = 5
+a[1]  // 2
+```
 
 
 
