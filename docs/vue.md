@@ -82,13 +82,17 @@ const router = new VueRouter({
 `beforeRouteEnter` 进入路由前, 在路由独享守卫后调用不能获取组件实例`this`，组件实例还没被创建<br>
 `beforeRouteUpdate(2.2)` 路由复用同一个组件时, 在当前路由改变，但是该组件被复用时调用 可以访问组件实例`this`<br
 `beforeRouteLeave`离开当前路由时, 导航离开该组件的对应路由时调用，可以访问组件实例`this`
-#### `Vue`的路由实现：`hash`模式和`history`模式
+#### `Vue`的路由实现：`hash`模式和`history`模式以及`abstract`模式
 **hash模式**<br>
 在浏览器中符号`“#”`，#以及#后面的字符称之为`hash`，用`window.location.hash`读取。<br>
 特点：`hash`虽然在`URL`中，但不被包括在`HTTP`请求中；用来指导浏览器动作，对服务端安全无用，`hash`不会重加载页面。 `hash`模式下，仅`hash`符号之前的内容会被包含在请求中，如 `http://www.xiaogangzai.com`，因此对于后端来说，即使没有做到对路由的全覆盖，也不会返回 `404` 错误。<br>
 
 **history模式**<br>
-`history`采用`HTML5`的新特性；且提供了两个新方法：`pushState()`,`replaceState()`可以对浏览器历史记录栈进行修改，以及`popState`事件的监听到状态变更。 `history`模式下，前端的`URL`必须和实际向后端发起请求的`URL`一致，如 `http://www.xxx.com/items/id`。后端如果缺少对 `/items/id` 的路由处理，将返回 `404` 错误。`Vue-Router` 官网里如此描述：“不过这种模式要玩好，还需要后台配置支持……所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 `URL` 匹配不到任何静态资源，则应该返回同一个 `index.html` 页面，这个页面就是你 `app` 依赖的页面。”
+`history`采用`HTML5`的新特性；且提供了两个新方法：`pushState()`,`replaceState()`可以对浏览器历史记录栈进行修改，以及`popState`事件的监听到状态变更。 `history`模式下，前端的`URL`必须和实际向后端发起请求的`URL`一致，如 `http://www.xxx.com/items/id`。后端如果缺少对 `/items/id` 的路由处理，将返回 `404` 错误。`Vue-Router` 官网里如此描述：“不过这种模式要玩好，还需要后台配置支持……所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 `URL` 匹配不到任何静态资源，则应该返回同一个 `index.html` 页面，这个页面就是你 `app` 依赖的页面。<br>
+
+**abstract模式**<br>
+`abstract`模式是使用一个不依赖于浏览器的浏览历史虚拟管理后端。 根据平台差异可以看出，在 `Weex` 环境中只支持使用 `abstract` 模式。
+
 #### `vuex`是什么？怎么使用？哪种功能场景使用它？
 `vuex`就是一个仓库，仓库里放了很多对象。其中`state`就是数据源存放地，对应于一般`vue`对象里面的`data`<br>
 `state`里面存放的数据是响应式的，`vue` 组件从 `store` 读取数据，若是 `store` 中的数据发生改变，依赖这相数据的组件也会发生更新<br/>
