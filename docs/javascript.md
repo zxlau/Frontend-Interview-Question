@@ -686,14 +686,6 @@ console.log('script end');
 // await async2() 这句中，遇到await会立即执行async2();
 // 然后把await后面的语句 console.log('async1 end')加入到微任务中，
 //所以等同步代码输出promise1 和 script end才会输出async1 end
-promise.then(() => {
-  console.log(3)
-})
-
-console.log(4)
-
-// 1243
-// 说明Promise构造函数是同步的，then方法是异步的
 ```
 #### 通过`new`创建一个对象的时候，构造函数内部有哪些改变？
 创建一个空对象，将它的引用赋给 `this`，继承函数的原型。
@@ -720,6 +712,23 @@ function _new(parent, ...args) {
 `UMD`：兼容`AMD`，`CommonJS` 模块化语法。<br>
 `webpack(require.ensure)`：`webpack 2.x` 版本中的代码分割。<br>
 `ES Modules`： `ES6`引入的模块化，支持`import`来引入另一个`js` 。
+#### export default与export的区别
+`export`可以导出多个对象，`export default`只能导出一个对象；<br>
+`export` 导出对象需要用`{}`，`export default`不需要`{}`，如：<br>
+```js
+export { A, B, C};
+export default A;
+```
+在其他文件引用`export default`导出的对象时不一定使用导出时的名字。因为这种方式实际上是将该导出对象设置为默认导出对象，如：
+```js
+// 文件A
+export default deObject;
+// 文件B
+import deObject from './A'
+// 或者
+import newDeObject from './A'
+```
+
 #### 改造下面的代码，使之输出`0 - 9`，写出你能想到的所有解法
 ```js
 for (var i = 0; i< 10; i++){
@@ -805,7 +814,7 @@ function wait(time) {
     setTimeout(resolve, time);
   })
 }
-function sleep(time) {
+async function sleep(time) {
   await wait(time);
 }
 ```
@@ -1147,10 +1156,10 @@ Array.from(arguments)
 ```
 #### 以下打印结果
 ```js
-if([]==false){console.log(1)};   // []和false 都被转换成 0
-if({}==false){console.log(2)};   // {}被转换成 NAN, false被转化成 0
-if([]){console.log(3)}           // []被转换成true
-if([1]==[1]){console.log(4)}     // 两者是不同对象，地址不同
+if([]==false){console.log(1)};   // true []和false 都被转换成 0
+if({}==false){console.log(2)};   // false {}被转换成 NAN, false被转化成 0
+if([]){console.log(3)}           // true []被转换成true
+if([1]==[1]){console.log(4)}     // false 两者是不同对象，地址不同
 ```
 #### 获取页面元素的位置和宽高？
 ```js
@@ -1187,20 +1196,20 @@ console.log('p.b: '+ p.b); // p.b: b
 #### 下面代码输出结果？为什么？
 ```js
 const person = {
-  namea: 'aaaa',
+  name: 'aaaa',
   say: function (){
     return function (){
-      console.log(this.namea);
+      console.log(this.name);
     };
   }
 };
 person.say()(); // undefined
 
 const person = {
-  namea: 'aaaa',
+  name: 'aaaa',
   say: function (){
     return () => {
-      console.log(this.namea);
+      console.log(this.name);
     };
   }
 };

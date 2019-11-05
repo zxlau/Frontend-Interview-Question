@@ -480,7 +480,7 @@ EventEmiter.prototype.emit = function(event) {
   let args = Array.prototype.slice.call(arguments, 1);
   if(cbs) {
     cbs.forEach(item => {
-      cbs[i].apply(this, args);
+      item.apply(this, args);
     })
   }
 }

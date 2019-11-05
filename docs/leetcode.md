@@ -153,7 +153,7 @@ function add() {
 function indexOfSorted(arr, n) {
     let st = 0,
         end = arr.length,
-        m = Math.floor(st + end) / 2;
+        m = Math.floor((st + end) / 2);
     while(end - st > 1) {
         if(n == arr[st]) {
             return st;
@@ -166,11 +166,11 @@ function indexOfSorted(arr, n) {
         }
         if(n > arr[m]) {
             st = m;
-            m = Math.floor(st + end) / 2;
+            m = Math.floor((st + end) / 2);
         }
         if(n < arr[m]) {
             end = m;
-            m = Math.floor(st + end) / 2;
+            m = Math.floor((st + end) / 2);
         }
     }
     return -1;
