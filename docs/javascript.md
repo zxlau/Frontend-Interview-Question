@@ -574,7 +574,7 @@ obj1.say = say;
 obj1.say()  // window 闭包 1-2 this指向
 
 obj1.say = obj2.say;
-obj1.say()  // 2-1 闭包 2-2 this指向
+obj1.say()  // 2-1 闭包 1-2 this指向
 ```
 #### `Promise` 构造函数是同步执行还是异步执行，那么 `then` 方法呢？
 ```js
@@ -596,7 +596,7 @@ console.log(4)
 ```js
 Array.prototype.findDuplicate = function(count) {
   let result = this.reduce((res, item) => {
-    let index = res.findIndex(i => i.name == item.name);
+    let index = res.findIndex(i => i.name == item);
     if(index > 0) {
       res[index].count++;
     } else {
