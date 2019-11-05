@@ -552,7 +552,7 @@ let list =[
     {id:7,name:'部门G',parentId:2},
     {id:8,name:'部门H',parentId:4}
 ];
-const result = convert(list, ...);
+const result = convert(list);
 
 // 转换后的结果如下
 let result = [
