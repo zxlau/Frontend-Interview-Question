@@ -969,7 +969,30 @@ function request(url, body, successCallback, errorCallback, maxCount = 3) {
   })
 }
 ```
-
+#### 二维数组的全排列组合
+```js
+let array = [[1,2,3,4], [1,2,3,4], [1,2,3,4]];
+console.log(getArrByArrs(array))
+function getArrByArrs(array) {
+  let arr = [''];
+  for(let i = 0; i < array.length; i++) {
+    arr = getValueByArr(arr, array[i]);
+  }
+  return arr;
+}
+function getValueByArr(arr1, arr2) {
+  let arr = [];
+  for(let i = 0; i < arr1.length; i++) {
+    let v1 = arr1[i];
+    for(let j = 0; j < arr2.length; j++) {
+      let v2 = arr2[j];
+      let value = v1 + v2;
+      arr.push(value)
+    }
+  }
+  return arr;
+}
+```
 
 
 
