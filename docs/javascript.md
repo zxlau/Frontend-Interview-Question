@@ -1297,6 +1297,15 @@ a[1]  // 2
 `defer` : 并行下载`js`，会按照页面上的`script`标签的顺序执行，然后在文档解析完成之后执行脚本<br>
 `defer` 与 `async` 的相同点是采用并行下载，在下载过程中不会产生阻塞。区别在于执行时机，`async` 是加载完成后自动执行，而 `defer` 需要等待页面完成后执行。
 
+#### 实现一个函数判断数据类型
+```js
+function getType(obj) {
+  if(obj === null) return String(obj);
+  return typeof obj === 'object' ? Object.prototype.toString.call(obj).replace('[object ', '').replace(']', '').toLowerCase() : typeof obj
+}
+```
+
+
 https://juejin.im/post/5db556376fb9a0207a6ddce7
 
 

@@ -939,9 +939,36 @@ function insertNode(node, newNode) {
   }
 }
 ```
-
-
-
+#### 如何从`10000`个数中找到最大的`10`个数
+```js
+// 冒泡排序，快速排序等，好一点的方法就是下面这种
+// 初始化长度为10的数组，然后比较剩下的9990个
+function findMax(arr) {
+  let result = arr.slice(0, 10).sort((a, b) => b-a);
+  let restArr = arr.slice(10);
+  for(let i = 0; i < restArr.length; i++) {
+    if(restArr[i] > result[9]) {
+      result.splice(9, 1);
+      result.push(restArr[i]);
+      result.sort((a, b) => b-a)
+    }
+  }
+  return result
+}
+```
+#### 手动封装一个请求函数，可以设置最大请求次数，请求成功则不再请求，请求失败则继续请求直到超过最大次数
+```js
+function request(url, body, successCallback, errorCallback, maxCount = 3) {
+  return new Promise((resolve, reject) => {
+    fetch(url, body)
+      .then(resp => successCallback(resp))
+      .catch(err => {
+        if(maxCount <= 0) return errorCallback('请求超时');
+        this.request(url, body, successCallback, errorCallback, --maxCount)
+      })
+  })
+}
+```
 
 
 
