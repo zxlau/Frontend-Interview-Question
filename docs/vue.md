@@ -485,6 +485,8 @@ EventEmiter.prototype.emit = function(event) {
   }
 }
 ```
+#### `Data、Observe、Dep`和`Watcher`之间的关系
+`Data`通过`Observe`转换成`getter/setter`的形式来追踪变化。当外界通过`watcher`读取数据时，会触发`getter`从而将`watcher`添加到依赖中。当数据发生了变化时， 会触发`setter`，从而向`Dep`中的依赖(`watcher`)发送通知。`watcher`接收到通知后，会向外界发送通知，变化通知到外界后可能触发视图更新，也有可能触发用户的某个回调函数等。
 
 
 
