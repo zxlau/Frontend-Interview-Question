@@ -76,3 +76,105 @@ function logData() {
 }
 ```
 
+#### `js`生产环境错误监测
+参考：`https://www.cnblogs.com/warm-stranger/p/9417084.html`<br>
+
+监控流程：监控错误 -> 搜集错误 -> 存储错误 -> 分析错误 -> 错误报警-> 定位错误 -> 解决错误<br>
+首先，我们应该对`Js`报错情况有个大致的了解，这样才能够及时的了解前端项目的健康状况。所以我们需要分析出一些必要的数据。<br>
+如：一段时间内，应用`JS`报错的走势(`chart`图表)、`JS`错误发生率、`JS`错误在`PC`端发生的概率、`JS`错误在`IOS`端发生的概率、`JS`错误在`Android`端发生的概率，以及`JS`错误的归类。<br>
+然后，我们再去其中的`Js`错误进行详细的分析，辅助我们排查出错的位置和发生错误的原因。<br>
+如：`JS`错误类型、 `JS`错误信息、`JS`错误堆栈、`JS`错误发生的位置以及相关位置的代码；`JS`错误发生的几率、浏览器的类型，版本号，设备机型等等辅助信息。<br>
+
+为了得到这些数据，我们需要在上传的时候将其分析出来。在众多日志分析中，很多字段及功能是重复通用的，所以应该将其封装起来。
+```js
+// 设置日志对象类的通用属性
+function setCommonProperty() {
+  this.happenTime = new Date().getTime(); // 日志发生时间
+  this.webMonitorId = WEB_MONITOR_ID;     // 用于区分应用的唯一标识（一个项目对应一个）
+  this.simpleUrl =  window.location.href.split('?')[0].replace('#', ''); // 页面的url
+  this.customerKey = utils.getCustomerKey(); // 用于区分用户，所对应唯一的标识，清理本地数据后失效
+  this.pageKey = utils.getPageKey();  // 用于区分页面，所对应唯一的标识，每个新页面对应一个值
+  this.deviceName = DEVICE_INFO.deviceName;
+  this.os = DEVICE_INFO.os + (DEVICE_INFO.osVersion ? " " + DEVICE_INFO.osVersion : "");
+  this.browserName = DEVICE_INFO.browserName;
+  this.browserVersion = DEVICE_INFO.browserVersion;
+  // TODO 位置信息, 待处理
+  this.monitorIp = "";  // 用户的IP地址
+  this.country = "china";  // 用户所在国家
+  this.province = "";  // 用户所在省份
+  this.city = "";  // 用户所在城市
+  // 用户自定义信息， 由开发者主动传入， 便于对线上进行准确定位
+  this.userId = USER_INFO.userId;
+  this.firstUserParam = USER_INFO.firstUserParam;
+  this.secondUserParam = USER_INFO.secondUserParam;
+}
+
+// JS错误日志，继承于日志基类MonitorBaseInfo
+function JavaScriptErrorInfo(uploadType, errorMsg, errorStack) {
+  setCommonProperty.apply(this);
+  this.uploadType = uploadType;
+  this.errorMessage = encodeURIComponent(errorMsg);
+  this.errorStack = errorStack;
+  this.browserInfo = BROWSER_INFO;
+}
+JavaScriptErrorInfo.prototype = new MonitorBaseInfo();
+```
+封装了一个`Js`错误对象`JavaScriptErrorInfo`，用以保存页面中产生的`Js`错误。其中，`setCommonProperty`用以设置所有日志对象的通用属性。<br>
+1）重写`window.onerror` 方法， 大家熟知，监控JS错误必然离不开它，有人对他进行了测试测试介绍感觉也是比较用心了<br>
+2）重写`console.error`方法，为什么要重写这个方法，我不能够给出明确的答案，如果`App`首次向浏览器注入的`Js`代码报错了，`window.onerror`是无法监控到的，所以只能重写`console.error`的方式来进行捕获，也许会有更好的办法。待`window.onerror`成功后，此方法便不再需要用了<br>
+3）重写`window.onunhandledrejection`方法。 当你用到`Promise`的时候，而你又忘记写`reject`的捕获方法的时候，系统总是会抛出一个叫 `Unhandled Promise rejection`. 没有堆栈，没有其他信息，特别是在写`fetch`请求的时候很容易发生。 所以我们需要重写这个方法，以帮助我们监控此类错误<br>
+下边是启动`JS`错误监控代码:
+```js
+/**
+ * 页面JS错误监控
+ */
+function recordJavaScriptError() {
+  // 重写console.error, 可以捕获更全面的报错信息
+  var oldError = console.error;
+  console.error = function () {
+    // arguments的长度为2时，才是error上报的时机
+    // if (arguments.length < 2) return;
+    var errorMsg = arguments[0] && arguments[0].message;
+    var url = WEB_LOCATION;
+    var lineNumber = 0;
+    var columnNumber = 0;
+    var errorObj = arguments[0] && arguments[0].stack;
+    if (!errorObj) errorObj = arguments[0];
+    // 如果onerror重写成功，就无需在这里进行上报了
+    !jsMonitorStarted && siftAndMakeUpMessage(errorMsg, url, lineNumber, columnNumber, errorObj);
+    return oldError.apply(console, arguments);
+  };
+  // 重写 onerror 进行jsError的监听
+  window.onerror = function(errorMsg, url, lineNumber, columnNumber, errorObj)
+  {
+    jsMonitorStarted = true;
+    var errorStack = errorObj ? errorObj.stack : null;
+    siftAndMakeUpMessage(errorMsg, url, lineNumber, columnNumber, errorStack);
+  };
+
+  function siftAndMakeUpMessage(origin_errorMsg, origin_url, origin_lineNumber, origin_columnNumber, origin_errorObj) {
+    var errorMsg = origin_errorMsg ? origin_errorMsg : '';
+    var errorObj = origin_errorObj ? origin_errorObj : '';
+    var errorType = "";
+    if (errorMsg) {
+      var errorStackStr = JSON.stringify(errorObj)
+      errorType = errorStackStr.split(": ")[0].replace('"', "");
+    }
+    var javaScriptErrorInfo = new JavaScriptErrorInfo(JS_ERROR, errorType + ": " + errorMsg, errorObj);
+    javaScriptErrorInfo.handleLogInfo(JS_ERROR, javaScriptErrorInfo);
+  };
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
