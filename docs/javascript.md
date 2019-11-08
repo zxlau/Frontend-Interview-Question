@@ -1306,8 +1306,6 @@ function getType(obj) {
 ```
 
 
-https://juejin.im/post/5db556376fb9a0207a6ddce7
-
 
 
 
