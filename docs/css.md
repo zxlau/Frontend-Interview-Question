@@ -399,8 +399,8 @@ html, body {
 * box-shadow
 
 `opacity`不会触发重绘。`translate`这个不会触发重布局。
-
-
+#### 说出`space-between`和`space-around`的区别？
+这个是`flex`布局的内容，其实就是一个边距的区别，按水平布局来说，`space-between`在左右两侧没有边距，而`space-around`在左右两侧会留下边距，垂直布局同理。
 
 
 

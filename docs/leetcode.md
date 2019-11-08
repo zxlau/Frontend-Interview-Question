@@ -964,7 +964,7 @@ function request(url, body, successCallback, errorCallback, maxCount = 3) {
       .then(resp => successCallback(resp))
       .catch(err => {
         if(maxCount <= 0) return errorCallback('请求超时');
-        this.request(url, body, successCallback, errorCallback, --maxCount)
+        request(url, body, successCallback, errorCallback, --maxCount)
       })
   })
 }
