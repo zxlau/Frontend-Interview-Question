@@ -11,11 +11,20 @@ let arr = [1,2,3,4,5,6,7,8,9,10];
 function randSort1(arr) {
   for(let i = 0, len = arr.length; i < len; i++) {
     let rand = parseInt(Math.random() * len);
-    let temp = arr[rand];
-    arr[rand] = arr[i];
-    arr[i] = temp;
+    [arr[rand], arr[i]] = [arr[i], arr[rand]];
     return arr;
   }
+}
+```
+```js
+// 著名的Fisher–Yates shuffle 洗牌算法
+function shuffle(arr) {
+  let m = arr.length;
+  while(m > 1) {
+    let index = parseInt(Math.random() * m--);
+    [arr[index], arr[m]] = [arr[m], arr[index]]
+  }
+  return arr;
 }
 ```
 ```js
@@ -23,6 +32,37 @@ let arr = [1,2,3,4,5,6,7,8,9,10];
 arr.sort(() => {
   return Math.random() - 0.5;
 })
+```
+#### 数组去重
+```js
+function removeDup(arr) {
+  let result = [];
+  let map = {};
+  for(let i = 0; i < arr.length; i++) {
+    let temp = arr[i];
+    if(!map[temp]) {
+      map[temp] = true;
+      result.push(temp)
+    }
+  }
+  return result;
+}
+// reduce
+function removeDup(arr) {
+  return arr.reduce((res, cur) => {
+    let index = res.findIndex(i => i === cur);
+    if(index == -1) {
+      res.push(cur)
+    }
+    return res
+  }, [])
+}
+```
+```js
+Array.form(new Set(arr))
+```
+```js
+[...new Set(arr)]
 ```
 #### `typeof`运算符和`instanceof`运算符以及`isPrototypeOf()`方法的区别
 `typeof`是一个运算符，用于检测数据的类型，比如基本数据类型`undefined、string、number、boolean`，以及引用数据类型`object、function`，但是对于正则表达式、日期、数组这些引用数据类型，它会全部识别为`object`；<br/>
@@ -79,6 +119,11 @@ function deepClone(obj) {
     }
   }
   return objClone;
+}
+```
+```js
+function deepClone(obj) {
+  return JSON.parse(JSON.stringify(obj))
 }
 ```
 数组深拷贝方法：
@@ -374,6 +419,64 @@ Function.prototype.bind = function() {
   return function() {
     let finalArgs = args.concat(Array.prototype.slice.call(arguments));
     self.appy(context, finalArgs)
+  }
+}
+```
+#### `filter`实现
+```js
+Array.prototype.filter = function(fn) {
+  if(typeof fn !== 'Function') return;
+  let arr = this;
+  let result = [];
+  for(let i = 0; i < arr.length; i++) {
+    let temp = fn.call(null, arr[i], i, arr);
+    if(temp) {
+      result.push(arr[i]);
+    }
+  }
+  return result;
+}
+```
+#### `call`的实现
+```js
+Function.prototype.call = function(context) {
+  let context = context || window;
+  context.fn = this; //把调用call的方法作为指定的上下文对象的一个属性
+  let args = [].silce.call(arguments, 1);
+  let result = eval(`context.fn(${args})`);
+  delete context.fn;
+  return result;
+}
+```
+#### `apply`的实现
+```js
+Function.prototype.apply = function(context) {
+  let context = context || window;
+  context.fn = this;
+  let args = arguments[1];
+  let result;
+  if(args) {
+    result = eval(`context.fn(${args})`)
+  } else {
+    result = context.fn()
+  }
+  delete context.fn;
+  return result;
+}
+```
+#### `intanceof`的实现
+```js
+function intanceOf(L, R) {
+  let O = R.prototype;
+  L = L.__proto__;
+  while(true) {
+    if(L === null) {
+      return false;
+    }
+    if(O === L) {
+      return true;
+      L = L.__proto__
+    }
   }
 }
 ```

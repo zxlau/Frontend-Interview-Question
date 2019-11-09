@@ -401,6 +401,103 @@ html, body {
 `opacity`不会触发重绘。`translate`这个不会触发重布局。
 #### 说出`space-between`和`space-around`的区别？
 这个是`flex`布局的内容，其实就是一个边距的区别，按水平布局来说，`space-between`在左右两侧没有边距，而`space-around`在左右两侧会留下边距，垂直布局同理。
+#### 三栏布局
+三栏布局是很常见的一种页面布局方式。左右固定，中间自适应。实现方式有很多种方法。<br>
+**第一种：flex**<br>
+```html
+<div class="container">
+    <div class="left">left</div>
+    <div class="main">main</div>
+    <div class="right">right</div>
+</div>
+```
+```css
+.container{
+    display: flex;
+}
+.left{
+    flex-basis:200px;
+    background: green;
+}
+.main{
+    flex: 1;
+    background: red;
+}
+.right{
+    flex-basis:200px;
+    background: green;
+}
+```
+**第二种：position + margin**
+```html
+<div class="container">
+    <div class="left">left</div>
+    <div class="right">right</div>
+    <div class="main">main</div>
+</div>
+```
+```css
+body,html{
+    padding: 0;
+    margin: 0;
+}
+.left,.right{
+    position: absolute;
+    top: 0;
+    background: red;
+}
+.left{
+    left: 0;
+    width: 200px;
+}
+.right{
+    right: 0;
+    width: 200px;
+}
+.main{
+    margin: 0 200px ;
+    background: green;
+}
+```
+**第三种：float + margin**
+```html
+<div class="container">
+    <div class="left">left</div>
+    <div class="right">right</div>
+    <div class="main">main</div>
+</div>
+```
+```css
+body,html{
+    padding:0;
+    margin: 0;
+}
+.left{
+    float:left;
+    width:200px;
+    background:red;
+}
+.main{
+    margin:0 200px;
+    background: green;
+}
+.right{
+    float:right;
+    width:200px;
+    background:red;
+}
+```
+#### 如何实现一个自适应的正方形
+```css
+.square {
+    width: 10vw;
+    height: 10vw;
+    background: red;
+}
+```
+
+
+
 
 
 

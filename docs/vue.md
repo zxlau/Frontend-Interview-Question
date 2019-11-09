@@ -448,7 +448,7 @@ EventEmiter.prototype.off = function(event, cb) {
   }
   if(Array.isArray(event)) {
     event.forEach(item => {
-      this.off(item ,cb);
+      this.off(item, cb);
     })
     return this;
   }
