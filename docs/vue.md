@@ -487,6 +487,27 @@ EventEmiter.prototype.emit = function(event) {
 ```
 #### `Data、Observe、Dep`和`Watcher`之间的关系
 `Data`通过`Observe`转换成`getter/setter`的形式来追踪变化。当外界通过`watcher`读取数据时，会触发`getter`从而将`watcher`添加到依赖中。当数据发生了变化时， 会触发`setter`，从而向`Dep`中的依赖(`watcher`)发送通知。`watcher`接收到通知后，会向外界发送通知，变化通知到外界后可能触发视图更新，也有可能触发用户的某个回调函数等。
+#### `vue`里的`Runtime Only`和`Runtime+Compiler`
+官网解释：如果你需要在客户端编译模板 (比如传入一个字符串给 `template` 选项，或挂载到一个元素上并以其 `DOM` 内部的 `HTML` 作为模板)，就将需要加上编译器。<br>
+
+**Runtime Only**<br>
+我们在使用 `Runtime Only` 版本的 `Vue.js` 的时候，通常需要借助如 `webpack` 的 `vue-loader` 工具把 `.vue` 文件编译成 `JavaScript`，因为是在编译阶段做的，所以它只包含运行时的 `Vue.js` 代码，因此代码体积也会更轻量。 在将 `.vue` 文件编译成 `JavaScript`的编译过程中会将组件中的`template`模板编译为`render`函数，所以我们得到的是`render`函数的版本。所以运行的时候是不带编译的，编译是在离线的时候做的。<br>
+
+**Runtime+Compiler**<br>
+我们如果没有对代码做预编译，但又使用了 `Vue` 的 `template` 属性并传入一个字符串或挂载到一个元素上并以其 `DOM` 内部的 `HTML` 作为模板，则需要在客户端编译模板。
+#### `Vue`组件全局注册和局部注册使用及原理
+**全局注册实例**
+```js
+Vue.component('app', App)
+```
+**局部注册实例**
+```js
+components: {
+  App
+}
+```
+
+
 
 
 
