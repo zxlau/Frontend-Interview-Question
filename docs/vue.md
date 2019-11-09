@@ -506,9 +506,110 @@ components: {
   App
 }
 ```
+下面我们进入两种注册方式的源码实现，首先进入`Vue.component`
+```js
+Vue[type] = function (
+  id: string,
+  definition: Function | Object
+): Function | Object | void {
+  if (!definition) {
+    return this.options[type + 's'][id]
+  } else {
+    /* istanbul ignore if */
+    if (process.env.NODE_ENV !== 'production' && type === 'component') {
+      validateComponentName(id)
+    }
+    if (type === 'component' && isPlainObject(definition)) {
+      definition.name = definition.name || id
+      definition = this.options._base.extend(definition)
+    }
+    if (type === 'directive' && typeof definition === 'function') {
+      definition = { bind: definition, update: definition }
+    }
+    this.options[type + 's'][id] = definition
+    return definition
+  }
+}
+```
+这里是对三种方法的定义`'component', 'directive', 'filter'`，这里我们要说的是`component`，可以看到，当`type = 'component'`时，直接调用了`extend`方法，`extends` 就是对`Vue`对象的扩展，就是一个组件的`Vue`构造函数，拥有`Vue`的所有方法，最后，将这个扩展赋值给了全局`Vue` 的`options` 的`components` 属性中，然后，我们进入到`patch`时解析标签时:
+```js
+let vnode, ns
+  if (typeof tag === 'string') {
+    let Ctor
+    ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+    if (config.isReservedTag(tag)) {
+      // platform built-in elements
+      vnode = new VNode(
+        config.parsePlatformTagName(tag), data, children,
+        undefined, undefined, context
+      )
+    } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+      // component
+      vnode = createComponent(Ctor, data, context, children, tag)
+    } else {
+      vnode = new VNode(
+        tag, data, children,
+        undefined, undefined, context
+      )
+    }
+  } else {
+    // direct component options / constructor
+    vnode = createComponent(tag, data, context, children)
+  }
+```
+当标签类型为普通标签时，会创建普通类型的标签，如果不是普通标签时我们可以看`else if`里，`Ctor = resolveAsset(context.$options, 'components', tag)` 我们找到这个函数，定义在源码`src/core/util/options.js`
+```js
+export function resolveAsset (
+  options: Object,
+  type: string,
+  id: string,
+  warnMissing?: boolean
+): any {
+  /* istanbul ignore if */
+  if (typeof id !== 'string') {
+    return
+  }
+  const assets = options[type]
+  // check local registration variations first
+  if (hasOwn(assets, id)) return assets[id]
+  const camelizedId = camelize(id)
+  if (hasOwn(assets, camelizedId)) return assets[camelizedId]
+  const PascalCaseId = capitalize(camelizedId)
+  if (hasOwn(assets, PascalCaseId)) return assets[PascalCaseId]
+  // fallback to prototype chain
+  const res = assets[id] || assets[camelizedId] || assets[PascalCaseId]
+  if (process.env.NODE_ENV !== 'production' && warnMissing && !res) {
+    warn(
+      'Failed to resolve ' + type.slice(0, -1) + ': ' + id,
+      options
+    )
+  }
+  return res
+}
+```
+这里的`options`是 `Vue`构造函数的`options`和当前组件`options`的组合，这里是重点，这个`options`是由之前调用的`extends` 方法完成合并的，这也是全局组件和局部组件的区别所在，可以看到代码中是通过这个`options`对象来找注册的组件，三个`if`是对驼峰式和大写式查找的支持，因为之前的`component`方法定义中已经将这个全局注册的组件的名字放到了`Vue`构造函数的`options`中，所以在这里可以通过组合的`options[组建名称]`查找到对应的组件构造函数，因为这个`options`包含`Vue`构造函数`options`和本组件的`options`，所以在任何地方都可以使用全局注册的组件，而局部注册的组件只会在局部组件的配置合并中合并到局部`options`中，当在其他组件的`options`中寻找注册的组件时就会找不到，所以局部注册的组件只存在于局部`options`中，下面我们看下局部`options`的合并:
+```js
+export function initInternalComponent (vm: Component, options: InternalComponentOptions) {
+  const opts = vm.$options = Object.create(vm.constructor.options)
+  // doing this because it's faster than dynamic enumeration.
+  const parentVnode = options._parentVnode
+  opts.parent = options.parent
+  opts._parentVnode = parentVnode
 
+  const vnodeComponentOptions = parentVnode.componentOptions
+  opts.propsData = vnodeComponentOptions.propsData
+  opts._parentListeners = vnodeComponentOptions.listeners
+  opts._renderChildren = vnodeComponentOptions.children
+  opts._componentTag = vnodeComponentOptions.tag
 
-
+  if (options.render) {
+    opts.render = options.render
+    opts.staticRenderFns = options.staticRenderFns
+  }
+}
+```
+这里是局部组件`options`合并的代码，局部注册的`components`属性便会合并到`options`中，所以在当前`templete`中的`component`标签便可以在此组件的`options`中找到对应的构造函数从而构造出对应的组件`vnode`。<br>
+所以`options`就是组件的构造函数的属性包括`data`啊，`computed`啊，`props`啊，`component`那些，因为组件树的底层`options`都会包含`Vue`构造函数`options`，所以，在`Vue`中注册的`component`可以在任何地方访问到。
 
 
 
