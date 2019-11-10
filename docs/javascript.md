@@ -641,6 +641,30 @@ function promiseRace(promises) {
   })
 }
 ```
+#### 实现一个`promise.retry`
+`promise.retry` 的作用是执行一个函数，如果不成功最多可以尝试 `times` 次。传参需要三个变量，所要执行的函数，尝试的次数以及延迟的时间。
+```js
+Promise.prototype.retry = function(fn, times, delay) {
+  return new Promise((resolve, reject) => {
+    let error;
+    let attempt = function() {
+      if(times === 0) {
+        reject(error)
+      } else {
+        fn.then(resolve)
+          .catch(e => {
+            times--;
+            error = e;
+            setTimeout(() => {
+              attempt();
+            }, delay)
+          }) 
+      }
+    }
+    attempt();
+  })
+}
+```
 #### 输出结果
 ```js
 let inner = 'window';
