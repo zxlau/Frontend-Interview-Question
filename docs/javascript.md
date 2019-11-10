@@ -464,9 +464,9 @@ Function.prototype.apply = function(context) {
   return result;
 }
 ```
-#### `intanceof`的实现
+#### `instanceof`的实现
 ```js
-function intanceOf(L, R) {
+function instanceOf(L, R) {
   let O = R.prototype;
   L = L.__proto__;
   while(true) {

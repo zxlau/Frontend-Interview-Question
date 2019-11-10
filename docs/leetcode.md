@@ -489,6 +489,17 @@ function currying(fn, length) {
 注释 5：不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度
 */
 ```
+```js
+// 或者
+function currying(fn, ...args) {
+  if(args.length >= fn.length) {
+    return fn(...args)
+  }
+  return function(...args1) {
+    return currying(fn, ...args, ...args1)
+  }
+}
+```
 #### 请实现一个 `add` 函数，满足以下功能。
 ```js
 add(1); 			// 1
