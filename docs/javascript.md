@@ -1431,6 +1431,30 @@ function getType(obj) {
   return typeof obj === 'object' ? Object.prototype.toString.call(obj).replace('[object ', '').replace(']', '').toLowerCase() : typeof obj
 }
 ```
+#### 匹配`elective`后的数字输出
+`url`有三种情况<br>
+`https://www.xx.cn/api?keyword=&level1=&local_batch_id=&elective=&local_province_id=33`<br>
+`https://www.xx.cn/api?keyword=&level1=&local_batch_id=&elective=800&local_province_id=33`<br>
+`https://www.xx.cn/api?keyword=&level1=&local_batch_id=&elective=800,700&local_province_id=33`<br>
+匹配`elective`后的数字输出（写出你认为的最优解法）:<br>
+`[] || ['800'] || ['800','700']`
+```js
+let res = str.match(/elective=(\d+,\d+)/);
+let result = res ? res[1].split(',') || []
+```
+#### 返回值
+```js
+String('11') == new String('11');
+String('11') === new String('11');
+```
+```js
+true // new String() 返回的是对象
+// == 的时候，实际运行的是
+// String('11') == new String('11').toString();
+false
+```
+
+
 
 https://juejin.im/post/5d9c2005f265da5bb977c55e
 
