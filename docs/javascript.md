@@ -1453,6 +1453,140 @@ true // new String() 返回的是对象
 // String('11') == new String('11').toString();
 false
 ```
+#### 如下代码的打印结果
+```js
+var name = 'Tom';
+(function() {
+ if (typeof name == 'undefined') {
+     var name = 'Jack';
+     console.log('Goodbye ' + name);
+ } else {
+     console.log('Hello ' + name);
+ }
+})();
+// Goodbye Tom  由于var穿透块级作用域，提升至function下面，所以typeof name是undefined
+```
+```js
+var name = 'Tom';
+(function() {
+ if (typeof name == 'undefined') {
+     name = 'Jack';
+     console.log('Goodbye ' + name);
+ } else {
+     console.log('Hello ' + name);
+ }
+})();
+// Hello Tom
+```
+#### 编程题，请写一个函数，完成以下功能
+```js
+[1, 2, 3, 5, 7, 8, 10]
+'1~3, 5, 7~8, 10'
+```
+```js
+function fn(arr) {
+  let result = [];
+  let temp = arr[0];
+  arr.forEach((value, index) => {
+    if(value + 1 !== arr[index + 1]) {
+      if(temp !== value) {
+        result.push(`${temp}~${value}`)
+      } else {
+        result.push(`${value}`)
+      }
+      temp = arr[index + 1]
+    }
+  })
+  return result;
+}
+```
+#### 转换对象
+```js
+var entry = {
+  a: {
+  b: {
+    c: {
+      dd: 'abcdd'
+    }
+  },
+  d: {
+    xx: 'adxx'
+  },
+  e: 'ae'
+  }
+}
+
+// 要求转换成如下对象
+var output = {
+'a.b.c.dd': 'abcdd',
+'a.d.xx': 'adxx',
+'a.e': 'ae'
+}
+```
+```js
+function flatObj(obj, parentKey, result = {}) {
+  for(let key in obj) {
+    if(obj.hasOwnProperty(key)) {
+      let keyName = `${parentKey}${key}`;
+      if(typeof obj[key] === 'object') {
+        flatObj(obj[key], keyName+'.', result)
+      } else {
+        result[key] = obj[key]
+      }
+    }
+  }
+  return result;
+}
+```
+#### 转换对象
+```js
+var entry = {
+  'a.b.c.dd': 'abcdd',
+  'a.d.xx': 'adxx',
+  'a.e': 'ae'
+}
+
+// 要求转换成如下对象
+var output = {
+  a: {
+   b: {
+     c: {
+       dd: 'abcdd'
+     }
+   },
+   d: {
+     xx: 'adxx'
+   },
+   e: 'ae'
+  }
+}
+```
+```js
+function map(entry) {
+  let obj = {};
+  for(let key in entry) {
+    let keymap = key.split('.');
+    set(obj, keymap, entry[key]);
+  }
+  return obj;
+}
+function set(obj, map, val) {
+  let tmp;
+  if(!obj[map[0]]) obj[map[0]] = {};
+  tmp = obj[map[0]];
+  for(let i = 1; i < map.length; i++) {
+    if(!tmp[map[i]]) tmp[map[i]] = map.length - 1 === i ? val : {};
+    tmp = tmp[map[i]]
+  }
+}
+```
+#### 输出结果
+```js
+1 + "1"  // 11 转换成字符串
+2 * "2" // 4 转换成数字
+[1, 2] + [2, 1] // 1,22,1 转换成字符串
+"a" + + "b"  // aNaN +'b' 被转换成数字
+```
 
 
 
