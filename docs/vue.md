@@ -92,6 +92,76 @@ const router = new VueRouter({
 
 **abstract模式**<br>
 `abstract`模式是使用一个不依赖于浏览器的浏览历史虚拟管理后端。 根据平台差异可以看出，在 `Weex` 环境中只支持使用 `abstract` 模式。
+#### `vue` 样式 `scoped`
+`scoped`的实现原理: `Vue`中的`scoped`属性的效果主要是通过`PostCss`实现的。
+转义前的代码：
+```css
+<style scoped lang="less">
+    .example{
+        color:red;
+    }
+</style>
+<template>
+    <div class="example">scoped测试案例</div>
+</template>
+```
+转译后:
+```css
+.example[data-v-5558831a] {
+  color: red;
+}
+<template>
+    <div class="example" data-v-5558831a>scoped测试案例</div>
+</template>
+```
+`PostCSS`给一个组件中的所有`dom`添加了一个独一无二的动态属性，给`css`选择器额外添加一个对应的属性选择器，来选择组件中的`dom`,这种做法使得样式只作用于含有该属性的`dom`元素(组件内部的`dom`)。<br>
+总结：`scoped`的渲染规则：<br>
+给`HTML`的`dom`节点添加一个不重复的`data`属性(例如: `data-v-5558831a`)来唯一标识这个`dom`元素<br>
+在每句`css`选择器的末尾(编译后生成的`css`语句)加一个当前组件的`data`属性选择器(例如：`[data-v-5558831a]`)来私有化样式<br>
+**scoped穿透**<br>
+`sass`和`less`的样式穿透 使用`/deep/`
+```css
+  外层 /deep/ 第三方组件 {
+    样式
+  }
+  .wrapper /deep/ .swiper-pagination-bullet-active{
+    background: #fff;
+  }
+```
+#### slot
+一般情况下`v-slot`只能在`<template>`使用。例如`<template v-slot:header>`<br>
+**作用域插槽**<br>
+有时让插槽内容能够访问子组件中才有的数据是很有用的。例如，设想一个带有如下模板的`<current-user>`组件：
+```html
+<span>
+  <slot>{{ user.lastName }}</slot>
+</span>
+```
+我们想让它的后备内容显示用户的名，以取代正常情况下用户的姓，如下：
+```html
+<current-user>
+  {{ user.firstName }}
+</current-user>
+```
+然而上述代码不会正常工作，因为只有 `<current-user>` 组件可以访问到 `user` 而我们提供的内容是在父级渲染的。<br>
+为了让 `user` 在父级的插槽内容中可用，我们可以将 `user` 作为 `<slot>` 元素的一个特性绑定上去：<br>
+```html
+<span>
+  <slot v-bind:user="user">
+    {{ user.lastName }}
+  </slot>
+</span>
+```
+绑定在 `<slot>` 元素上的特性被称为插槽 `prop`。现在在父级作用域中，我们可以给 `v-slot` 带一个值来定义我们提供的插槽 `prop` 的名字：
+```html
+<current-user>
+  <template v-slot:default="slotProps">
+    {{ slotProps.user.firstName }}
+  </template>
+</current-user>
+```
+
+
 
 #### `vuex`是什么？怎么使用？哪种功能场景使用它？
 `vuex`就是一个仓库，仓库里放了很多对象。其中`state`就是数据源存放地，对应于一般`vue`对象里面的`data`<br>
