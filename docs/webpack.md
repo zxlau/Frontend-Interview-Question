@@ -113,8 +113,9 @@ new CommonsChunkPlugin({
 })
 ```
 通过以上配置就能从网页 `A` 和网页 `B` 中抽离出公共部分，放到 `common` 中 。
-
-
+#### `webpack` 打包 `vue` 速度太慢怎么办？
+1.使用`webpack-bundle-analyzer`对项目进行模块分析生成`report`，查看`report`后看看哪些模块体积过大，然后针对性优化，比如我项目中引用了常用的`UI`库`element-ui`和`v-charts`等<br>
+2.配置`webpack`的`externals` ，官方文档的解释：防止将某些`import`的包(`package`)打包到 `bundle` 中，而是在运行时(`runtime`)再去从外部获取这些扩展依赖
 
 
 

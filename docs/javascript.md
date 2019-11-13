@@ -1587,7 +1587,27 @@ function set(obj, map, val) {
 [1, 2] + [2, 1] // 1,22,1 转换成字符串
 "a" + + "b"  // aNaN +'b' 被转换成数字
 ```
+#### 执行结果
+```js
+function wait() {
+return new Promise(resolve =>
+ setTimeout(resolve, 10 * 1000)
+)
+}
 
+async function main() {
+console.time();
+const x = wait();
+const y = wait();
+const z = wait();
+await x;
+await y;
+await z;
+console.timeEnd();
+}
+main();
+````
+三个任务发起的时候没有`await`，可以认为是同时发起了三个异步。之后各自`await`任务的结果。结果按最高耗时计算，由于三个耗时一样。所以结果是 `10 * 1000ms`
 
 
 https://juejin.im/post/5d9c2005f265da5bb977c55e
