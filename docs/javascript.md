@@ -1590,25 +1590,35 @@ function set(obj, map, val) {
 #### 执行结果
 ```js
 function wait() {
-return new Promise(resolve =>
- setTimeout(resolve, 10 * 1000)
-)
+  return new Promise(resolve =>
+    setTimeout(resolve, 10 * 1000)
+  )
 }
-
 async function main() {
-console.time();
-const x = wait();
-const y = wait();
-const z = wait();
-await x;
-await y;
-await z;
-console.timeEnd();
+  console.time();
+  const x = wait();
+  const y = wait();
+  const z = wait();
+  await x;
+  await y;
+  await z;
+  console.timeEnd();
 }
 main();
-````
+```
 三个任务发起的时候没有`await`，可以认为是同时发起了三个异步。之后各自`await`任务的结果。结果按最高耗时计算，由于三个耗时一样。所以结果是 `10 * 1000ms`
-
+#### 用 `setTimeout` 实现 `setInterval`，阐述实现的效果与`setInterval`的差异
+```js
+function mySetInterval() {
+  mySetInterval.timer = setTimeout(() => {
+    arguments[0]();
+    mySetInterval(...arguments);
+  }, arguments[1])
+}
+mySetInterval.clear = function() {
+  cleatTimout(mySetInterval.timer)
+}
+```
 
 https://juejin.im/post/5d9c2005f265da5bb977c55e
 
