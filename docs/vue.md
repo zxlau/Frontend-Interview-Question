@@ -160,7 +160,9 @@ const router = new VueRouter({
   </template>
 </current-user>
 ```
-
+#### `vue.js`中`this`为什么可以访问属性的属性
+因为`el、data、computed`都应该理解为`Vue`对象的声明对象内容的关键字，而不是它的直接属性。<br>
+那么在`data`声明的就是它（`vm`本身）的数据属性，在`computed`中声明的就是它的计算属性，在`methods`中声明的就是它的方法。
 
 
 #### `vuex`是什么？怎么使用？哪种功能场景使用它？
