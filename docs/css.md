@@ -519,6 +519,44 @@ background: -moz-linear-gradient(right, transparent, #fff 55%);
 background: linear-gradient(to right, transparent, #fff 55%);
 ```
 
+#### 兄弟元素怎么让它们以高的那个元素为标准等高
+```html
+<div class="box">
+  <div class="left">asdfads</div>
+  <div class="right">asdfasd<br>asdfad<br>adfasdfa<br>asfdas</div>
+</div>
+```
+```css
+/* flex布局默认的align-items属性的值为stretch，所以默认是撑开的 */
+.box {
+  display: flex;
+}
+.left,.right {
+  margin: 0 20px;
+  background: red;
+}
+/* table table-cell */
+.box {
+  display: flex;
+  border-spacing: 20px;
+}
+.left,.right {
+  display: table-cell;
+  background: red;
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
