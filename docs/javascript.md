@@ -1619,6 +1619,40 @@ mySetInterval.clear = function() {
   cleatTimout(mySetInterval.timer)
 }
 ```
+#### `js`实现`splice`方法
+```js
+function mySplice(arr) {
+  let index = arguments[0];
+  let num = arguments[1];
+  let len = arguments.length;
+  let result = [];
+  let content = [];
+  if(len == 2) {
+    // 删除
+    result = arr.slice(0, index).concat(arr.slice(index + num));
+    arr = result;
+    return arr.slice(index, num);
+  } else if(len > 2) {
+    for(let i = 2; i < len; i++) {
+      content.push(arguments[i]);
+    }
+    if(num == 0) {
+      // 插入
+      result = arr.slice(0, index).concat(content, arr.slice(index));
+      arr = result;
+      // return [];
+    } else if(num > 0) {
+      // 替换
+      result = arr.slice(0, index).concat(content, arr.slice(index + num, arr.length));
+      arr = result;
+    }
+  } else {
+    console.error('参数有误')
+  }
+}
+```
+
+
 
 https://juejin.im/post/5d9c2005f265da5bb977c55e
 
