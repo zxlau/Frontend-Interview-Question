@@ -253,4 +253,22 @@ test()
 1、唯一标识：`Etag`(服务端响应携带)和`If-None-Match`(客户端请求携带);<br>
 2、最后修改时间：`Last-Modified`(服务端响应携带) & `If-Modified-Since` (客户端请求携带) ，其优先级低于`Etag`。<br>
 服务端判断值是否一致，如果一致，则直接返回304通知浏览器使用本地缓存，如果不一致则返回新的资源。
-
+#### 跨域解决标准`CORS`(跨域资源共享)
+`CORS`需要浏览器和服务器同时支持，才可以实现跨域请求，目前几乎所有浏览器都支持`CORS`，`IE`则不能低于`IE10`。`CORS`的整个过程都由浏览器自动完成，前端无需做任何设置，跟平时发送`ajax`请求并无差异。`so`，实现`CORS`的关键在于服务器，只要服务器实现`CORS`接口，就可以实现跨域通信。
+```js
+var express = require('express');
+var app = express();
+var allowCrossDomain = function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+}
+app.use(allowCrossDomain);
+```
+`CORS`字段解释：<br>
+`Access-Control-Allow-Methods`: 该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。<br>
+`Access-Control-Allow-Headers`: 如果浏览器请求包括`Access-Control-Request-Headers`字段，则`Access-Control-Allow-Headers`字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在"预检"中请求的字段。<br>
+`Access-Control-Allow-Credentials`: 该字段与简单请求时的含义相同。<br>
+`Access-Control-Max-Age`: 该字段可选，用来指定本次预检请求的有效期，单位为秒。
+使用`CORS`简单请求，非常容易，对于前端来说无需做任何配置，与发送普通`ajax`请求无异。唯一需要注意的是，需要携带`cookie`信息时，需要将`withCredentials`设置为`true`即可
