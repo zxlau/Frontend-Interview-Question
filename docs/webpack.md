@@ -116,14 +116,47 @@ new CommonsChunkPlugin({
 #### `webpack` 打包 `vue` 速度太慢怎么办？
 1.使用`webpack-bundle-analyzer`对项目进行模块分析生成`report`，查看`report`后看看哪些模块体积过大，然后针对性优化，比如我项目中引用了常用的`UI`库`element-ui`和`v-charts`等<br>
 2.配置`webpack`的`externals` ，官方文档的解释：防止将某些`import`的包(`package`)打包到 `bundle` 中，而是在运行时(`runtime`)再去从外部获取这些扩展依赖
+#### `loader`的执行顺序为什么是后写的先执行
+其实为啥是从右往左，而不从左往右，只是`Webpack`选择了`compose`方式，而不是`pipe`的方式而已，在技术上实现从左往右也不会有难度。<br>
+`webpack`选择了函数式编程的方式，所以`loader`的顺序编程了从右往左。
+#### 什么是`loader`
+`loader`是文件加载器，能够加载资源文件，并对这些文件进行一些处理，诸如编译、压缩等，最终一起打包到指定的文件中。<br>
+处理一个文件可以使用多个`loader`，`loader`的执行顺序是和本身的顺序是相反的，即最后一个`loader`最先执行，第一个`loader`最后执行。<br>
+第一个执行的`loader`接收源文件内容作为参数，其他`loader`接收前一个执行的`loader`的返回值作为参数。最后执行的`loader`会返回此模块的`JavaScript`源码。
+#### `plugin`
+在 `Webpack` 运行的生命周期中会广播出许多事件，`Plugin` 可以监听这些事件，在合适的时机通过 `Webpack` 提供的 `API` 改变输出结果。所以`plugin`可以扩展`webpack`的功能。
+#### `plugin`和`loader`的区别是什么？
+对于`loader`，它就是一个转换器，将A文件进行编译形成`B`文件，这里操作的是文件，比如将`A.scss`或`A.less`转变为`B.css`，单纯的文件转换过程。<br>
+`plugin`是一个扩展器，它丰富了`wepack`本身，针对是`loader`结束后，`webpack`打包的整个过程，它并不直接操作文件，而是基于事件机制工作，会监听`webpack`打包过程中的某些节点，执行广泛的任务。
 
+#### 插件
+```js
+class MyPlugin {
+ // 构造方法
+ constructor (options) {
+  console.log('MyPlugin constructor:', options)
+ }
+ // 应用函数
+ apply (compiler) {
+  // 绑定钩子事件
+  compiler.plugin('compilation', compilation => {
+   console.log('MyPlugin')
+  ))
+ }
+}
+module.exports = MyPlugin
+```
+`webpack`启动后，在读取配置的过程中会先执行 `new MyPlugin(options)` 初始化一个 `MyPlugin` 获得其实例。<br>
+在初始化 `compiler` 对象后，再调用 `myPlugin.apply(compiler)` 给插件实例传入 `compiler` 对象。<br>
+插件实例在获取到 `compiler` 对象后，就可以通过 `compiler.plugin`(事件名称, 回调函数) 监听到 `Webpack` 广播出来的事件。<br>
+并且可以通过 `compiler` 对象去操作 `webpack`。<br>
 
+#### `compiler`是啥，`compilation`又是啥？
+`Compiler` 对象包含了 `Webpack` 环境所有的的配置信息，包含 `options，loaders，plugins` 这些信息，这个对象在 `Webpack` 启动时候被实例化，它是全局唯一的，可以简单地把它理解为 `Webpack` 实例；<br>
+`Compilation` 对象包含了当前的模块资源、编译生成资源、变化的文件等。当 `Webpack` 以开发模式运行时，每当检测到一个文件变化，一次新的 `Compilation` 将被创建。`Compilation` 对象也提供了很多事件回调供插件做扩展。通过 `Compilation` 也能读取到 `Compiler` 对象。
 
-
-
-
-
-
+#### `Compiler`和 `Compilation` 的区别在于
+`Compiler` 代表了整个 `Webpack` 从启动到关闭的生命周期，而 `Compilation` 只是代表了一次新的编译。
 
 
 
