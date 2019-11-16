@@ -682,9 +682,20 @@ export function initInternalComponent (vm: Component, options: InternalComponent
 ```
 这里是局部组件`options`合并的代码，局部注册的`components`属性便会合并到`options`中，所以在当前`templete`中的`component`标签便可以在此组件的`options`中找到对应的构造函数从而构造出对应的组件`vnode`。<br>
 所以`options`就是组件的构造函数的属性包括`data`啊，`computed`啊，`props`啊，`component`那些，因为组件树的底层`options`都会包含`Vue`构造函数`options`，所以，在`Vue`中注册的`component`可以在任何地方访问到。
+#### `vue`中`$nestTick`的原理
+`nextTick`接收一个回调函数作为参数，作用是将回调延迟到下次`DOM`更新周期之后执行。下次`DOM`更新周期的意思其实就是下次微任务执行时更新`DOM`,而`$nextTick`其实是将回调添加到微任务中。<br>
+在`vue.js`中，当状态发生变化时，`watcher`会得到通知，然后触发虚拟`DOM`的渲染流程。而`watcher`触发渲染这个操作不是同步的，而是异步的。`vue.js`中有一个队列，每当需要渲染时，会将`watcher`推送到这个队列中，在下次事件循环中再让`watcher`触发渲染的流程。
 
+#### 使用`nextTick`如果环境不支持`promise`
+`vue`的降级策略: `（micro-task）promise -> MutationObserver ->（macro-task） setTimeout`
 
+想要要创建一个新的 `job`，优先使用 `Promise`，如果浏览器不支持，再尝试 `MutationObserver`。实在不行，只能用 `setTimeout` 创建 `task` 了。
 
-
-
+#### `MutationObserver`
+`MutationObserver` 是 `html5` 新加的一个功能，其功能是监听`dom`节点的变动，在所有 `dom` 变动完成后，执行回调函数。<br>
+具体有一下几点变动的监听：<br>
+`childList`：子元素的变动<br>
+`attributes`：属性的变动<br>
+`characterData`：节点内容或节点文本的变动<br>
+`subtree`：所有下属节点（包括子节点和子节点的子节点）的变动
 
