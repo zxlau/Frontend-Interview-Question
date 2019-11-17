@@ -698,6 +698,26 @@ export function initInternalComponent (vm: Component, options: InternalComponent
 `attributes`：属性的变动<br>
 `characterData`：节点内容或节点文本的变动<br>
 `subtree`：所有下属节点（包括子节点和子节点的子节点）的变动
+#### `vue` 中 更新了数据但是不更新视图的情况
+```html
+<p>a属性：{{data.a}}</p>
+<p>b属性：{{data.b}}</p>
+```
+```js
+data: {
+  b: 1
+}
+```
+直接修改：
+```js
+this.data.a = 2  // 这样肯定不会生效
+this.$set(this.data, 'a', 2)  // 当执行了上面的代码后，也就是直接添加了a属性后，再次$set的时候，也会失效
+this.data = {a: 2, b: 1} //直接修改整个data是可以被监听的
+```
+其次还有就是数组中：使用数组下标修改值或者添加值视图都不会更新，因为`vue`对数组原型上的一些操作方法进行了覆盖。
+
+#### `v-for`中设置`key`为`index`有什么问题
+当有列表数据的增删的时候，会出现列表重新渲染的问题，第一点是影响性能，第二点是会导致`index`和预期不一致，比如删除`delete(index)`方法，导致`bug`
 
 #### 组件的设计
 我们知道，只要是组件，就需要在引用的时候与 `view` 或者其他组件进行相关的交互，即 `props` 传值，`$emit` 触发事件，
