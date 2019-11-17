@@ -1651,10 +1651,31 @@ function mySplice(arr) {
   }
 }
 ```
-
-
-
-https://juejin.im/post/5d9c2005f265da5bb977c55e
+#### 递归深入对象
+```js
+ let dan = {
+        type: 'person',
+        data: {
+            gender: 'male',
+            info: {
+                id: 22,
+                fullname: {
+                    first: 'Dan',
+                    last: 'Deacon'
+                }
+            }
+        }
+    }
+    
+    deepPick('type', dan); //person
+    deepPick('data.info.fullname.first', dan) //Dan
+```
+```js
+function deepPick(fields, object = {}) {
+  const [first, ...remaining] = fields.split('.');
+  return remaining.length ? deepPick(remaining.join('.'), object[first]) : object[first];
+}
+```
 
 
 
