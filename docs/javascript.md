@@ -1707,7 +1707,7 @@ function deepPick(fields, object = {}) {
   return remaining.length ? deepPick(remaining.join('.'), object[first]) : object[first];
 }
 ```
-
+AST 相关 https://segmentfault.com/a/1190000016231512?utm_source=tag-newest
 
 
 
