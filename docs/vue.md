@@ -167,7 +167,7 @@ const router = new VueRouter({
 
 #### `vuex`是什么？怎么使用？哪种功能场景使用它？
 `vuex`就是一个仓库，仓库里放了很多对象。其中`state`就是数据源存放地，对应于一般`vue`对象里面的`data`<br>
-`state`里面存放的数据是响应式的，`vue` 组件从 `store` 读取数据，若是 `store` 中的数据发生改变，依赖这相数据的组件也会发生更新<br/>
+`state`里面存放的数据是响应式的，`vue` 组件从 `store` 读取数据，若是 `store` 中的数据发生改变，依赖这项数据的组件也会发生更新<br/>
 ```js
 import { mapGetters, mapActions } from 'vuex'
 

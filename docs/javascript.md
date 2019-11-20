@@ -90,7 +90,7 @@ function removeDup(arr) {
 }
 ```
 ```js
-Array.form(new Set(arr))
+Array.from(new Set(arr))
 ```
 ```js
 [...new Set(arr)]
@@ -449,7 +449,7 @@ Function.prototype.bind = function() {
   let args = Array.prototype.slice.call(arguments);
   return function() {
     let finalArgs = args.concat(Array.prototype.slice.call(arguments));
-    self.appy(context, finalArgs)
+    self.apply(context, finalArgs)
   }
 }
 ```
