@@ -5,6 +5,7 @@
 3、根据`DOM`树和`CSSOM`树来构造`render Tree`。<br/>
 4、`layout`: 根据得到的`render Tree`来计算所有节点的位置。<br/>
 5、`paint`: 遍历`render` 树，并调用硬件图形`API`来绘制每个节点。
+
 #### 浏览器的重排、重绘
 当`render tree`中的一部分(或全部)因为元素的规模尺寸，布局，隐藏等改变而需要重新构建。这就称为回流`(reflow)`;<br>
 当`render tree`中的一些元素需要更新属性，而这些属性只是影响元素的外观，风格，而不会影响布局的，比如`background-color`。则就叫称为重绘;<br>
