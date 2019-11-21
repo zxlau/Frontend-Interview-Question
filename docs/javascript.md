@@ -374,8 +374,35 @@ window.addEventListener('resize', throttle(sayHi));
 #### 介绍下深度优先遍历和广度优先遍历
 **深度优先遍历`(DFS)`**<br/>
 `DFS` 就是从图中的一个节点开始追溯，直到最后一个节点，然后回溯，继续追溯下一条路径，直到到达所有的节点，如此往复，直到没有路径为止。<br/>
+```js
+//深度优先遍历的递归写法
+function deepTraversal(node){
+  let nodes=[];
+  if(node!=null){
+      nodes.push[node];
+      let childrens=node.children;
+      for(let i=0;i<childrens.length;i++) {
+        deepTraversal(childrens[i]);
+      }
+  }
+  return nodes;
+}
+```
 **广度优先遍历`(BFS)`**<br/>
 `BFS`从一个节点开始，尝试访问尽可能靠近它的目标节点。本质上这种遍历在图上是逐层移动的，首先检查最靠近第一个节点的层，再逐渐向下移动到离起始节点最远的层。
+```js
+//广度优先遍历的递归写法
+function wideTraversal(node){
+    let nodes=[],i=0;
+    if(node!=null){
+        nodes.push(node);
+        wideTraversal(node.nextElementSibling);
+        node=nodes[i++];
+        wideTraversal(node.firstElementChild);
+    }
+    return nodes;
+}
+```
 #### 将数组扁平化并去除其中重复数据，最终得到一个升序且不重复的数组
 ```js
 Array.from(new Set(arr.flat(Infinity))).sort((a,b)=>{ return a-b})
