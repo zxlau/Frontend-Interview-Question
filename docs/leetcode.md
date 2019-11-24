@@ -373,7 +373,7 @@ class LazyManClass {
         return this;
     },
     next() {
-        let fn = taskList.unshift();
+        let fn = taskList.shift();
         fn && fn();
     }
 }
