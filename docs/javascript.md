@@ -246,6 +246,7 @@ function NewType(name,age) {
      BasicType.call(this,name);
      this.age=age;
 }
+NewType.prototype = Object.create(BasicType.prototype);
 var test = new NewType("syf","23");
 test.colors.push("black");
 alert(test.colors);  //"red,blue,green,black"
