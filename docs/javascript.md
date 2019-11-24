@@ -190,12 +190,12 @@ console.log(b);//1,2,3,4
 console.log(a)//1,2,3
 ```
 #### `JSON.parse(JSON.stringify())`实现对对象的深拷贝的一些缺陷
-1、如果`obj`里面有时间对象，则`JSON.stringify`后再`JSON.parse`的结果，时间将只是字符串的形式;
-2、如果`obj`里有`RegExp、Error`对象，则序列化的结果将只得到空对象;
-3、如果`obj`里有函数或者`undefined`，则序列化的结果会把函数或`undefined`丢失;
-4、如果`obj`里有`NaN、Infinity`和`-Infinity`，则序列化的结果会变成`null`;
-5、`JSON.stringify()`只能序列化对象的可枚举的自有属性，例如 如果`obj`中的对象是有构造函数生成的， 则使用`JSON.parse(JSON.stringify(obj))`深拷贝后，会丢弃对象的`constructor`;
-6、如果对象中存在循环引用的情况也无法正确实现深拷贝
+1、如果`obj`里面有时间对象，则`JSON.stringify`后再`JSON.parse`的结果，时间将只是字符串的形式;<br>
+2、如果`obj`里有`RegExp、Error`对象，则序列化的结果将只得到空对象;<br>
+3、如果`obj`里有函数或者`undefined`，则序列化的结果会把函数或`undefined`丢失;<br>
+4、如果`obj`里有`NaN、Infinity`和`-Infinity`，则序列化的结果会变成`null`;<br>
+5、`JSON.stringify()`只能序列化对象的可枚举的自有属性，例如 如果`obj`中的对象是有构造函数生成的， 则使用`JSON.parse(JSON.stringify(obj))`深拷贝后，会丢弃对象的`constructor`;<br>
+6、如果对象中存在循环引用的情况也无法正确实现深拷贝<br>
 
 #### 原型继承的原理
 **原型链**
