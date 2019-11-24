@@ -150,7 +150,7 @@ function add() {
 ```
 #### 二分法查找代码
 ```js
-function indexOfSorted(arr, n) {
+function getIndex(arr, n) {
     let st = 0,
         end = arr.length,
         m = Math.floor((st + end) / 2);
