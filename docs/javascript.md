@@ -1688,7 +1688,8 @@ mySetInterval.clear = function() {
 ```
 #### `js`实现`splice`方法
 ```js
-function mySplice(arr) {
+let arr = [1,2,3,4]
+function mySplice() {
   let index = arguments[0];
   let num = arguments[1];
   let len = arguments.length;
