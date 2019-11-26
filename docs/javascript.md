@@ -1744,6 +1744,90 @@ function deepPick(fields, object = {}) {
   return remaining.length ? deepPick(remaining.join('.'), object[first]) : object[first];
 }
 ```
+#### `commonjs`和`ES6`模块循环引用
+**common.js**<br>
+当模块第二次引用时不会去重复加载，而是执行上次缓存的。<br>
+一旦出现某个模块被”循环引用”，就只输出已经执行的部分，还未执行的部分不会输出。<br>
+```js
+// a.js
+exports.done = false;
+var b = require('./b.js');
+exports.hello = false;
+console.log(`在a中b.done的值为：`+b.done);
+exports.done = true;
+```
+```js
+// b.js
+exports.done = false;
+var a = require('./a.js');
+console.log(`在b中a.done的值为：`+a.done);
+console.log(`在b中a.hello的值为：`+a.hello);
+exports.done = true;
+```
+```js
+// main.js
+var a = require('./a.js');
+var b = require('./b.js');
+console.log(a.done,b.done,b.hello);
+var a1 = require('./a.js');
+var b1 = require('./b.js');
+console.log(a1.done,b1.done,b.hello);
+```
+在`a.js`中，第一行，导出其`done`值为`false`，第二行引用`b.js`，此时进入`b.js`中，第一行导出其`done`值为`false`，第二行引用`a.js`，此时进入`a.js`中，而`a.js`只执行了两行，只输出了一个值即`done`为`false`；所以`b.js`而 第二行的a只能引用到`done`值，`hello`值为`undefined`。所以`b.js`输出<br>
+```js
+在b中a.done的值为：false
+在b中a.hello的值为：undefined
+```
+`b.js`执行完成后，其`done`值为`true`，然后继续`a.js`第三行，第四行输出：
+```js
+在a中b.done的值为：true
+```
+此时`a`中`done`为`true`，`hello`为`false`，而`b.js`只能引用`a`中`done`的值。
+所以`console.log(a.done,b.done,b.hello)`;这行输出：`true true undefined`,而再次引用`a`和`b`时，不会再次执行。
+```js
+var a1 = require('./a.js');
+var b1 = require('./b.js');
+console.log(a1.done,b1.done,b.hello);
+```
+只会输出：`true true undefined`<br>
+**ES6 import模块循环引用**<br>
+`ES6`中对模块的引用不像`commonjs`中那样必须执行`require`进来的模块，而只是保存一个模块的引用而已，因此，即使是循环引用也不会出错。
+```js
+// even.js
+import { odd } from './odd'
+export var counter = 0;
+export function even(n) {
+    counter++;
+    return n === 0 || odd(n - 1);
+}
+export function even2() {
+   console.log(1234);
+}
+```
+```js
+// odd.js
+import { even,  even2 } from './even';
+export function odd(n) {
+    even2();
+    return n != 0 && even(n - 1);
+}
+```
+```js
+// main.js
+require('babel-core/register');
+var even = require('./even');
+even.even(6);
+console.log(even.counter);
+```
+运行`main.js`输出： 
+```js
+1234
+1234
+1234
+```
+
+
+
 AST 相关 https://segmentfault.com/a/1190000016231512?utm_source=tag-newest
 
 
