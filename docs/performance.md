@@ -165,8 +165,19 @@ function recordJavaScriptError() {
   };
 };
 ```
+#### 公司前端项目部署
+**正式环境：**<br>
+公网转内网`（CLB -> LB）`---> `www.XXXXX.com`<br>
+如果路由中有带`/api/` ---> 则`LB`会转发至后端服务地址，比如`c.restgetway`<br>
+如果路由没有带`/api/` ---> 则`LB`会转发至前端服务地址，比如`c.fe`<br>
+然后前端部署`c.fe`的时候，`html`文件是和后端服务部署在同一个服务上，都是`www.XXXXX.com`。所以不存在跨域的问题。<br>
+`webpack`打包之后的`css、js`文件都会部署到`cdn`上面，然后`html`引用`cdn`的地址。<br>
 
+**开发环境：**<br>
+基本和正式环境一致，但是少了一层公网转内网。然后`LB`层使用`nginx`代替，使用`nginx``来做转发。
 
+**本地环境：**<br>
+`webpack`配置 `umock` 地址，`umock` 使用`node`进行转发。
 
 
 
