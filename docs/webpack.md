@@ -123,11 +123,32 @@ new CommonsChunkPlugin({
 `loader`是文件加载器，能够加载资源文件，并对这些文件进行一些处理，诸如编译、压缩等，最终一起打包到指定的文件中。<br>
 处理一个文件可以使用多个`loader`，`loader`的执行顺序是和本身的顺序是相反的，即最后一个`loader`最先执行，第一个`loader`最后执行。<br>
 第一个执行的`loader`接收源文件内容作为参数，其他`loader`接收前一个执行的`loader`的返回值作为参数。最后执行的`loader`会返回此模块的`JavaScript`源码。
+#### 有哪些常见的`Loader`？他们是解决什么问题的？
+`file-loader`：把文件输出到一个文件夹中，在代码中通过相对 `URL` 去引用输出的文件<br>
+`url-loader`：和 `file-loader` 类似，但是能在文件很小的情况下以 `base64` 的方式把文件内容注入到代码中去<br>
+`source-map-loader`：加载额外的 `Source Map` 文件，以方便断点调试<br>
+`image-loader`：加载并且压缩图片文件<br>
+`babel-loader`：把 `ES6` 转换成 `ES5`<br>
+`css-loader`：加载 `CSS`，支持模块化、压缩、文件导入等特性<br>
+`style-loader`：把 `CSS` 代码注入到 `JavaScript` 中，通过 `DOM` 操作去加载 `CSS`。<br>
+`eslint-loader`：通过 `ESLint` 检查 `JavaScript` 代码<br>
+#### 常见的`plugin`
+`define-plugin`：定义环境变量<br>
+`commons-chunk-plugin`：提取公共代码<br>
+`uglifyjs-webpack-plugin`：通过`UglifyES`压缩`ES6`代码<br>
 #### `plugin`
 在 `Webpack` 运行的生命周期中会广播出许多事件，`Plugin` 可以监听这些事件，在合适的时机通过 `Webpack` 提供的 `API` 改变输出结果。所以`plugin`可以扩展`webpack`的功能。
 #### `plugin`和`loader`的区别是什么？
 对于`loader`，它就是一个转换器，将A文件进行编译形成`B`文件，这里操作的是文件，比如将`A.scss`或`A.less`转变为`B.css`，单纯的文件转换过程。<br>
 `plugin`是一个扩展器，它丰富了`wepack`本身，针对是`loader`结束后，`webpack`打包的整个过程，它并不直接操作文件，而是基于事件机制工作，会监听`webpack`打包过程中的某些节点，执行广泛的任务。
+#### `webpack`的构建流程是什么?从读取配置到输出文件这个过程尽量说全
+1、初始化参数：从配置文件和 `Shell` 语句中读取与合并参数，得出最终的参数；<br>
+2、开始编译：用上一步得到的参数初始化 `Compiler` 对象，加载所有配置的插件，执行对象的 `run` 方法开始执行编译；<br>
+3、确定入口：根据配置中的 `entry` 找出所有的入口文件；<br>
+4、编译模块：从入口文件出发，调用所有配置的 `Loader` 对模块进行翻译，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理；<br>
+5、完成模块编译：在经过第4步使用 `Loader` 翻译完所有模块后，得到了每个模块被翻译后的最终内容以及它们之间的依赖关系；
+6、输出资源：根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 `Chunk`，再把每个 `Chunk` 转换成一个单独的文件加入到输出列表，这步是可以修改输出内容的最后机会；<br>
+7、输出完成：在确定好输出内容后，根据配置确定输出的路径和文件名，把文件内容写入到文件系统。
 
 #### 插件
 ```js
@@ -158,6 +179,7 @@ module.exports = MyPlugin
 #### `Compiler`和 `Compilation` 的区别在于
 `Compiler` 代表了整个 `Webpack` 从启动到关闭的生命周期，而 `Compilation` 只是代表了一次新的编译。
 
+#### 是否写过`Loader`和`Plugin`？描述一下编写`loader`或`plugin`的思路？
+`Loader`像一个"翻译官"把读到的源文件内容转义成新的文件内容，并且每个`Loader`通过链式操作，将源文件一步步翻译成想要的样子。编写`Loader`时要遵循单一原则，每个`Loader`只做一种"转义"工作。 每个`Loader`的拿到的是源文件内容（`source`），可以通过返回值的方式将处理后的内容输出，也可以调用`this.callback()`方法，将内容返回给`webpack`。 还可以通过 `this.async()`生成一个`callback`函数，再用这个`callback`将处理后的内容输出出去。 此外`webpack`还为开发者准备了开发`loader`的工具函数集——`loader-utils`。<br>
 
-
-
+相对于`Loader`而言，`Plugin`的编写就灵活了许多。 `webpack`在运行的生命周期中会广播出许多事件，`Plugin` 可以监听这些事件，在合适的时机通过 `Webpack` 提供的 `API` 改变输出结果。
