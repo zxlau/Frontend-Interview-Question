@@ -24,6 +24,14 @@
 `Gecko`内核：`Netscape6`及以上版本，`FF,MozillaSuite/SeaMonkey`等。<br/>
 `Presto`内核：`Opera7`及以上。<br/>
 `Webkit`内核：`Safari,Chrome`等。
+#### `cookie`属性值
+一个`Cookie`包含以下信息：<br>
+1、`name`: `Cookie`名称，`Cookie`名称必须使用只能用在`URL`中的字符，一般用字母及数字，不能包含特殊字符，如有特殊字符想要转码。如`js`操作`cookie`的时候可以使用`escape()`对名称转码。<br>
+2、`value`: `Cookie`值，`Cookie`值同理`Cookie`的名称，可以进行转码和加密。<br>
+3、`expire`: `Expires`，过期日期，一个`GMT`格式的时间，当过了这个日期之后，浏览器就会将这个`Cookie`删除掉，当不设置这个的时候，`Cookie`在浏览器关闭后消失。<br>
+4、`path`: `Path`，一个路径，在这个路径下面的页面才可以访问该`Cookie`，一般设为`“/”`，以表示同一个站点的所有页面都可以访问这个`Cookie`。<br>
+5、`Domain`: 子域，指定在该子域下才可以访问`Cookie`，例如要让`Cookie`在`a.test.com`下可以访问，但在`b.test.com`下不能访问，则可将`domain`设置成`a.test.com`。<br>
+6、`Secure`: 安全性，指定`Cookie`是否只能通过`https`协议访问，一般的`Cookie`使用`HTTP`协议既可访问，如果设置了`Secure`（没有值），则只有当使用`https`协议连接时`cookie`才可以被页面访问。<br>
 #### `cookie、session、sessionStorage、localStorage`理解和区别
 1、`cookie`是网站为了标示用户身份而储存在用户本地的数据（通常经过加密）。 `cookie`数据始终在同源的`http`请求中携带（即使不需要），也会在浏览器和服务器间来回传递。<br/>
 2、`session`和`cookie`的作用有点类似，都是为了存储用户相关的信息。服务器使用`session`把用户的信息临时保存在了服务器上，用户离开网站后`session`会被销毁。不同的是，`cookie`是存储在本地浏览器，而`session`存储在服务器。存储在服务器的数据会更加的安全，不容易被窃取。`cookie`数据大小不能超过`4k`。 `session`大小没有限制。<br/>

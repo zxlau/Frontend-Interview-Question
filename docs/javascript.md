@@ -573,6 +573,62 @@ console.log('end');
 
 // begin -> end -> setTimeout 1 -> a -> promise1 -> b -> promise 2 -> setTimeout2
 ```
+#### 执行顺序
+```js
+new Promise((resolve,reject)=>{
+    console.log("promise1")
+    resolve()
+}).then(()=>{
+    console.log("then11")
+    new Promise((resolve,reject)=>{
+        console.log("promise2")
+        resolve()
+    }).then(()=>{
+        console.log("then21")
+    }).then(()=>{
+        console.log("then23")
+    })
+}).then(()=>{
+    console.log("then12")
+})
+// promise1,then11,promise2,then21,then12,then23
+```
+第一轮<br>
+`current task: promise1`是当之无愧的立即执行的一个函数，立即执行输出`[promise1]`<br>
+`micro task queue`: `[promise1的第一个then]`<br>
+
+第二轮<br>
+`current task`: `then1`执行中，立即输出了`then11`以及新`promise2`的`promise2`<br>
+`micro task queue`: `[新promise2的then函数,以及promise1的第二个then函数]`<br>
+
+第三轮<br>
+`current task`: 新`promise2`的`then`函数输出`then21`和`promise1`的第二个`then`函数输出`then12`。<br>
+`micro task queue`: `[新promise2的第二then函数]`<br>
+
+第四轮<br>
+`current task`: 新`promise2`的第二`then`函数输出`then23`<br>
+`micro task queue: []`<br>
+#### 执行顺序
+```js
+new Promise((resolve,reject)=>{
+    console.log("promise1")
+    resolve()
+}).then(()=>{
+    console.log("then11")
+    return new Promise((resolve,reject)=>{
+        console.log("promise2")
+        resolve()
+    }).then(()=>{
+        console.log("then21")
+    }).then(()=>{
+        console.log("then23")
+    })
+}).then(()=>{
+    console.log("then12")
+})
+// promise1,then11,promise2,then21,then23,then12
+// 为何then12会在then23之后执行，这里Promise的第二个then相当于是挂在新Promise的最后一个then的返回值上
+```
 #### `this`指向
 ```js
 let a = {
