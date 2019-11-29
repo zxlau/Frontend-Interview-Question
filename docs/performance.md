@@ -174,7 +174,7 @@ function recordJavaScriptError() {
 `webpack`打包之后的`css、js`文件都会部署到`cdn`上面，然后`html`引用`cdn`的地址。<br>
 
 **开发环境：**<br>
-基本和正式环境一致，但是少了一层公网转内网。然后`LB`层使用`nginx`代替，使用`nginx``来做转发。
+基本和正式环境一致，但是少了一层公网转内网。然后`LB`层使用`nginx`代替，使用`nginx`来做转发。
 
 **本地环境：**<br>
 `webpack`配置 `umock` 地址，`umock` 使用`node`进行转发。
