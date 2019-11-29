@@ -43,8 +43,8 @@ function randSort1(arr) {
   for(let i = 0, len = arr.length; i < len; i++) {
     let rand = parseInt(Math.random() * len);
     [arr[rand], arr[i]] = [arr[i], arr[rand]];
-    return arr;
   }
+  return arr;
 }
 ```
 ```js
