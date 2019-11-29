@@ -107,6 +107,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;`404 not found`: 表示在服务器上没有找到请求的资源<br/>
 `5XX` 服务器错误<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;`500 internal sever error`: 表示服务器端在执行请求时发生了错误<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;`502 bad gate way`: 产生错误的原因是连接超时<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`503 service unavailable`: 表明服务器暂时处于超负载或正在停机维护，无法处理请求<br/>
 #### 永久性重定向`（301）`和临时性重定向`（302）`对` SEO `有什么影响
 1）`301 redirect`——`301`代表永久性转移`(Permanently Moved)`，`301`重定向是网页更改地址后对搜索引擎友好的最好方法，只要不是暂时搬移的情况,都建议使用`301`来做转址。<br>
