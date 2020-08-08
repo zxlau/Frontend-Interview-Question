@@ -538,6 +538,20 @@ function fn(nums, target) {
         }
     }
 }
+// 性能更好
+function fn(nums, tartget) {
+  let map = {};
+  let loop = 0;
+  let dis;
+  while(loop < nums.length) {
+    dis = target - nums[loop];
+    if(map[dis] != undefined) {
+      return [map[dis], loop];
+    }
+    map[nums[loop]] = loop;
+    loop++;
+  }
+}
 ```
 #### 在输入框中如何判断输入的是一个正确的网址
 ```js
