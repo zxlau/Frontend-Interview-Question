@@ -1081,7 +1081,7 @@ reverse([1,2,3,4,5,6,7,8,9,10,11,12,13 ])
     let add = 0;
     let sum = 0;
     while(l1 || l2) {
-      sum = (l1 ? l1.val : 0) + (l2 ? l2.val : 0);
+      sum = (l1 ? l1.val : 0) + (l2 ? l2.val : 0) + add;
       temp.next = new listNode(sum % 10);
       temp = temp.next;
       add = sum >= 10 ? 1 : 0;
