@@ -35,21 +35,6 @@ function StrLen(str) {
     }
     return result
 }
-// 或者
-function StrLen(str) {
-  let arr = str.split('');
-  let result = 0;
-  let s = '';
-  arr.forEach(item => {
-    if(!s.includes(item)) {
-      s += item;
-      result = Math.max(result, s.length);
-    } else {
-      s = item
-    }
-  })
-  return result;
-}
 
 console.log(StrLen('abrtyewbbcbd'))
 ```
