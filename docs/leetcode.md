@@ -20,11 +20,11 @@ console.log(arr.reverse().join(','))
 #### 给定一个字符串，找出其中无重复字符的最长子字符串长度
 ```js
 function StrLen(str) {
-    let result = 1;
+    let result = 0;
     let norepeatStr = '';
     let len = str.length;
     for(let i = 0; i< len; i++) {
-        let specStr = str.charAt(i);
+        let specStr = str.charAt(i);n
         let index = norepeatStr.indexOf(specStr);
         if(index === -1) {
             norepeatStr = norepeatStr+specStr;
@@ -35,6 +35,24 @@ function StrLen(str) {
     }
     return result
 }
+// 或者
+function StrLen(str) {
+  let result = 0;
+  let arr = str.split('');
+  let norepeatStr = '';
+  arr.forEach(item => {
+    let index = norepeatStr.indexOf(item);
+    if(index === -1) {
+      norepeatStr += item;
+      result = Math.max(result, norepeatStr.length);
+    } else {
+      norepeatStr = norepeatStr.substr(index + 1) + item;
+    }
+  })
+  return result;
+}
+
+
 
 console.log(StrLen('abrtyewbbcbd'))
 ```
