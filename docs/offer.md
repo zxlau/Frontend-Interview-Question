@@ -175,5 +175,24 @@ function rectCover(number) {
   return temp;
 }
 ```
-
-
+#### 给定一个`double`类型的浮点数`base`和`int`类型的整数`exponent`。求`base`的`exponent`次方。
+```js
+function Power(base, exponent){
+  return Math.pow(base, exponent);
+}
+```
+#### 输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有的奇数位于数组的前半部分，所有的偶数位于位于数组的后半部分，并保证奇数和奇数，偶数和偶数之间的相对位置不变。
+```js
+function reOrderArray(array){
+    var result = [];
+    var even = [];
+    array.forEach(function(item){
+        if((item % 2) === 1){
+            result.push(item);
+        } else {
+            even.push(item);
+        }
+    });
+    return result.concat(even);
+}
+```
