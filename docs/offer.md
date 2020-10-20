@@ -196,3 +196,27 @@ function reOrderArray(array){
     return result.concat(even);
 }
 ```
+
+#### 输入一个链表，输出该链表中倒数第k个结点
+```js
+/*function ListNode(x){
+    this.val = x;
+    this.next = null; 1,2,3,4,5,6,7,8,9,0
+}*/
+/*
+此题我们可以先定义两个指针，p和q。让p和q都指向头结点。在定义一个i，i的初始值为0。然后进入一个for循环，直到p走到链表结尾，每次i++。当i < k 的我们让p走，q不走。当i >= k 的时候我们让p和q同时走一步。当p走到结尾的时候，那么q走的值就是倒数k的位置，我们返回这个值就好了。
+*/
+function FindKthToTail(head, k) {
+  if(!head || k <= 0){
+    return null;
+  }
+  let p = q = head;
+  for(let i = 0; p != null; i++) {
+    if(i >= k) {
+      q = q.next;
+    }
+    p = p.next
+  }
+  return i < k ? null : q;
+}
+```
