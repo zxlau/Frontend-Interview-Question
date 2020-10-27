@@ -134,4 +134,4 @@ Object.assign(  nextState,  {index: state.index+ 1},  {index: state.index+ 1})
 `React`会对多次连续的 `setState` 进行合并，如果你想立即使用上次 `setState` 后的结果进行下一次 `setState`，可以让 `setState` 接收一个函数而不是一个对象。这个函数用上一个 `state` 作为第一个参数，将此次更新被应用时的 `props` 做为第二个参数。<br/>
 
 #### React如何实现自己的事件机制？
-
+`React`事件并没有绑定在真实的 `Dom` 节点上，而是通过事件代理，在最外层的 `document` 上对事件进行统一分发。
