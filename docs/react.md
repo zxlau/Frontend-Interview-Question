@@ -134,4 +134,45 @@ Object.assign(  nextState,  {index: state.index+ 1},  {index: state.index+ 1})
 `React`会对多次连续的 `setState` 进行合并，如果你想立即使用上次 `setState` 后的结果进行下一次 `setState`，可以让 `setState` 接收一个函数而不是一个对象。这个函数用上一个 `state` 作为第一个参数，将此次更新被应用时的 `props` 做为第二个参数。<br/>
 
 #### React如何实现自己的事件机制？
-`React`事件并没有绑定在真实的 `Dom` 节点上，而是通过事件代理，在最外层的 `document` 上对事件进行统一分发。
+简要回答：
+- `React` 它并不会把事件处理函数直接绑定到真实的节点上，而是把所有事件绑定到结构的最外层，使用一个统一的事件监听器。
+- 这个事件监听器上维持了一个映射来保存所有组件内部的事件监听和处理函数。
+- 当组件挂载或卸载时，只是在这个统一的事件监听器上插入或删除一些对象；
+- 当事件发生时，首先被这个统一的事件监听器处理，然后在映射里找到真正的事件处理函数并调用。
+
+详细回答，描述过程：<br/>
+`React`事件并没有绑定在真实的 `Dom` 节点上，而是通过事件代理，在最外层的 `document` 上对事件进行统一分发。<br/>
+组件挂载、更新时：
+- 通过 `lastProps、 nextProps`判断是否新增、删除事件分别调用事件注册、卸载方法。
+- 调用 `EventPluginHub` 的 `enqueuePutListener` 进行事件存储
+- 获取 `document` 对象。
+- 根据事件名称（如 `onClick、 onCaptureClick`）判断是进行冒泡还是捕获。
+- 判断是否存在 `addEventListener` 方法，否则使用 `attachEvent`（兼容IE）。
+- 给 `document` 注册原生事件回调为 `dispatchEvent` (统一的事件分发机制）。<br/>
+
+事件初始化：<br>
+- `EventPluginHub` 负责管理 `React` 合成事件的 `callback`，它将 `callback` 存储在 `listenerBank` 中，另外还存储了负责合成事件的 `Plugin`。
+- 获取绑定事件的元素的唯一标识 `key`。
+- 将 `callback` 根据事件类型，元素的唯一标识 `key` 存储在 `listenerBank` 中。
+- `listenerBank` 的结构是： `listenerBank[registrationName][key]`。
+
+触发事件时：<br/>
+- 触发 document注册原生事件的回调 dispatchEvent
+- 获取到触发这个事件最深一级的元素
+- 遍历这个元素的所有父元素，依次对每一级元素进行处理。
+- 构造合成事件。
+- 将每一级的合成事件存储在 eventQueue事件队列中。
+- 遍历 eventQueue。
+- 通过 isPropagationStopped判断当前事件是否执行了阻止冒泡方法。
+- 如果阻止了冒泡，停止遍历，否则通过 executeDispatch执行合成事件。
+- 释放处理完成的事件。
+
+#### 为`何React`事件要自己绑定`this`？
+
+
+
+
+
+
+
+
