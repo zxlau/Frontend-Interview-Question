@@ -168,10 +168,19 @@ Object.assign(  nextState,  {index: state.index+ 1},  {index: state.index+ 1})
 - 释放处理完成的事件。
 
 #### 为`何React`事件要自己绑定`this`？
-
-
-
-
+事件处理流程中， `React` 在 `document` 上进行统一的事件分发， `dispatchEvent` 通过循环调用所有层级的事件来模拟事件冒泡和捕获。<br/>
+在 `React` 源码中，当具体到某一事件处理函数将要调用时，将调用 `invokeGuardedCallback` 方法。
+```js
+function invokeGuardedCallback(name, func, a) {  
+  try {    
+    func(a);  
+  } catch (x) {    
+    if (caughtError === null) {      
+      caughtError = x;    
+    }  
+  }}
+```
+事件处理函数是直接调用的，并没有指定调用的组件，所以不进行手动绑定的情况下直接获取到的 `this` 是不准确的，所以我们需要手动将当前组件绑定到 `this` 上或者写箭头函数自动绑定 `this` 到当前组件。
 
 
 
