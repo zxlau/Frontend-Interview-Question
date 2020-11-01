@@ -199,3 +199,8 @@ function invokeGuardedCallback(name, func, a) {
 ####  虚拟`Dom`是什么？
 在原生的 `JavaScript` 程序中，我们直接对 `DOM` 进行创建和更改，而 `DOM` 元素通过我们监听的事件和我们的应用程序进行通讯。而 `React` 会先将你的代码转换成一个 `JavaScript` 对象，然后这个 `JavaScript` 对象再转换成真实 `DOM`。这个 `JavaScript` 对象就是所谓的虚拟 `DOM`。当我们需要创建或更新元素时， `React`首先会让这个 `VitrualDom` 对象进行创建和更改，然后再将 `VitrualDom` 对象渲染成真实`DOM`。当我们需要对 `DOM` 进行事件监听时，首先对 `VitrualDom` 进行事件监听， `VitrualDom` 会代理原生的 `DOM` 事件从而做出响应。
 
+#### 虚拟`Dom`比普通`Dom`更快吗？
+很多文章说 `VitrualDom` 可以提升性能，这一说法实际上是很片面的。直接操作 `DOM` 是非常耗费性能的，这一点毋庸置疑。但是 `React` 使用 `VitrualDom` 也是无法避免操作 `DOM` 的。如果是首次渲染， `VitrualDom` 不具有任何优势，甚至它要进行更多的计算，消耗更多的内存。`VitrualDom`的优势在于 `React` 的 `Diff` 算法和批处理策略， `React` 在页面更新之前，提前计算好了如何进行更新和渲染 `DOM`。实际上，这个计算过程我们在直接操作 `DOM`时，也是可以自己判断和实现的，但是一定会耗费非常多的精力和时间，而且往往我们自己做的是不如 `React`好的。所以，在这个过程中 `React`帮助我们"提升了性能"。所以，我更倾向于说， `VitrualDom`帮助我们提高了开发效率，在重复渲染时它帮助我们计算如何更高效的更新，而不是它比 `DOM` 操作更快。
+
+
+
