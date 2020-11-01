@@ -194,7 +194,8 @@ function invokeGuardedCallback(name, func, a) {
 另外，不管在什么浏览器环境下，浏览器会将该事件类型统一创建为合成事件，从而达到了浏览器兼容的目的。
 
 #### `React`和原生事件的执行顺序是什么？可以混用吗？
+`React`的所有事件都通过 `document` 进行统一分发。当真实 `Dom` 触发事件后冒泡到 `document` 后才会对 `React` 事件进行处理。所以原生的事件会先执行，然后执行 `React` 合成事件，最后执行真正在 `document` 上挂载的事件`React`事件和原生事件最好不要混用。原生事件中如果执行了 `stopPropagation`方法，则会导致其他 `React`事件失效。因为所有元素的事件将无法冒泡到 `document`上，导致所有的 `React`事件都将无法被触发。
 
-
-
+####  虚拟`Dom`是什么？
+在原生的 `JavaScript` 程序中，我们直接对 `DOM` 进行创建和更改，而 `DOM` 元素通过我们监听的事件和我们的应用程序进行通讯。而 `React` 会先将你的代码转换成一个 `JavaScript` 对象，然后这个 `JavaScript` 对象再转换成真实 `DOM`。这个 `JavaScript` 对象就是所谓的虚拟 `DOM`。当我们需要创建或更新元素时， `React`首先会让这个 `VitrualDom` 对象进行创建和更改，然后再将 `VitrualDom` 对象渲染成真实`DOM`。当我们需要对 `DOM` 进行事件监听时，首先对 `VitrualDom` 进行事件监听， `VitrualDom` 会代理原生的 `DOM` 事件从而做出响应。
 
