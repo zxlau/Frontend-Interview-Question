@@ -202,5 +202,36 @@ function invokeGuardedCallback(name, func, a) {
 #### 虚拟`Dom`比普通`Dom`更快吗？
 很多文章说 `VitrualDom` 可以提升性能，这一说法实际上是很片面的。直接操作 `DOM` 是非常耗费性能的，这一点毋庸置疑。但是 `React` 使用 `VitrualDom` 也是无法避免操作 `DOM` 的。如果是首次渲染， `VitrualDom` 不具有任何优势，甚至它要进行更多的计算，消耗更多的内存。`VitrualDom`的优势在于 `React` 的 `Diff` 算法和批处理策略， `React` 在页面更新之前，提前计算好了如何进行更新和渲染 `DOM`。实际上，这个计算过程我们在直接操作 `DOM`时，也是可以自己判断和实现的，但是一定会耗费非常多的精力和时间，而且往往我们自己做的是不如 `React`好的。所以，在这个过程中 `React`帮助我们"提升了性能"。所以，我更倾向于说， `VitrualDom`帮助我们提高了开发效率，在重复渲染时它帮助我们计算如何更高效的更新，而不是它比 `DOM` 操作更快。
 
+#### 虚拟`Dom`中的`?typeof`属性的作用是什么？
+`ReactElement` 中有一个 `?typeof` 属性，它被赋值为 `REACT_ELEMENT_TYPE`：
+```js
+var REACT_ELEMENT_TYPE =  (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) ||  0xeac7;
+```
+可见， `?typeof` 是一个 `Symbol` 类型的变量，这个变量可以防止 `XSS`。
+如果你的服务器有一个漏洞，允许用户存储任意 `JSON` 对象， 而客户端代码需要一个字符串，这可能会成为一个问题：
+```js
+let expectedTextButGotJSON = {  
+  type: 'div',  
+  props: {    
+    dangerouslySetInnerHTML: {      
+      __html: '/* put your exploit here */'    },  
+    },
+  };
+  let message = { 
+    text: expectedTextButGotJSON 
+  };
+  <p>{message.text}</p>
+```
+`JSON` 中不能存储 `Symbol`类型的变量。
+`ReactElement.isValidElement` 函数用来判断一个 `React` 组件是否是有效的，下面是它的具体实现。
+```js
+ReactElement.isValidElement = function (object) {  
+  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+};
+```
+可见 `React` 渲染时会把没有 `?typeof` 标识，以及规则校验不通过的组件过滤掉。
+
+当你的环境不支持 `Symbol` 时， `?typeof` 被赋值为 `0xeac7`，至于为什么， `React` 开发者给出了答案：`0xeac7`看起来有点像 `React`。
+
 
 
