@@ -233,5 +233,23 @@ ReactElement.isValidElement = function (object) {
 
 当你的环境不支持 `Symbol` 时， `?typeof` 被赋值为 `0xeac7`，至于为什么， `React` 开发者给出了答案：`0xeac7`看起来有点像 `React`。
 
+#### `React`组件的渲染流程是什么？
+- 使用 `React.createElement` 或 `JSX` 编写 `React` 组件，实际上所有的 `JSX` 代码最后都会转换成 `React`.`createElement(...)`， `Babel`帮助我们完成了这个转换的过程。
+- `createElement` 函数对 `key` 和 `ref` 等特殊的 `props` 进行处理，并获取`defaultProps`对默认`props`进行赋值，并且对传入的孩子节点进行处理，最终构造成一个`ReactElement`对象（所谓的虚拟 `DOM`）。
+- `ReactDOM.render`将生成好的虚拟`DOM`渲染到指定容器上，其中采用了批处理、事务等机制并且对特定浏览器进行了性能优化，最终转换为真实`DOM`。
+
+#### 为什么代码中一定要引入`React`？
+`JSX`只是为`React.createElement(component,props,...children)`方法提供的语法糖。所有的`JSX`代码最后都会转换成`React.createElement(...)`， `Babel`帮助我们完成了这个转换的过程。所以使用了`JSX`的代码都必须引入 `React`。
+
+#### 为什么`React`组件首字母必须大写？
+`babel`在编译时会判断`JSX`中组件的首字母，当首字母为小写时，其被认定为原生`DOM`标签，`createElement`的第一个变量被编译为字符串；当首字母为大写时，其被认定为自定义组件，`createElement`的第一个变量被编译为对象；
+
+#### `React`在渲染真实`Dom`时做了哪些性能优化？
+在 `IE（8-11）`和 `Edge`浏览器中，一个一个插入无子孙的节点，效率要远高于插入一整个序列化完整的节点树。`React`通过 `lazyTree`，在 `IE（8-11）`和 `Edge`中进行单个节点依次渲染节点，而在其他浏览器中则首先将整个大的 `DOM`结构构建好，然后再整体插入容器。并且，在单独渲染节点时， `React`还考虑了 `fragment` 等特殊节点，这些节点则不会一个一个插入渲染。
+
+#### 什么是高阶组件？如何实现？
+
+
+
 
 
