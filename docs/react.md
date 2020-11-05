@@ -248,6 +248,89 @@ ReactElement.isValidElement = function (object) {
 在 `IE（8-11）`和 `Edge`浏览器中，一个一个插入无子孙的节点，效率要远高于插入一整个序列化完整的节点树。`React`通过 `lazyTree`，在 `IE（8-11）`和 `Edge`中进行单个节点依次渲染节点，而在其他浏览器中则首先将整个大的 `DOM`结构构建好，然后再整体插入容器。并且，在单独渲染节点时， `React`还考虑了 `fragment` 等特殊节点，这些节点则不会一个一个插入渲染。
 
 #### 什么是高阶组件？如何实现？
+高阶组件可以看作`React`对装饰模式的一种实现，高阶组件就是一个函数，且该函数接受一个组件作为参数，并返回一个新的组件。
+高阶组件`（ HOC）`是 `React`中的高级技术，用来重用组件逻辑。但高阶组件本身并不是 `ReactAPI`。它只是一种模式，这种模式是由 `React` 自身的组合性质必然产生的。
+```jsx
+function visible(WrappedComponent) {  
+  return class extends Component {    
+    render() {      
+      const { visible, ...props } = this.props;      
+      if (visible === false) return null;      
+      return <WrappedComponent {...props} />;    
+    } 
+  }
+}
+```
+上面的代码就是一个 `HOC`的简单应用，函数接收一个组件作为参数，并返回一个新组件，新组建可以接收一个 `visible props`，根据 `visible` 的值来判断是否渲染`Visible`。
+
+我们可以通过以下两种方式实现高阶组件：
+
+**属性代理**<br/>
+函数返回一个我们自己定义的组件，然后在 `render`中返回要包裹的组件，这样我们就可以代理所有传入的 `props`，并且决定如何渲染，实际上 ，这种方式生成的高阶组件就是原组件的父组件，上面的函数 `visible`就是一个 `HOC`属性代理的实现方式。
+```jsx
+function proxyHOC(WrappedComponent) {  
+  return class extends Component {    
+    render() {      
+      return <WrappedComponent {...this.props} />;    
+    }
+  }
+}
+```
+对比原生组件增强的项：
+- 可操作所有传入的 `props`
+- 可操作组件的生命周期
+- 可操作组件的`static`方法
+` 获取`refs`
+
+**反向继承**<br/>
+返回一个组件，继承原组件，在`render`中调用原组件的`render`。由于继承了原组件，能通过`this`访问到原组件的 生命周期、`props、state、render`等，相比属性代理它能操作更多的属性。
+```jsx
+function inheritHOC(WrappedComponent) {  
+  return class extends WrappedComponent {    
+    render() {      
+      return super.render();    
+    }  
+  }
+}
+```
+对比原生组件增强的项：
+- 可操作所有传入的`props`
+- 可操作组件的生命周期
+- 可操作组件的`static`方法
+- 获取`refs`
+- 可操作`state`
+- 可以渲染劫持
+
+#### `HOC`在业务场景中有哪些实际应用场景？
+`HOC`可以实现的功能：
+- 组合渲染
+- 条件渲染
+- 操作 `props`
+- 获取 `refs`
+- 状态管理
+- 操作 `state`
+- 渲染劫持
+`HOC`在业务中的实际应用场景：
+- 日志打点
+- 权限控制
+- 双向绑定
+- 表单校验
+
+#### 高阶组件`(HOC)`和`Mixin`的异同点是什么？
+`Mixin`和`HOC`都可以用来解决`React`的代码复用问题。
+- `Mixin`可能会相互依赖，相互耦合，不利于代码维护
+- 不同的`Mixin`中的方法可能会相互冲突
+- `Mixin`非常多时，组件是可以感知到的，甚至还要为其做相关处理，这样会给代码造成滚雪球式的复杂性
+
+而 `HOC`的出现可以解决这些问题：
+- 高阶组件就是一个没有副作用的纯函数，各个高阶组件不会互相依赖耦合
+- 高阶组件也有可能造成冲突，但我们可以在遵守约定的情况下避免这些行为
+- 高阶组件并不关心数据使用的方式和原因，而被包裹的组件也不关心数据来自何处。高阶组件的增加不会为原组件增加负担
+
+#### `Hook`有哪些优势？
+
+
+
 
 
 
