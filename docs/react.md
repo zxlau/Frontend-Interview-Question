@@ -418,15 +418,34 @@ function inheritHOC(WrappedComponent) {
 内部实现上不直观（依赖一份可变的全局状态，不再那么“纯”）<br/>
 `React.memo`并不能完全替代`shouldComponentUpdate`（因为拿不到 `state change`，只针对 `props change`）<br/>
 
+#### 你是如何理解`fiber`的?
+`React Fiber` 是一种基于浏览器的单线程调度算法.
+`React 16`之前 ，`reconcilation` 算法实际上是递归，想要中断递归是很困难的，`React 16` 开始使用了循环来代替之前的递归.
+`Fiber`：一种将 `recocilation` （递归 `diff`），拆分成无数个小任务的算法；它随时能够停止，恢复。停止恢复的时机取决于当前的一帧（`16ms`）内，还有没有足够的时间允许计算。
 
+#### 你对 `Time Slice`的理解?
+时间分片<br>
+- `React` 在渲染（`render`）的时候，不会阻塞现在的线程
+- 如果你的设备足够快，你会感觉渲染是同步的
+- 如果你设备非常慢，你会感觉还算是灵敏的
+- 虽然是异步渲染，但是你将会看到完整的渲染，而不是一个组件一行行的渲染出来
+- 同样书写组件的方式
+时间分片正是基于可随时打断、重启的`Fiber`架构,可打断当前任务,优先处理紧急且重要的任务,保证页面的流畅运行.
 
+#### `redux`的工作流程?
+首先，我们看下几个核心概念：<br>
+`Store`：保存数据的地方，你可以把它看成一个容器，整个应用只能有一个`Store`。
+`State`：`Store`对象包含所有数据，如果想得到某个时点的数据，就要对`Store`生成快照，这种时点的数据集合，就叫做`State`。
+`Action`：`State`的变化，会导致`View`的变化。但是，用户接触不到`State`，只能接触到`View`。所以，`State`的变化必须是`View`导致的。`Action`就是`View`发出的通知，表示`State`应该要发生变化了。
+`Action Creator`：`View`要发送多少种消息，就会有多少种`Action`。如果都手写，会很麻烦，所以我们定义一个函数来生成`Action`，这个函数就叫`Action Creator`。
+`Reducer`：`Store`收到`Action`以后，必须给出一个新的`State`，这样`View`才会发生变化。这种`State`的计算过程就叫做`Reducer`。`Reducer`是一个函数，它接受`Action`和当前`State`作为参数，返回一个新的`State`。
+`dispatch`：是`View`发出`Action`的唯一方法。
 
+然后我们过下整个工作流程：
 
+首先，用户（通过`View`）发出`Action`，发出方式就用到了`dispatch`方法。
+然后，`Store`自动调用`Reducer`，并且传入两个参数：当前`State`和收到的`Action`，`Reducer`会返回新的`State`
+`State`一旦有变化，`Store`就会调用监听函数，来更新`View`。
 
-
-
-
-
-
-
+#### `react-redux`是如何工作的?
 
