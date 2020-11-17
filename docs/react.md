@@ -474,5 +474,39 @@ function inheritHOC(WrappedComponent) {
 但是在一定规模的项目中,上述方法很难进行异步流的管理,通常情况下我们会借助`redux`的异步中间件进行异步处理.
 `redux`异步流中间件其实有很多,但是当下主流的异步中间件只有两种`redux-thunk`、`redux-saga`，当然`redux-observable`可能也有资格占据一席之地
 
-#### `redux`异步中间件之间的优劣?
+####  `React` 中 `keys` 的作用是什么？
+`Keys` 是 `React` 用于追踪哪些列表中元素被修改、被添加或者被移除的辅助标识。
+- `react`利用`key`来识别组件，它是一种身份标识标识，相同的`key react`认为是同一个组件，这样后续相同的`key`对应组件都不会被创建
+- 有了`key`属性后，就可以与组件建立了一种对应关系，`react`根据`key`来决定是销毁重新创建组件还是更新组件。
+- `key`相同，若组件属性有所变化，则`react`只更新组件对应的属性；没有变化则不更新。
+- `key`值不同，则`react`先销毁该组件(有状态组件的`componentWillUnmount`会执行)，然后重新创建该组件（有状态组件的`constructor`和`componentWillUnmount`都会执行）
+
+#### 调用 `setState` 之后发生了什么？
+- 在代码中调用 `setState` 函数之后，`React` 会将传入的参数对象与组件当前的状态合并，然后触发所谓的调和过程。
+- 经过调和过程，`React`会以相对高效的方式根据新的状态构建`React`元素树并且着手重新渲染整个 `UI` 界面。
+- 在 `React` 得到元素树之后，`React` 会自动计算出新的树与老树的节点差异，然后根据差异对界面进行最小化重渲染。
+- 在差异计算算法中，`React` 能够相对精确地知道哪些位置发生了改变以及应该如何改变，这就保证了按需更新，而不是全部重新渲染。
+
+#### 触发多次`setstate`，那么`render`会执行几次？
+- 多次`setState`会合并为一次`render`，因为`setState`并不会立即改变`state`的值，而是将其放到一个任务队列里，最终将多个`setState`合并，一次性更新页面。
+- 所以我们可以在代码里多次调用`setState`，每次只需要关注当前修改的字段即可。
+
+#### 为什么建议传递给 `setState`的参数是一个`callback`而不是一个对象？
+因为`this.props` 和`this.state`的更新可能是异步的，不能依赖它们的值去计算下一个`state`
+
+#### 为什么`setState`是一个异步的？
+当批量执行`state`的时候可以让`DOM`渲染的更快,也就是说多个`setstate`在执行的过程中还需要被合并
+
+#### `this.setState`之后`react`做了哪些操作？
+`shouldComponentUpdate`<br>
+`componentWillUpdate`<br>
+`render`<br>
+`componentDidUpdate`
+
+#### 简述一下`virtual DOM` （虚拟`dom`）如何工作？为什么虚拟 `dom` 会提高性能?
+
+
+
+
+
 
