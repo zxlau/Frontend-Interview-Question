@@ -448,4 +448,31 @@ function inheritHOC(WrappedComponent) {
 `State`一旦有变化，`Store`就会调用监听函数，来更新`View`。
 
 #### `react-redux`是如何工作的?
+`Provider`: `Provider`的作用是从最外部封装了整个应用，并向`connect`模块传递`store`<br/>
+`connect`: 负责连接`React`和`Redux`<br/>
+- 获取`state`: `connect`通过`context`获取`Provider`中的`store`，通过`store.getState()`获取整个`store tree` 上所有`state`
+- 包装原组件: 将`state`和`action`通过`props`的方式传入到原组件内部`wrapWithConnect`返回一个`ReactComponent`对象`Connect`，`Connect`重新`render`外部传入的原组件`WrappedComponent`，并把`connect`中传入的`mapStateToProps`, `mapDispatchToProps`与组件上原有的`props`合并后，通过属性的方式传给`WrappedComponent`
+- 监听`store tree`变化: `connect`缓存了`store tree`中`state`的状态,通过当前`state`状态和变更前`state`状态进行比较,从而确定是否调用`this.setState()`方法触发`Connect`及其子组件的重新渲染
+
+#### `redux`与`mobx`的区别?
+两者对比:<br/>
+- `redux`将数据保存在单一的`store`中，`mobx`将数据保存在分散的多个`store`中
+- `redux`使用`plain object`保存数据，需要手动处理变化后的操作；`mobx`适用`observable`保存数据，数据变化后自动处理响应的操作
+- `redux`使用不可变状态，这意味着状态是只读的，不能直接去修改它，而是应该返回一个新的状态，同时使用纯函数；`mobx`中的状态是可变的，可以直接对其进行修改
+- `mobx`相对来说比较简单，在其中有很多的抽象，`mobx`更多的使用面向对象的编程思维；`redux`会比较复杂，因为其中的函数式编程思想掌握起来不是那么容易，同时需要借助一系列的中间件来处理异步和副作用
+- `mobx`中有更多的抽象和封装，调试会比较困难，同时结果也难以预测；而r`edux`提供能够进行时间回溯的开发工具，同时其纯函数以及更少的抽象，让调试变得更加的容易
+
+场景辨析:<br>
+- 基于以上区别,我们可以简单得分析一下两者的不同使用场景.
+- `mobx`更适合数据不复杂的应用: `mobx`难以调试,很多状态无法回溯,面对复杂度高的应用时,往往力不从心.
+- `redux`适合有回溯需求的应用: 比如一个画板应用、一个表格应用，很多时候需要撤销、重做等操作，由于`redux`不可变的特性，天然支持这些操作.
+- `mobx`适合短平快的项目: `mobx`上手简单,样板代码少,可以很大程度上提高开发效率.
+- 当然`mobx`和`redux`也并不一定是非此即彼的关系,你也可以在项目中用`redux`作为全局状态管理,用`mobx`作为组件局部状态管理器来用.
+
+#### `redux`中如何进行异步操作?
+当然,我们可以在`componentDidmount`中直接进行请求无须借助`redux`.
+但是在一定规模的项目中,上述方法很难进行异步流的管理,通常情况下我们会借助`redux`的异步中间件进行异步处理.
+`redux`异步流中间件其实有很多,但是当下主流的异步中间件只有两种`redux-thunk`、`redux-saga`，当然`redux-observable`可能也有资格占据一席之地
+
+#### `redux`异步中间件之间的优劣?
 
