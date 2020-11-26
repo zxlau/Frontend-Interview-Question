@@ -504,9 +504,14 @@ function inheritHOC(WrappedComponent) {
 `componentDidUpdate`
 
 #### 简述一下`virtual DOM` （虚拟`dom`）如何工作？为什么虚拟 `dom` 会提高性能?
+- 当数据发生变化，比如`setState`时，会引起组件重新渲染，整个`UI`都会以`virtual dom`的形式重新渲染
+- 然后收集差异也就是`diff`新的`virtual dom`和老的`virtual dom`的差异
+- 最后把差异队列里的差异，比如增加节点、删除节点、移动节点更新到真实的`DOM`上
 
-
-
-
+#### 为什么虚拟 `dom` 会提高性能?
+虚拟 `dom` 相当于在 `js` 和真实 `dom` 中间加了一个缓存，利用 `dom diff` 算法避免了没有必要的 `dom` 操作，从而提高性能。
+用 `JavaScript` 对象结构表示 `DOM` 树的结构
+然后用这个树构建一个真正的 `DOM` 树，插到文档当中当状态变更的时候，重新构造一棵新的对象树。
+然后用新的树和旧的树进行比较，记录两棵树差异把 `2` 所记录的差异应用到步骤 `1` 所构建的真正的 `DOM` 树上，视图就更新了。
 
 
