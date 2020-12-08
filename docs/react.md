@@ -514,4 +514,98 @@ function inheritHOC(WrappedComponent) {
 然后用这个树构建一个真正的 `DOM` 树，插到文档当中当状态变更的时候，重新构造一棵新的对象树。
 然后用新的树和旧的树进行比较，记录两棵树差异把 `2` 所记录的差异应用到步骤 `1` 所构建的真正的 `DOM` 树上，视图就更新了。
 
+#### `react diff` 原理
+- 把树形结构按照层级分解，只比较同级元素。
+- 给列表结构的每个单元添加唯一的 `key` 属性，方便比较。
+- `React` 只会匹配相同`class`的`component`（这里面的`class`指的是组件的名字）
+- 合并操作，调用 `component` 的 `setState` 方法的时候, `React` 将其标记为 `dirty`到每一个事件循环结束, `React`检查所有标记 `dirty` 的 `component` 重新绘制.
+- 选择性子树渲染。开发人员可以重写 `shouldComponentUpdate` 提高 `diff` 的性能。
+
+#### `React` 中 `refs` 的作用是什么？
+- `Refs` 是 `React` 提供给我们的安全访问`DOM`元素或者某个组件实例的句柄。
+- 是父组件用来获取子组件的`dom`元素的
+- 我们可以为元素添加 `ref` 属性然后在回调函数中接受该元素在 `DOM` 树中的句柄，该值会作为回调函数的第一个参数返回
+
+#### 如果你创建了类似下面的 Twitter 元素，那么它相关的类定义是什么样的？
+```jsx
+<Twitter username='123'>
+  {user => user === null 
+  ? <Loading />
+  : <Badge info={user}>
+  }
+</Twitter>
+```
+回调渲染模式：
+```jsx
+import React, { Component, PropTypes } from 'react'
+import fetchUser from 'twitter'
+class Twitter extends Component {
+  state = {
+    user: null,
+  }
+  static propTypes = {
+    username: PropTypes.string.isRequired,
+  }
+  componentDidMount () {
+    fetchUser(this.props.username)
+      .then((user) => this.setState({user}))
+  }
+  render () {
+    return this.props.children(this.state.user)
+  }
+}
+```
+这种模式的优势在于将父组件与子组件解耦和，父组件可以直接访问子组件的内部状态而不需要再通过 `Props` 传递，这样父组件能够更为方便地控制子组件展示的 `UI` 界面。
+
+#### `Controlled Component` 与 `Uncontrolled Component` 之间的区别是什么？
+`React` 的核心组成之一就是能够维持内部状态的自治组件，不过当我们引入原生的HTML表单元素时（`input,select,textarea` 等），我们是否应该将所有的数据托管到 `React` 组件中还是将其仍然保留在 DOM 元素中呢？这个问题的答案就是受控组件与非受控组件的定义分割。受控组件`（Controlled Component）`代指那些交由 `React` 控制并且所有的表单数据统一存放的组件。譬如下面这段代码中`username`变量值并没有存放到`DOM`元素中，而是存放在组件状态数据中。任何时候我们需要改变`username`变量值时，我们应当调用`setState`函数进行修改。
+```jsx
+class ControlledForm extends Component {
+  state = {
+    username: ''
+  }
+  updateUsername = (e) => {
+    this.setState({
+      username: e.target.value,
+    })
+  }
+  handleSubmit = () => {}
+  render () {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <input
+          type='text'
+          value={this.state.username}
+          onChange={this.updateUsername} />
+        <button type='submit'>Submit</button>
+      </form>
+    )
+  }
+}
+```
+而非受控组件`（Uncontrolled Component）`则是由`DOM`存放表单数据，并非存放在 `React` 组件中。我们可以使用 `refs` 来操控`DOM`元素
+```jsx
+class UnControlledForm extends Component {
+  handleSubmit = () => {
+    console.log("Input Value: ", this.input.value)
+  }
+  render () {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <input
+          type='text'
+          ref={(input) => this.input = input} />
+        <button type='submit'>Submit</button>
+      </form>
+    )
+  }
+}
+```
+竟然非受控组件看上去更好实现，我们可以直接从 `DOM` 中抓取数据，而不需要添加额外的代码。不过实际开发中我们并不提倡使用非受控组件，因为实际情况下我们需要更多的考虑表单验证、选择性的开启或者关闭按钮点击、强制输入格式等功能支持，而此时我们将数据托管到 `React` 中有助于我们更好地以声明式的方式完成这些功能。引入 `React` 或者其他 `MVVM` 框架最初的原因就是为了将我们从繁重的直接操作 `DOM` 中解放出来。
+
+
+
+
+
+
 
