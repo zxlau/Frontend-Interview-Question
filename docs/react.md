@@ -603,6 +603,40 @@ class UnControlledForm extends Component {
 ```
 竟然非受控组件看上去更好实现，我们可以直接从 `DOM` 中抓取数据，而不需要添加额外的代码。不过实际开发中我们并不提倡使用非受控组件，因为实际情况下我们需要更多的考虑表单验证、选择性的开启或者关闭按钮点击、强制输入格式等功能支持，而此时我们将数据托管到 `React` 中有助于我们更好地以声明式的方式完成这些功能。引入 `React` 或者其他 `MVVM` 框架最初的原因就是为了将我们从繁重的直接操作 `DOM` 中解放出来。
 
+#### 在生命周期中的哪一步你应该发起 `AJAX` 请求？
+`React` 下一代调和算法 `Fiber` 会通过开始或停止渲染的方式优化应用性能，其会影响到 `componentWillMount` 的触发次数。对于 `componentWillMount` 这个生命周期函数的调用次数会变得不确定，`React` 可能会多次频繁调用 `componentWillMount`。如果我们将 `AJAX` 请求放到 `componentWillMount` 函数中，那么显而易见其会被触发多次，自然也就不是好的选择。<br>
+如果我们将 `AJAX` 请求放置在生命周期的其他函数中，我们并不能保证请求仅在组件挂载完毕后才会要求响应。如果我们的数据请求在组件挂载之前就完成，并且调用了`setState`函数将数据添加到组件状态中，对于未挂载的组件则会报错。而在 `componentDidMount` 函数中进行 `AJAX` 请求则能有效避免这个问题。
+
+#### `shouldComponentUpdate` 的作用是啥以及为何它这么重要？
+`shouldComponentUpdate` 允许我们手动地判断是否要进行组件更新，根据组件的应用场景设置函数的合理返回值能够帮我们避免不必要的更新。
+
+#### 如何告诉 `React` 它应该编译生产环境版本？
+通常情况下我们会使用 `Webpack` 的 `DefinePlugin` 方法来将 `NODE_ENV` 变量值设置为 `production`。编译版本中 `React` 会忽略 `propType` 验证以及其他的告警信息，同时还会降低代码库的大小，`React` 使用了 `Uglify` 插件来移除生产环境下不必要的注释等信息。
+
+#### 为什么我们需要使用 `React` 提供的 `Children` `API` 而不是 `JavaScript` 的 `map`？
+`props.children`并不一定是数组类型，譬如下面这个元素：
+```jsx
+<Parent>
+  <h1>Welcome.</h1>
+</Parent>
+```
+如果我们使用`props.children.map`函数来遍历时会受到异常提示，因为在这种情况下`props.children`是对象`（object）`而不是数组`（array）`。`React` 当且仅当超过一个子元素的情况下会将`props.children`设置为数组，就像下面这个代码片：
+```jsx
+<Parent>
+  <h1>Welcome.</h1>
+  <h2>props.children will now be an array</h2>
+</Parent>
+```
+这也就是我们优先选择使用`React.Children.map`函数的原因，其已经将`props.children`不同类型的情况考虑在内了。
+
+#### 概述下 `React` 中的事件处理逻辑
+为了解决跨浏览器兼容性问题，`React` 会将浏览器原生事件`（Browser Native Event）`封装为合成事件`（SyntheticEvent）`传入设置的事件处理器中。这里的合成事件提供了与原生事件相同的接口，不过它们屏蔽了底层浏览器的细节差异，保证了行为的一致性。另外有意思的是，`React` 并没有直接将事件附着到子元素上，而是以单一事件监听器的方式将所有的事件发送到顶层进行处理。这样 `React` 在更新 `DOM` 的时候就不需要考虑如何去处理附着在 `DOM` 上的事件监听器，最终达到优化性能的目的。
+
+#### `createElement` 与 `cloneElement` 的区别是什么？
+`createElement` 函数是 `JSX` 编译之后使用的创建 `React Element` 的函数，而 `cloneElement` 则是用于复制某个元素并传入新的 `Props`。
+
+#### 传入 `setState` 函数的第二个参数的作用是什么？
+该函数会在`setState`函数调用完成并且组件开始重渲染的时候被调用，我们可以用该函数来监听渲染是否完成。
 
 
 
