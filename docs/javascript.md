@@ -894,6 +894,98 @@ function Promise(fn) {
   }
 }
 ```
+```js
+// 更严谨
+class Promise {
+  static pending = 'pending';
+  static fulfilled = 'fulfilled';
+  static rejected = 'rejected';
+  constructor(executor) {
+    this.status = Promise.pending; //初始化状态为pending
+    this.value = null; // 存储this._resolve操作成功返回的值
+    this.reason = null; // 存储this._reject操作失败返回的值
+    this.callbacks = [];
+    executor(this._resolve.bind(this), this._reject.bind(this));
+  }
+  
+  // onFulfilled 成功时执行
+  // onRejected 失败时执行
+  then(onFulfilled, onRejected) {
+    // 返回新的 Promise
+    return new Promise((nextResolve, nextReject) => {
+      // 之所以把下一个Promise的resolve函数和reject函数也存在callback中
+      // 是为了将onFullfilled的执行结果通过nextResolve传入到下一个Promise作为它的value值
+      this._handler({
+        nextResolve,
+        nextReject,
+        onFulfilled,
+        onRejected
+      })
+    })
+  }
+  
+  _resolve(value) {
+    // 处理onFulfilled执行结果是一个Promise时的情况
+    // 当value instanceOf Promise时，说明当前 Promise 肯定不会是第一个Promise
+    // 而是后续then方法返回的Promise
+    // 我们要获取的是value中的value(value是Promise时，那么内部存有个value的变量)
+    // 怎样将value的value值取到呢，可以将传递一个函数作为value.then的onFulfilled参数
+    // 那么在value的内部则会执行这个函数，我们只需要将当前Promise的value值赋值为value的value即可
+    if(value instanceOf Promsie) {
+      value.then(
+        this._resolve.bind(this),
+        this._reject.bind(this)
+      );
+      return
+    }
+    this.value = value;
+    this.status = Promise.fulfilled;  // 设置状态为成功
+    
+    this.callbacks.forEach(cb => this.handler(cb)); // 通知事件执行
+  }
+  
+  _reject(reason) {
+    if(reason instanceOf Promsie) {
+      reason.then(
+        this._resolve.bind(this),
+        this._reject.bind(this)
+      );
+      return
+    }
+    this.reason = reason;
+    this.status = Promise.rejected;  // 设置状态为失败
+    
+    this.callbacks.forEach(cb => this.handler(cb)); // 通知事件执行
+  }
+  
+  _handler(callback) {
+    const {
+      onFulfilled,
+      onRejected,
+      nextResolved,
+      nextReject,
+    } = callback;
+    if(this.status === Promise.pending) {
+      this.callbacks.push(callback);
+      return;
+    }
+    
+    if(this.status === Promise.fulfilled) {
+      //传入存储的值
+      // 未传入onfulfilled时,value传入
+      const nextValue = onFulfilled ? onFulfilled(this.value) : this.value;
+      nextResolved(nextValue);
+      return;
+    }
+    
+    if(this.status === Promise.rejected) {
+      const nextReason = onReject ? onReject(this.reason) : this.reason;
+      nextReject(nextReason);
+    }
+  }
+}
+```
+
 #### `ES5/ES6`的继承除了写法以外还有什么区别？
 ```js
 class Foo {}
