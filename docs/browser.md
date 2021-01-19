@@ -130,6 +130,31 @@ function stopDefault( e ) {
 #### 请解释`JSONP`的工作原理，以及它为什么不是真正的`AJAX`
 `JSONP (JSON with Padding)`是一个简单高效的跨域方式，`HTML`中的`script`标签可以加载并执行其他域的`javascript`，于是我们可以通过`script`标记来动态加载其他域的资源。<br/>
 `AJAX`是不跨域的，而`JSONP`是一个是跨域的，还有就是二者接收参数形式不一样！
+
+#### 实现JSONP
+```js
+function fn () {
+  let script = document.createElement("script");
+  script.setAttribute('src', 'https://api.douban.com/v2/book/search?q=javascript&count=1&callback=handleResponse')
+  document.querySelector('body').append(script);
+}
+
+function handleResponse() {
+  console.log(9999)
+}
+```
+
+#### http请求方法
+http请求中的8种请求方法<br/>
+1、options 返回服务器针对特定资源所支持的HTML请求方法或web服务器发送*测试服务器功能（允许客户端查看服务器性能）<br/>
+2、Get 向特定资源发出请求（请求指定页面信息，并返回实体主体）<br/>
+3、Post 向指定资源提交数据进行处理请求（提交表单、上传文件），又可能导致新的资源的建立或原有资源的修改<br/>
+4、Put  向指定资源位置上上传其最新内容（从客户端向服务器传送的数据取代指定文档的内容）<br/>
+5、Head  与服务器索与get请求一致的相应，响应体不会返回，获取包含在小消息头中的原信息（与get请求类似，返回的响应中没有具体内容，用于获取报头）<br/>
+6、Delete  请求服务器删除request-URL所标示的资源*（请求服务器删除页面）<br/>
+7、Trace   回显服务器收到的请求，用于测试和诊断<br/>
+8、Connect   HTTP/1.1协议中能够将连接改为管道方式的代理服务器<br/>
+
 #### 处理跨域的方式
 `JSONP`<br>
 `CORS`<br>

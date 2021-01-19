@@ -5,6 +5,7 @@
 * [html相关](html.md)
 * [css相关](css.md)
 * [javascript相关](javascript.md)
+* [typescript相关](typescript.md)
 * [webpack相关](webpack.md)
 * [vue相关](vue.md)
 * [react相关](react.md)

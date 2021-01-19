@@ -1087,6 +1087,27 @@ function levelTraversal(root) {
 }
 ```
 
+####  判断对称二叉树
+```js
+// 实现思路:
+// 判断根节点相同
+// 左子树的右节点和右子树的左节点相同
+// 右子树的左节点和左子树的右节点相同
+function isSymmetrical(pRoot) {
+  return isSymmetricalTree(pRoot, pRoot);
+}
+function isSymmetricalTree(node1, node2) {
+  // 判断是否都为空,如果为对称二叉树，最后会走进这里
+  if(!node1 && !node2) return true;
+  // 判断是否有一个为空
+  if((!node1 && node2) ||(node1 && !node2)) return false;
+  // 判断两个节点是否相等
+  if(node1.val != node2.val) return false;
+  return isSymmetricalTree(node1.left, node2.right) && isSymmetricalTree(node1.right, node2.left)
+}
+```
+
+
 #### 如何从`10000`个数中找到最大的`10`个数
 ```js
 // 冒泡排序，快速排序等，好一点的方法就是下面这种
@@ -1241,6 +1262,27 @@ function scale36(n) {
 }
 ```
 
+#### 合并乱序区间
+```js
+// 给出一个区间的集合，请合并所有重叠的区间
+// let arr = [[1,3],[2,6],[8,10],[15,18]]
+// [ [ 1, 6 ], [ 8, 10 ], [ 15, 18 ] ]
+function merge(intervals) {
+  if(!intervals || !intervals.length) return [];
+  intervals.sort((a, b) => a-b); // 按照区间第一位进行排序
+  let result = [intervals[0]]; // 排序之后第一个是最小的 [[1, 3]]
+  for(let i = 1; i < intervals.length; i++) { // 从第二个开始比较
+    let resultLast = result.length -1;
+    if(result[resultLast][1] > intervals[i][0]) {
+      result[resultLast][1] = Math.max(result[resultLast][1], intervals[i][1]); // 区间重复就进行合并了
+    } else {
+      result.push(intervals[i])
+    }
+  }
+  return result;
+}
+
+```
 
 
 
