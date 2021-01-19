@@ -983,6 +983,110 @@ function insertNode(node, newNode) {
   }
 }
 ```
+#### 二叉树的层次遍历
+```js
+var levelOrder = function(root) {
+    
+    const result = [];
+    if (!root) return result;
+
+    let quque = [root];
+    let temp = [], res = [];   // temp用于存储下一层级的节点，而res用户存储当前层级的值
+    let p;
+    while(quque.length > 0 || temp.length > 0) {
+        if (quque.length === 0) {  // 当队列长度为0，说明当前层级所有节点已经访问过
+            result.push(res);    //保存当前层级的值
+            quque = temp;    //访问下一层
+            temp = [];
+            res = [];
+        }
+        p = quque.shift();
+        if (p) {
+            res.push(p.val);
+            temp.push(p.left);
+            temp.push(p.right);
+        }
+    }
+
+    return result;
+};
+```
+
+#### 二叉树四种遍历
+```js
+// 二叉树
+const root = {
+  val: "A",
+  left: {
+    val: "B",
+    left: {
+      val: "D"
+    },
+    right: {
+      val: "E"
+    }
+  },
+  right: {
+    val: "C",
+    right: {
+      val: "F"
+    }
+  }
+};
+```
+```js
+// 前序遍历顺序 根节点->左子树->右子树
+// 遍历完的结果为：A -> B -> D -> E -> C -> F
+// 递归写法
+function preorder(root) {
+  if(!root) return;
+  console.log(root.val)
+  preorder(root.left);
+  preorder(root.right);
+}
+
+//  中序遍历的顺序为：左子树->根节点->右子树
+// 遍历完的结果为：D -> B -> E -> A -> C -> F
+// 递归写法
+function inorder(root) {
+  if(!root) return;
+  inorder(root.left);
+  console.log(root.val);
+  inorder(root.right);
+}
+
+// 后序遍历的顺序为：左子树->右子树->根节点
+// 遍历完的结果为：D -> E -> B -> F -> C -> A
+function postorder(root) {
+  if(!root) return;
+  postorder(root.left);
+  postorder(root.right);
+  console.log(root.val)
+}
+
+// 层序遍历就是从上到下，从左到右打印二叉树的节点
+// 思路：创建一个数组存放结果，一个队列存放二叉树的节点，如果存放二叉树的队列不为空，就重复下面的步骤：
+// （1）将队列的第一个节点作为根节点，并放入结果数组中
+// （2）如果该根节点的左子树不为空，就将其放入队列中
+// （3）如果该根节点的右子树不为空，就将其放入队列中
+function levelTraversal(root) {
+  if(!root) return [];
+  let queue = [root];
+  let result = [];
+  while(queue.length !== 0) {
+    let node = queue.shift();
+    result.push(node.val);
+    if(node.left) {
+      queue.push(node.left);
+    }
+    if(node.right) {
+      queue.push(node.right);
+    }
+  }
+  return result;
+}
+```
+
 #### 如何从`10000`个数中找到最大的`10`个数
 ```js
 // 冒泡排序，快速排序等，好一点的方法就是下面这种
@@ -1112,7 +1216,30 @@ reverse([1,2,3,4,5,6,7,8,9,10,11,12,13 ])
   } 
 ```
 
+#### js 实现36进制
+```js
+function getNums36() {
+  let result = [];
+  for(let i = 0; i < 36; i++) {
+    if(i <= 9) {
+      result.push(i);
+    } else {
+      result.push(String.fromCharCode(i + 87))
+    }
+  }
+  return result;
+}
 
+function scale36(n) {
+  let arr = [];
+  while(n) {
+    let res = n % 36;
+    arr.push(res);
+    n = parseInt(n / 36);
+  }
+  return arr;
+}
+```
 
 
 

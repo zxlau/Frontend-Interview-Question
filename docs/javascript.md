@@ -1984,7 +1984,33 @@ console.log(even.counter);
 2、对`es6`模块重新赋值会报错<br>
 3、可以对对象内部的值进行改变<br>
 
-
+#### 原生 Ajax
+```js
+const Ajax = {
+  get: function(url, fn) {
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+        fn.call(this, xhr.responseText)
+      }
+    }
+    xhr.send();
+  },
+  post: function (url, data, fn) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    // 添加http头，发送信息至服务器时内容编码类型
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");  
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+        fn.call(this, xhr.responseText);
+      }
+    };
+    xhr.send(data);
+  }
+}
+```
 
 AST 相关 https://segmentfault.com/a/1190000016231512?utm_source=tag-newest
 

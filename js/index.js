@@ -46,7 +46,6 @@ $(function () {
     }
   });
 
-
   function loadContent() {
     var hash = getHash();
     var page = hash;
