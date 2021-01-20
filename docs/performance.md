@@ -197,8 +197,37 @@ function recordJavaScriptError() {
 对组件使用Gzip压缩<br/>
 减少cookie的大小<br/>
 
+##### css优化
+将样式表放在页面顶部<br/>
+使用less scss表达式<br/>
+使用link 不适用@import引入样式<br/>
+压缩css<br/>
+禁止使用 gif 图片实现 loading 效果（降低 CPU 消耗，提升渲染性能）<br/>
+使用 CSS3 代码代替 JS 动画（尽可能避免重绘重排以及回流）<br/>
+对于一些小图标，可以使用base64位编码，以减少网络请求。<br/>
+页面头部的 <style> <script> 会阻塞页面；（因为 Renderer进程中 JS 线程和渲染线程是互斥的）<br/>
+当需要设置的样式很多时设置 className 而不是直接操作 style<br/>
 
+#### js方面
+将脚本放到页面底部<br/>
+将js 外部引入<br/>
+压缩js <br/>
+使用Eslint语法检测<br/>
+减少Dom的操作<br/>
+熟练使用设计模式<br/>
+禁止使用 iframe （阻塞父文档 onload 事件）<br/>
+页面中空的 href 和 src 会阻塞页面其他资源的加载<br/>
+网页 gzip ， CDN 托管， data 缓存 ，图片服务器<br/>
 
-
+#### webpack优化点
+代码压缩插件 UglifyJsPlugin<br/>
+服务器启用gzip压缩<br/>
+按需加载资源文件 require.ensure<br/>
+优化 devtool 中的 source-map<br/>
+剥离 css 文件，单独打包<br/>
+去除不必要插件，通常就是开发环境与生产环境用同一套配置文件导致<br/>
+开发环境不做无意义的工作如提取 css 计算文件hash等<br/>
+配置 devtool<br/>
+优化构建时的搜索路径 指明需要构建目录及不需要构建目录<br/>
 
 

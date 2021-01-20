@@ -183,3 +183,23 @@ module.exports = MyPlugin
 `Loader`像一个"翻译官"把读到的源文件内容转义成新的文件内容，并且每个`Loader`通过链式操作，将源文件一步步翻译成想要的样子。编写`Loader`时要遵循单一原则，每个`Loader`只做一种"转义"工作。 每个`Loader`的拿到的是源文件内容（`source`），可以通过返回值的方式将处理后的内容输出，也可以调用`this.callback()`方法，将内容返回给`webpack`。 还可以通过 `this.async()`生成一个`callback`函数，再用这个`callback`将处理后的内容输出出去。 此外`webpack`还为开发者准备了开发`loader`的工具函数集——`loader-utils`。<br>
 
 相对于`Loader`而言，`Plugin`的编写就灵活了许多。 `webpack`在运行的生命周期中会广播出许多事件，`Plugin` 可以监听这些事件，在合适的时机通过 `Webpack` 提供的 `API` 改变输出结果。
+
+#### 写个简单Loader
+```js
+// 定义
+module.exports = function(src) {
+ //src是原文件内容（abcde），下面对内容进行处理，这里是反转
+ var result = src.split('').reverse().join('');
+ //返回JavaScript源码，必须是String或者Buffer
+ return `module.exports = '${result}'`;
+}
+//使用
+{
+test: /\.txt$/,
+    use: [{
+        './path/reverse-txt-loader'
+    }]
+},
+```
+
+
