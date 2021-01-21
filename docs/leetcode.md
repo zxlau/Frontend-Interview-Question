@@ -1284,12 +1284,37 @@ function merge(intervals) {
 
 ```
 
+#### 随意给定一个无序的、不重复的数组data，任意抽取n个数，相加和为sum，也可能无解，请写出该函数。
 
-
-
-
-
-
+```js
+function getAllCombin(array, n, sum, temp) {
+  if(temp.length === n) {
+    if(temp.reduce((res, cur) => res += cur, 0) === sum) {
+      return temp;
+    }
+    return null;
+  }
+  for(let i = 0; i < array.length; i++) {
+    let current = array.shift();
+    temp.push(current);
+    let result = getAllCombin(array, u, sum, temp);
+    if(result) {
+      return result;
+    }
+    temp.pop();
+    array.push(current)
+  }
+}
+```
+#### 二叉树tree ，根节点是root，判断是否存在一条完整路径，其路径上节点的值之和为target，输出布尔值。
+```js
+function hasPathSum(node, target) {
+  if(!node.left && !node.right) {
+    return node.val === target;
+  }
+  return (node.left && hasPathSum(node.left, target - node.val)) || (node.right && hasPathSum(node.right, target - node.val))
+}
+```
 
 
 
