@@ -1668,6 +1668,12 @@ function getType(obj) {
 let res = str.match(/elective=(\d+,\d+)/);
 let result = res ? res[1].split(',') || []
 ```
+#### url参数
+```js
+/(^|?|&=?(\w+)?)/ig
+```
+
+
 #### 返回值
 ```js
 String('11') == new String('11');
@@ -1690,7 +1696,7 @@ var name = 'Tom';
      console.log('Hello ' + name);
  }
 })();
-// Goodbye Tom  由于var穿透块级作用域，提升至function下面，所以typeof name是undefined
+// Goodbye Jack  由于var穿透块级作用域，提升至function下面，所以typeof name是undefined
 ```
 ```js
 var name = 'Tom';

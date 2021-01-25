@@ -24,7 +24,7 @@ function StrLen(str) {
     let norepeatStr = '';
     let len = str.length;
     for(let i = 0; i< len; i++) {
-        let specStr = str.charAt(i);n
+        let specStr = str.charAt(i);
         let index = norepeatStr.indexOf(specStr);
         if(index === -1) {
             norepeatStr = norepeatStr+specStr;
@@ -1316,6 +1316,525 @@ function hasPathSum(node, target) {
 }
 ```
 
+#### 最长公共前缀
+```js
+function longestCommonPrefix(strs) {
+  let result = '';
+  if(!strs.length) return result;
+  for(let i = 0; i < strs[0].length; i++) {
+    let reg = new RegExp(`^${strs[0].slice(0, i + 1)}`);
+    let flag = true;
+    strs.forEach(item => {
+      if(!item.match(reg)) {
+        flag = false;
+      }
+    })
+    if(flag) {
+      result = strs[0].slice(0, i + 1);
+    }
+  }
+  return result;
+}
+```
+```js
+// 无重复字符串
+function lengthOfLongestSubstring(s) {
+  let result = 0;
+  let noRepeatStr = '';
+  for(let i = 0; i < s.length; i++) {
+    let index = noRepeatStr.indexOf(s[i]);
+    if(index === -1) {
+      noRepeatStr += s[i];
+      result = Math.max(result, noRepeatStr.length);
+    } else {
+      noRepeatStr = noRepeatStr.substr(index + 1) + s[i];
+    }
+  }
+  return result;
+}
+// 最长公共前缀
+function longestCommonPrefix(strs) {
+  if(!strs || strs.length === 0) return '';
+  let result = '';
+  for(let i = 0; i < strs[0].length; i++) {
+    let reg = new RegExp(`^${strs[0].slice(0, i + 1)}`);
+    let flag = true;
+    strs.forEach(item => {
+      if(!item.match(reg)) {
+        flag = false;
+      }
+    });
+    if(flag) {
+      result = strs[0].slice(0, i + 1);
+    }
+  }
+  return result;
+}
+
+// 字符串的排列
+// 给定两个字符串 s1 和 s2，写一个函数来判断 s2 是否包含 s1 的排列。
+// 换句话说，第一个字符串的排列之一是第二个字符串的子串。
+function fn(s1, s2) {
+  let arr = Permutation(s1);
+  let res = false;
+  arr.forEach(item => {
+    if(s2.includes(item)) {
+      res = true;
+    }
+  })
+  return res;
+}
+
+function Permutation(str) {
+  // 字符串的全排列
+  if(!str || str.length === 0) return [];
+  let result = [];
+  let arr = str.split('');
+  let temp = '';
+  ordering(arr);
+  result = result.filter((item, index) => {
+    return result.indexOf(item) === index;
+  });
+  return result;
+  function ordering(tempArr) {
+    if(tempArr.length === 0) {
+      result.push(temp);
+      return;
+    }
+    for(let i = 0; i < tempArr.length; i++) {
+      temp += tempArr[i];
+      insideArr = tempArr.concat();
+      insideArr.splice(i, 1);
+      ordering(insideArr);
+      temp = temp.substring(0, temp.length - 1);
+    }
+  }
+}
+
+// 字符串相乘
+function multiply(num1, num2) {
+  let l1 = num1.length;
+  let l2 = num2.length;
+  let post = Array.from({length: l1 + l2}).fill(0);
+  for(let i = l1 -1; i >= 0; i--) {
+    let s1 = +num1[i];
+    for(let j = l2 - 1; j >= 0; j--) {
+      let s2 = +num2[j];
+      let multi = s1 * s2;
+      let sum = post[i + j + 1] + multi;
+      post[i + j + 1] = sum % 10;
+      post[i + j] += sum / 10 | 0;
+    }
+  }
+  while(post[0] == 0) {
+    post.shift();
+  }
+  return post.length > 0 ? post.join('') : '0';
+}
+
+// 翻转字符串里的单词
+function reverseWords(s) {
+  return s.split(' ').filter(item => !!item).reverse().join(' ');
+}
+
+// 简化路径
+function simplifyPath(path) {
+  if(!path) return;
+  let result = [];
+  let arr = path.split('/');
+  for(let i = 0; i < arr.length; i ++) {
+    if(arr[i] === '' || arr[i] === '.') {
+      continue;
+    } else if(arr[i] === '..') {
+      result.pop();
+    } else {
+      result.push(arr[i]);
+    }
+  }
+  return `/${result.join('/')}`
+}
+
+// 复原IP地址
+function restoreIpAddresses(s) {
+  let res = [];
+  const dfs = (subRes, start) => {
+    if(subRes.length === 4 && start === s.length) { // 片段满4段，且耗尽所有字符
+      res.push(subRes.join('.')); // 拼成字符串，加入解集
+    }
+    if(subRes.length === 4 && start < s.length) { // 满4段，字符未耗尽，不用往下选了
+      return;
+    }
+    for(let len = 1; len <= 3; len++) { // 枚举出选择，三种切割长度
+      if(start + len - 1 > s.length) return; // 加上要切的长度就越界，不能切这个长度
+      if(len != 1 && s[start] == '0') return; // 不能切出'0x'、'0xx'
+      let str = s.substring(start, start + len); // 当前选择切出的片段
+      if(len === 3 && +str > 255) return; // 不能超过255
+      subRes.push(str); // 作出选择，将片段加入subRes
+      dfs[subRes, start + len]; // 基于当前选择，继续选择，注意更新指针
+      subRes.pop(); // 上面一句的递归分支结束，撤销最后的选择，进入下一轮迭代，考察下一个切割长度
+    }
+  }
+  dfs([], 0);
+  return res;
+}
+
+// 三数之和
+// 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重复的三元组
+function threeSum(nums) {
+  let res = [];
+  let len = nums.length;
+  if(!nums || len === 0) return res;
+  nums.sort((a, b) => a-b);
+  for(let i = 0; i < nums.length; i++) {
+    if(nums[i] > 0) break;
+    if(i > 0 && nums[i] === nums[i + 1]) continue;
+    let L = i +1;
+    let R = len -1;
+    while(L < R) {
+      const sum = nums[i] + nums[L] + nums[R];
+      if(sum === 0) {
+        res.push(nums[i], nums[L], nums[R]);
+        while(L < R && nums[L] === nums[L+1]) L++;
+        while(L < R && nums[R] === nums[R-1]) R--;
+        L++;
+        R--;
+      } else if(sum < 0) {
+        R--;
+      } else if(sum > 0) {
+        L++;
+      }
+    }
+  }
+}
+
+// 岛屿最大面积
+function maxAreaOfIsland(grid) {
+  let x = grid.length;
+  let y = grid[0].length;
+  let max = 0;
+  for(let i = 0; i < x; i++) {
+    for(let j = 0; j < y; j++) {
+      if(grid[i][j] === 1) {
+        max = Math.max(max, cntArea(grid, i, j, x, y));
+      }
+    }
+  }
+  return max;
+}
+
+function cntArea(grid, i, j, x, y) {
+  if(i < 0|| i >= x || j <0 || j >= y || grid[i][j] === 0) return;
+  let cnt = 0;
+  grid[i][j] =0;
+  cnt += cntArea(grid, i + 1, j, x, y);
+  cnt += cntArea(grid, i - 1, j, x, y);
+  cnt += cntArea(grid, i, j + 1, x, y);
+  cnt += cntArea(grid, i, j - 1, x, y);
+  return cnt;
+}
+
+// 搜索旋转排序数组
+function search(nums, target) {
+  let start = 0;
+  let end = nums.length - 1;
+  let mid;
+  while(start < end) {
+    mid = Math.ceil((start + end) / 2);
+    if(nums[start] === target) return start;
+    if(nums[end] === target) return end;
+    if(nums[mid] === target) return mid;
+    if(nums[start] < nums[mid]) {
+      // 前面部分有序
+      if(nums[start] < target && target < nums[mid]) {
+        end = mid - 1;
+      } else {
+        start = mid + 1;
+      }
+    } else {
+      // 后面部分
+      if(nums[mid] < target && target < nums[end]) {
+        start = mid + 1;
+      } else {
+        end = mid - 1;
+      }
+    }
+  }
+  return -1;
+}
+
+// 最长连续递增序列
+function findLengthOfLCIS(nums) {
+  let count = 1;
+  let res = 1;
+  for(let i = 0; i < nums.length; i++) {
+    if(nums[i + 1] > nums[i]) {
+      count++;
+    } else {
+      count = 1;
+    }
+    res = Math.max(res, count);
+  }
+  return res;
+}
+
+// 一位数组的全排列
+function permute(arr) {
+  let result = [];
+  let usedItem = [];
+  function main(arr) {
+    for(let i = 0; i < arr.length; i++) {
+      let ch = arr.splice(i, 1)[0];
+      usedItem.push(ch);
+      if(arr.length === 0) {
+        result.push(usedItem.slice());
+      }
+      main(arr);
+      arr.splice(i, 0, ch);
+      usedItem.pop();
+    }
+    return result;
+  }
+  return main(arr);
+}
+
+// 省份数量
+var findCircleNum = function(isConnected) {
+  const provinces = isConnected.length;
+  const visited = new Set();
+  let circles = 0;
+  for (let i = 0; i < provinces; i++) {
+      if (!visited.has(i)) {
+          dfs(isConnected, visited, provinces, i);
+          circles++;
+      }
+  }
+  return circles;
+};
+const dfs = (isConnected, visited, provinces, i) => {
+  for (let j = 0; j < provinces; j++) {
+      if (isConnected[i][j] == 1 && !visited.has(j)) {
+          visited.add(j);
+          dfs(isConnected, visited, provinces, j);
+      }
+  }
+};
+
+// 合并区间
+function merge(intervals) {
+  intervals.sort((a, b) => a-b);
+  let result = [intervals[0]];
+  for(let i = 0; i < intervals.length; i++) {
+    let resultLast = result.length - 1;
+    if(result[resultLast][1] > intervals[i][0]) {
+      result[resultLast][1] = Math.max(result[resultLast][1], intervals[i][1]);
+    } else {
+      result.push(intervals[i]);
+    }
+  }
+  return result;
+}
+
+// 接雨水
+var trap = function(height) {
+  let n=height.length;
+  if(n===0) return 0;
+  let res=0;
+
+  let left_max=[] ,right_max=[];
+  //记录左边数组的最大值
+  left_max[0]=height[0];
+  for(let i=1;i<n;i++){
+    left_max[i]=Math.max(left_max[i-1],height[i]);
+  }
+  //记录右边数组的最大值
+  right_max[n-1]=height[n-1];
+  for(let i=n-2;i>=0;i--){
+    right_max[i]=Math.max(right_max[i+1],height[i]);
+  }
+  //统计每一列的面积之和
+  for(let i=0;i<n;i++){
+    res+=Math.min(left_max[i],right_max[i])-height[i];
+  }
+  return res;
+};
+
+// 合并两个有序链表
+function mergeTwoLists(l1, l2) {
+  let result = new ListNode(0);
+  while(l1 && l2) {
+    if(l1.val < l2.val) {
+      result.next = l1;
+      l1 = l1.next;
+    } else {
+      result.next = l2;
+      l2 = l2.next;
+    }
+    result = result.next;
+  }
+  if(l1 && !l2) {
+    result.next = l1;
+  } else if(!l1 && l2) {
+    result.next = l2;
+  }
+  return result;
+}
+
+// 反转链表
+function reverseList(head) {
+  let pre = null;
+  let cur = head;
+  while(cur != null) {
+    let next = cur.next;
+    pre = cur;
+    cur = next;
+  }
+  return pre;
+}
+
+// 两数相加 链表
+function addTwoNumbers(l1, l2) {
+  let result = new ListNode(0);
+  let add = 0;
+  while(l1 || l2) {
+    let sum = (l1.val || 0) + (l2.val || 0) + add;
+    result.val = sum % 10;
+    add = sum > 9 ? 1 : 0;
+    result.next = new ListNode(0);
+    l1 && (l1 = l1.next);
+    l2 && (l2 = l2.next);
+  }
+  add && (result.next = new ListNode(add));
+  return result;
+}
+
+// 链表排序
+function sortList(head) {
+  if(!head) return;
+  let r = [];
+  while(head) {
+    r.push(head);
+    let temp = head.next;
+    head.next = null;
+    head = temp;
+  }
+  r.sort((a, b) => a-b).reduce((p, v) => p.next = v);
+  return r[0]
+}
+
+// 合并 K 个有序链表
+function mergeKLists(lists) {
+  return lists.reduce((p, n) => {
+    while(n) {
+      p.push(n);
+      n = n.next;
+      return p;
+    }
+  }).sort((a, b) => a.val - b.val).reduce((p, n) => p.next = n);
+}
+// 二叉树的最近公共祖先
+function lowestCommonAncestor(root, p, q) {
+  if(!root || root == p || root == q) return root;
+  let left = lowestCommonAncestor(root.left, p, q);
+  let right = lowestCommonAncestor(root.right, p, q);
+  if(!left) return right;
+  if(!right) return left;
+  return root;
+}
+
+// 买卖股票的最佳时机 [7,1,5,3,6,4]
+function maxProfit(prices) {
+  if(!prices || prices.length == 0) return;
+  let min = prices[0];
+  let len = prices.length;
+  let dp = Array.from({length: len}).fill(0);
+  for(let i = 1; i < len; i++) {
+    min = Math.min(min, prices[i]);
+    dp[i] = Math.max(dp[i - 1], prices[i] - min);
+  }
+  return dp[dp.length - 1]
+}
+
+// 买卖股票的最佳时机2 [7,1,5,3,6,4]
+function maxProfit2(prices) {
+  let profit = 0;
+  for(let i = 0; i < prices.length; i++) {
+    if(prices[i] - prices[i - 1] > 0) {
+      profit += prices[i] - prices[i - 1];
+    }
+  }
+  return profit;
+}
+
+// 最大正方形
+var maximalSquare = function(matrix) {
+  if (matrix.length === 0) return 0;
+  const dp = [];
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  let max = Number.MIN_VALUE;
+
+  for (let i = 0; i < rows + 1; i++) {
+    if (i === 0) {
+      dp[i] = Array(cols + 1).fill(0);
+    } else {
+      dp[i] = [0];
+    }
+  }
+
+  for (let i = 1; i < rows + 1; i++) {
+    for (let j = 1; j < cols + 1; j++) {
+      if (matrix[i - 1][j - 1] === "1") {
+        dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1;
+        max = Math.max(max, dp[i][j]);
+      } else {
+        dp[i][j] = 0;
+      }
+    }
+  }
+
+  return max * max;
+};
+
+// 最大子序和
+function maxSub(nums) {
+  let len = nums.length;
+  let max = nums[0];
+  let min = 0;
+  let sum = 0
+  for(let i = 0; i < len; i++) {
+    sum += nums[i];
+    if(sum - min > max) {
+      max = sum - min;
+    }
+    if(sum < min) {
+      min = sum;
+    }
+  }
+  return max;
+}
+
+// 三角形最小路径和
+var minimumTotal = function(triangle) {
+  const r = triangle.length
+  for (let i = r - 1; i >= 0; i --) {
+      for (let j = triangle[i].length - 1; j >= 0; j --) {
+          if (j + 1 !== triangle[i].length) {
+              triangle[i - 1][j] = Math.min(triangle[i][j], triangle[i][j + 1]) + triangle[i - 1][j]
+          }
+      }
+  }
+  return triangle[0][0]
+};
+
+// 平方根
+function fn(x) {
+  let r = x;
+  while(r ** 2 >x) {
+    r = Math.floor((r + x / r) / 2);
+  }
+  return r;
+}
+```
 
 
 
