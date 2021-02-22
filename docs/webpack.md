@@ -9,6 +9,29 @@
 #### `webpack` 工作过程
 `webpack`起来在启动后会从`Entry`里配置的`Module`开始，递归解析`Entry`依赖的所有`Module`。每找到一个`Module`，就会根据配置的`Loader`去找出对应的转换规则，对`Module`进行转换后，再解析出当前`Module`依赖的`Module`。这些模块会以`Entry`为单位进行分组，一个`Entry`及其所有依赖的`Module`被分到了一个组也就是一个`Chunk`。最后，`webpack`会将所有`Chunk`转换成文件输出。在整个流程中，`webpack`会在恰当的时机执行`plugin`里定义的逻辑。
 
+#### babel 配置 react 版本，兼容浏览器版本
+```js
+presets: [
+    require.resolve('@babel/preset-react'),
+    [
+      require.resolve('@babel/preset-env'),
+      {
+        // "modules": false,
+        "modules": "commonjs",
+        "targets": {
+          "browsers": ["last 4 versions", "ie >= 9", "safari >= 10"] // "last 2 Chrome versions",
+        },
+        "useBuiltIns": "entry",
+        "corejs": 2,
+      }
+    ],
+  ],
+```
+支持移动端：
+```
+chrome, opera, edge, firefox, safari, ie, ios, android, node, electron
+```
+
 ### 优化相关
 #### 优化`loader`配置
 可以通过`test、include、exclude`三个配置项来命中`loader`要应用规则的文件。<br>
@@ -201,5 +224,9 @@ test: /\.txt$/,
     }]
 },
 ```
+#### tree shaking 原理
 
+开启ScopeHoisting(作用域提升)：所有代码打包到一个作用域内，然后使用压缩工具根据变量是否被引用进行处理，删除未被引用的代码
+
+未开启ScopeHoisting：每个模块保持自己的作用域，由webpack的treeShaking对export打标记，未被使用的导出不会被webpack链接到exports（即被引用数为0），然后使用压缩工具将被引用数为0的变量清除。（类似于垃圾回收的引用计数机制？）
 

@@ -258,6 +258,14 @@ Sec-WebSocket-Accept：与客户端的 Sec-WebSocket-Key 相对应，是经过�
 服务器长期维护长连接需要一定的成本，各个浏览器支持程度不一；<br/>
 成熟的 HTTP 生态下有大量的组件可以复用，WebSocket 则没有，遇到异常问题难以快速定位快速解决<br/>
 
+#### websocket 为什么可以保持长连接
+
+```
+Upgrade: websocket
+Connection: Upgrade
+```
+这个就是Websocket的核心了，告诉Apache、Nginx等服务器：注意啦，窝发起的是Websocket协议，快点帮我找到对应的助理处理~不是那个老土的HTTP。
+
 #### 介绍下 `HTTPS` 中间人攻击
 中间人攻击过程如下：<br>
 1、服务器向客户端发送公钥。<br>

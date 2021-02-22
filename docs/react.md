@@ -659,5 +659,27 @@ Link组件最终会渲染为HTML的a标签，它的to、query、hash属性会被
 
 前进与后退的实现，是通过监听popstate以及hashchange的事件，当前进或后退url更新时，触发这两个事件的回调函数。可以简单地把web浏览器的历史记录比做成一个仅有入栈操作的栈，当用户浏览器到某一个页面时将该文档存入到栈中，点击后退或前进按钮时移动指针到history栈中对应的某一个文档。在传统的浏览器中，文档都是从服务端请求过来的。不过现代的浏览器一般都会支持两种方式用于动态的生成并载入页面。
 
+#### React Suspense
 
+懒加载组件，利用动态 import 方式。
+```js
+import  React, { Component, Suspense } from "react"
+const Test1 = React.lazy(()=>import("./Test1"))
+const Test2 = React.lazy(()=>import("./Test1"))
+
+function MyComponent(){
+  return(
+    <div>
+      <Suspense fallback={<div>loading...</div>}> 
+        <section>   // suspense可以包含多个需要懒加载的文件
+            <Test1/> 
+            <Test2/>
+        </section>
+      </Suspense>
+    </div>
+  )
+} 
+```
+
+返回一个 Promise ，当 Promise 在pending状态时渲染 fallback 中的内容，resolve 之后渲染指定的内容。
 
