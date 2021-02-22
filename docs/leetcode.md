@@ -1685,6 +1685,7 @@ function reverseList(head) {
   let cur = head;
   while(cur != null) {
     let next = cur.next;
+    cur.next = pre;
     pre = cur;
     cur = next;
   }

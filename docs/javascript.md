@@ -1665,12 +1665,12 @@ function getType(obj) {
 匹配`elective`后的数字输出（写出你认为的最优解法）:<br>
 `[] || ['800'] || ['800','700']`
 ```js
-let res = str.match(/elective=(\d+,\d+)/);
+let res = str.match(/elective=(\d+\,?\d+)/);
 let result = res ? res[1].split(',') || []
 ```
 #### url参数
 ```js
-/(^|?|&=?(\w+)?)/ig
+/([\?|\&](\w+)=?(\w+)?)/ig
 ```
 
 
