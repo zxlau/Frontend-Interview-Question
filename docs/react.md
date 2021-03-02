@@ -683,3 +683,93 @@ function MyComponent(){
 
 返回一个 Promise ，当 Promise 在pending状态时渲染 fallback 中的内容，resolve 之后渲染指定的内容。
 
+**`Code Spliting`**<br/>
+Code Spliting 在 React 中的使用方法是在 Suspense 组件中使用 <LazyComponent> 组件:
+```jsx
+import { Suspense, lazy } from 'react'
+
+const DemoA = lazy(() => import('./demo/a'))
+const DemoB = lazy(() => import('./demo/b'))
+
+<Suspense>
+  <NavLink to="/demoA">DemoA</NavLink>
+  <NavLink to="/demoB">DemoB</NavLink>
+
+  <Router>
+    <DemoA path="/demoA" />
+    <DemoB path="/demoB" />
+  </Router>
+</Suspense>
+```
+源码中 lazy 将传入的参数封装成一个 LazyComponent
+```js
+function lazy(ctor) {
+  return {
+    $$typeof: REACT_LAZY_TYPE, // 相关类型
+    _ctor: ctor,
+    _status: -1,   // dynamic import 的状态
+    _result: null, // 存放加载文件的资源
+  };
+}
+```
+可以发现 dynamic import 本身类似 Promise 的执行机制, 也具有 Pending、Resolved、Rejected 三种状态, 这就比较好理解为什么 LazyComponent 组件需要放在 Suspense 中执行了(Suspense 中提供了相关的捕获机制)
+
+**`Async Data Fetching`**
+为了解决获取的数据在不同时刻进行展现的问题, Suspense 给出了解决方案。
+一般进行数据获取的代码如下:
+```jsx
+export default class Demo extends Component {
+  state = {
+    data: null,
+  };
+
+  componentDidMount() {
+    fetchAPI(`/api/demo/${this.props.id}`).then((data) => {
+      this.setState({ data });
+    });
+  }
+
+  render() {
+    const { data } = this.state;
+
+    if (data == null) {
+      return <Spinner />;
+    }
+
+    const { name } = data;
+
+    return (
+      <div>{name}</div>
+    );
+  }
+}
+```
+在 Suspense 中进行数据获取的代码如下:
+```jsx
+const resource = unstable_createResource((id) => {
+  return fetchAPI(`/api/demo`)
+})
+
+function Demo {
+  render() {
+    const data = resource.read(this.props.id)
+
+    const { name } = data;
+
+    return (
+      <div>{name}</div>
+    );
+  }
+}
+```
+减少了 loading 状态的维护(在最外层的 Suspense 中统一维护子组件的 loading)<br/>
+减少了不必要的生命周期的书写<br/>
+
+具体原理过程：<br/>
+1、第一次请求没有缓存, 子组件 throw 一个 thenable 对象, Suspense 组件内的 componentDidCatch 捕获之, 此时展示 Loading 组件;<br/>
+2、当 Promise 态的对象变为完成态后, 页面刷新此时 resource.read() 获取到相应完成态的值;<br/>
+3、之后如果相同参数的请求, 则走 LRU 缓存算法, 跳过 Loading 组件返回结果(缓存算法见后记);<br/>
+
+
+
+
