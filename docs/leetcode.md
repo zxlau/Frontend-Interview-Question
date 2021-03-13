@@ -1837,7 +1837,24 @@ function fn(x) {
 }
 ```
 
-
+#### 最长回文子串
+```js
+function countSubstrings(s) {
+  let res = 0;
+  for(let i = 0; i < s.length; i++) {
+    let str = '';
+    let restr = '';
+    for(let j = i; j < s.length; j++) {
+      str += s[j];
+      restr = s[j] + restr;
+      if(str === restr) {
+        res++;
+      }
+    }
+  }
+  return res;
+}
+```
 
 
 

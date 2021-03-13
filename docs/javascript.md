@@ -2029,6 +2029,18 @@ const Ajax = {
 }
 ```
 
+#### exports 和 module.exports 的区别
+module.exports 默认值为{}<br/>
+exports 是 module.exports 的引用<br/>
+exports 默认指向 module.exports 的内存空间<br/>
+require() 返回的是 module.exports 而不是 exports<br/>
+若对 exports 重新赋值，则断开了 exports 对 module.exports 的指向<br/>
+
+#### commonJs 和 esModule 的区别
+commonJs是被加载的时候运行，esModule是编译的时候运行<br/>
+commonJs输出的是值的浅拷贝，esModule输出值的引用<br/>
+commentJs具有缓存。在第一次被加载时，会完整运行整个文件并输出一个对象，拷贝（浅拷贝）在内存中。下次加载文件时，直接从内存中取值<br/>
+
 AST 相关 https://segmentfault.com/a/1190000016231512?utm_source=tag-newest
 
 
