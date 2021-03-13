@@ -565,9 +565,10 @@ background: linear-gradient(to right, transparent, #fff 55%);
 - 如果正向解析，例如「`div div p em」`，我们首先就要检查当前元素到 `html` 的整条路径，找到最上层的 `div`，再往下找，如果遇到不匹配就必须回到最上层那个 `div`，往下再去匹配选择器中的第一个 `div`，回溯若干次才能确定匹配与否，效率很低。<br>
 - 逆向匹配则不同，如果当前的 `DOM` 元素是 `div`，而不是 `selector` 最后的 `em`，那只要一步就能排除。只有在匹配时，才会不断向上找父节点进行验证。
 
-
-
-
+#### z-index细节
+1、只有position的值为relative/absolute/fixed中的一个,Z-index才会生效。<br>
+2、当一个div的Z-index为整数时,它的子元素和外界元素进行比较时,采用父元素的Z-index进行比较, 和兄弟元素比较采用自身的Z-index。当一个div的Z-index为auto时,如果它和它的兄弟进行比较,采用它父元素的Z-index。<br>
+3、如果不设置Z-index那么默认值为auto,则不建立层叠上下文。设置为0则会脱离文档流,建立层叠上下文。<br>
 
 
 
