@@ -92,6 +92,12 @@ const router = new VueRouter({
 
 **abstract模式**<br>
 `abstract`模式是使用一个不依赖于浏览器的浏览历史虚拟管理后端。 根据平台差异可以看出，在 `Weex` 环境中只支持使用 `abstract` 模式。
+
+#### keep-alive的实现
+作用：实现组件缓存<br>
+钩子函数： `activated`组件渲染后调用 `deactivated`组件销毁后调用<br>
+原理：`Vue.js`内部将`DOM`节点抽象成了一个个的`VNode`节点，`keep-alive`组件的缓存也是基于`VNode`节点的而不是直接存储`DOM`结构。它将满足条件（`pruneCache与pruneCache`）的组件在`cache`对象中缓存起来，在需要重新渲染的时候再将`vnode`节点从`cache`对象中取出并渲染。<br>
+配置属性： `include` 字符串或正则表达式。只有名称匹配的组件会被缓存 `exclude` 字符串或正则表达式。任何名称匹配的组件都不会被缓存 `max` 数字、最多可以缓存多少组件实例<br>
 #### `vue` 样式 `scoped`
 `scoped`的实现原理: `Vue`中的`scoped`属性的效果主要是通过`PostCss`实现的。
 转义前的代码：
