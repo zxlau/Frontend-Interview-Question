@@ -10,7 +10,8 @@
 * [vue相关](vue.md)
 * [react相关](react.md)
 * [性能相关](performance.md)
-* [leetcode](leetcode.md)
+* [计算题目](leetcode.md)
 * [winter重学前端](winter.md)
 * [剑指offer](offer.md)
+* [leetcode-js](leetcode-js.md)
 

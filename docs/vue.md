@@ -813,7 +813,9 @@ export default {
 </div>
 ```
 
-
+#### Vue2 和 Vue3 中的 v-model 有什么差异？
+`vue3` 默`prop`与`event`为：`modelValue`和`update:modelValue`；`vue2` 中则是：`value`和`input`；
+`vue3` 中直接通过 `v-model` 后面参数`v-model:msg`来指定属性名，并且支持绑定多个 `v-model`；而 `vue2` 中通过子组件的`model`属性中的`prop`值和`event`值来指定属性名和事件名
 
 
 

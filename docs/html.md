@@ -8,6 +8,24 @@
 `html` 语义化让页面的内容结构化，结构更清晰，便于对浏览器、搜索引擎解析；即使在没有样式 `CSS` 情况下也以一种文档格式显示，并且是容易阅读的;<br>
 搜索引擎的爬虫也依赖于 `HTML` 标记来确定上下文和各个关键字的权重，利于`SEO`;<br>
 使阅读源代码的人对网站更容易将网站分块，便于阅读维护理解。<br>
+去掉或者丢失样式的时候能够让页面呈现出清晰的结构。<br>
+方便其他设备解析(如屏幕阅读器、盲人阅读器、移动设备)以意义的方式来渲染网页。<br>
+
+#### meta标签
+`meta`是`HTML`语言`head`区的一个辅助性标签，位于文档的头部，不包含任何内容。 标签的属性定义了与文档相关联的名称/值对。<br>
+`meta`元素可提供相关页面的元信息`（meta-information）`，比如针对搜索引擎和更新频度的描述和关键词。<br>
+`meta` 元素往往不会引起用户的注意，但是`meta`对整个网页有影响，会对网页能否被搜索引擎检索，和在搜索中的排名起着关键性的作用。<br>
+
+`meta`有个必须的属性`content`用于表示需要设置的项的值。<br>
+`meta`存在两个非必须的属性`http-equiv`和`name`, 用于表示要设置的项。<br>
+比如`<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">`,设置的项是`Content-Security-Policy`设置的值是`upgrade-insecure-requests`。<br>
+
+| 属性 | 值 | 描述 |
+|--|
+|charset|character_set|定义文档的字符编码。|
+|content|text|定义与 http-equiv 或 name 属性相关的元信息。|
+|http-equiv|content-typ<br>edefault-style<br>refresh|把 content 属性关联到 HTTP 头部。|
+|name|application-nam<br>eauthor<br>description<br>generator<br>keywords|把 content 属性关联到一个名称。|
 
 #### 说说 title 和 alt 属性
 - 两个属性都是当鼠标滑动到元素上的时候显示

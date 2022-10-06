@@ -107,6 +107,12 @@ Array.from(new Set(arr))
 ```js
 [...new Set(arr)]
 ```
+#### Array.from()用途
+将类数组对象转换成数组<br>
+克隆数组<br>
+填充数组<br>
+去重<br>
+
 #### `typeof`运算符和`instanceof`运算符以及`isPrototypeOf()`方法的区别
 `typeof`是一个运算符，用于检测数据的类型，比如基本数据类型`undefined、string、number、boolean`，以及引用数据类型`object、function`，但是对于正则表达式、日期、数组这些引用数据类型，它会全部识别为`object`；<br/>
 `instanceof`同样也是一个运算符，它就能很好识别数据具体是哪一种引用类型。它与`isPrototypeOf`的区别就是它是用来检测构造函数的原型是否存在于指定对象的原型链当中；而`isPrototypeOf`是用来检测调用此方法的对象是否存在于指定对象的原型链中，所以本质上就是检测目标不同。<br/>
