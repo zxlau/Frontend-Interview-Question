@@ -778,3 +778,49 @@ React.lazy() 所返回的 LazyComponent 对象，其 _status 默认是 -1，所�
 Suspense 原理<br/>
 
 由于 React 捕获异常并处理的代码逻辑比较多，这里就不贴源码，感兴趣可以去看 throwException 中的逻辑，其中就包含了如何处理捕获的异常。简单描述一下处理过程，React 捕获到异常之后，会判断异常是不是一个 thenable，如果是则会找到 SuspenseComponent ，如果 thenable 处于 pending 状态，则会将其 children 都渲染成 fallback 的值，一旦 thenable 被 resolve 则 SuspenseComponent 的子组件会重新渲染一次。
+
+#### 怎么用react hooks模拟生命周期
+```js
+// constructor
+unction Example() {
+  // 在函数里初始化state
+  const [count, setCount] = useState(0);
+  return null;
+}
+
+// componentDidUpdate / componentDidMount
+function Example() {
+  // componentDidUpdate
+  useEffect(() => console.log('mounted or updated'));
+  // componentDidMount
+  useEffect(() => console.log('mounted'), []);
+  return null;
+}
+```
+useEffect 拥有两个参数，第一个参数作为回调函数会在浏览器布局和绘制完成后调用，因此它不会阻碍浏览器的渲染进程。第二个参数是一个数组:
+
+当数组存在并有值时，如果数组中的任何值发生更改，则每次渲染后都会触发回调。
+当它不存在时，每次渲染后都会触发回调，类似于 componentDidUpdate。
+当它是一个空列表时，回调只会被触发一次，类似于 componentDidMount。
+
+```js
+// shouldComponentUpdate
+const MyComponent = React.memo(
+    _MyComponent, 
+    (prevProps, nextProps) => nextProps.count !== prevProps.count
+)
+```
+React.memo 包裹一个组件来对它的 props 进行浅比较,但这不是一个 hooks，因为它的写法和 hooks 不同,其实React.memo 等效于 PureComponent，但它只比较 props。
+
+|class 组件 |	Hooks 组件|
+|--|
+|constructor|	useState|
+|getDerivedStateFromProps	|useState 里面 update 函数|
+|shouldComponentUpdate|	useMemo|
+|render|	函数本身|
+|componentDidMount	|useEffect空数组或固定值|
+|componentDidUpdate	|useEffect|
+|componentWillUnmount	|useEffect 里面返回的函数|
+|componentDidCatch	|无|
+|getDerivedStateFromError	|无|
+
