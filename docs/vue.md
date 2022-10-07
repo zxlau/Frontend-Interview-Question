@@ -465,8 +465,16 @@ oldS > oldE
 <img width="500" src="/Frontend-Interview-Question/images/diff3.png" />
 
 #### `computed` 和 `watch` 的区别
+`computed` 监控的数据在 `data` 中没有声明；<br/>
 `computed`： 是计算属性，依赖其它属性值，并且 `computed` 的值有缓存，只有它依赖的属性值发生改变，下一次获取 `computed` 的值时才会重新计算 `computed` 的值；<br>
-`watch`： 更多的是「观察」的作用，类似于某些数据的监听回调 ，每当监听的数据变化时都会执行回调进行后续操作；
+`computed` 不支持异步，当 `computed` 中有异步操作时，无法监听数据的变化；<br>
+`watch`监测的数据必须在 `data` 中声明或 `props` 中数据；<br>
+`watch`支持异步操作；<br>
+`watch`没有缓存，页面重新渲染时，值不改变时也会执行<br>
+
+#### watch的实现原理
+对 `watch` 每个属性创建一个 `watcher`，触发 `data[key]` 的 `get` 方法, 进行依赖收集; 当 `data[key]` 发生变动时触发 `set` 方法, 通知所有收集的依赖 `watcher` , 触发收集的 `watcher` , 执行 `watch` 中的监听函数。
+
 #### 父组件可以监听到子组件的生命周期吗？
 ```js
 // Parent.vue

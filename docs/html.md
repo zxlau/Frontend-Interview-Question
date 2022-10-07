@@ -121,3 +121,7 @@
 <meta http-equiv=”cache-control” content=”no-cache”>
 <meta http-equiv=”expires” content=”0″>
 ```
+
+#### 图片懒加载原理
+在图片没有进入可视区的时候，不给src属性赋值，等图片进入到了可视区，再给src属性赋值，去请求图。
+

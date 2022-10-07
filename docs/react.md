@@ -771,5 +771,10 @@ function Demo {
 3、之后如果相同参数的请求, 则走 LRU 缓存算法, 跳过 Loading 组件返回结果(缓存算法见后记);<br/>
 
 
+#### React.lazy 懒加载实现原理
+React.lazy() 所返回的 LazyComponent 对象，其 _status 默认是 -1，所以首次渲染时，会进入 readLazyComponentType 函数中的 default 的逻辑，这里才会真正异步执行 import(url)操作，由于并未等待，随后会检查模块是否 Resolved，如果已经Resolved了（已经加载完毕）则直接返回moduleObject.default（动态加载的模块的默认导出），否则将通过 throw 将 thenable 抛出到上层。<br/>
 
+为什么要 throw 它？这就要涉及到 Suspense 的工作原理，我们接着往下分析。<br/>
+Suspense 原理<br/>
 
+由于 React 捕获异常并处理的代码逻辑比较多，这里就不贴源码，感兴趣可以去看 throwException 中的逻辑，其中就包含了如何处理捕获的异常。简单描述一下处理过程，React 捕获到异常之后，会判断异常是不是一个 thenable，如果是则会找到 SuspenseComponent ，如果 thenable 处于 pending 状态，则会将其 children 都渲染成 fallback 的值，一旦 thenable 被 resolve 则 SuspenseComponent 的子组件会重新渲染一次。

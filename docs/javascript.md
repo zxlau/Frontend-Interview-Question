@@ -76,6 +76,15 @@ arr.sort(() => {
   return Math.random() - 0.5;
 })
 ```
+#### Array.sort 排序方法的实现原理
+V8引擎实现原理：
+如果要排序的元素个数是 n 的时候，那么就会有以下几种情况：<br>
+当 `n<=10` 时，采用插入排序<br>
+当 `n>10` 时，采用三路快速排序<br>
+`10< n <=1000`，采用中位数作为哨兵元素<br>
+`n>1000`，每隔 `200~215` 个元素挑出一个元素，放到一个新数组中，然后对它排序，找到中间位置的数，以此作为中位数
+
+
 #### 数组去重
 ```js
 function removeDup(arr) {
@@ -389,6 +398,12 @@ function sayHi(e) {
 } 
 window.addEventListener('resize', throttle(sayHi));
 ```
+
+#### for...in 与 for...of 的区别
+`for...in`循环的是`key`。`for...of`循环的是`value`；
+推荐在循环对象属性的时候，使用`for...in`,在遍历数组的时候的时候使用`for...of`。
+
+
 #### 介绍下 `Set、Map、WeakSet` 和 `WeakMap` 的区别？
 `Set`<br/>
 成员唯一、无序且不重复；`[value, value]`，键值与键名是一致的（或者说只有键值，没有键名）；可以遍历，方法有：`add、delete、has`。<br/>
