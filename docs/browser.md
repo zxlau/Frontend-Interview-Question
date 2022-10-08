@@ -24,6 +24,15 @@
 `Gecko`内核：`Netscape6`及以上版本，`FF,MozillaSuite/SeaMonkey`等。<br/>
 `Presto`内核：`Opera7`及以上。<br/>
 `Webkit`内核：`Safari,Chrome`等。
+
+#### 关于XML，你了解哪些？
+设计宗旨：XML 被设计为传输和存储数据，其焦点是数据的内容；HTML 被设计用来显示数据，其焦点是数据的外观。HTML 旨在显示信息，而 XML 旨在传输信息。<br/>
+
+作用：<br/>
+作为项目或者模板的配置文件<br/>
+作为网络传输数据的格式(现在已JSON为主)<br/>
+用来保存数据,而且这些数据具有自我描述性<br/>
+
 #### `cookie`属性值
 一个`Cookie`包含以下信息：<br>
 1、`name`: `Cookie`名称，`Cookie`名称必须使用只能用在`URL`中的字符，一般用字母及数字，不能包含特殊字符，如有特殊字符想要转码。如`js`操作`cookie`的时候可以使用`escape()`对名称转码。<br>
@@ -43,6 +52,19 @@
 4、`localStorage`：将数据保存在客户端本地的硬件设备(通常指硬盘，也可以是其他硬件设备)中，即使浏览器被关闭了，该数据仍然存在，下次打开浏览器访问网站时仍然可以继续使用。<br/>
 这两者的区别在于，`sessionStorage`为临时保存，而`localStorage`为永久保存。`sessionStorage`和`localStorage` 虽然也有存储大小的限制，但比`cookie`大得多，可以达到`5M`或更大。<br/>
 有期时间： `localStorage` 存储持久数据，浏览器关闭后数据不丢失除非主动删除数据； `sessionStorage` 数据在当前浏览器窗口关闭后自动删除。 `cookie` 设置的`cookie`过期时间之前一直有效，即使窗口或浏览器关闭。
+#### 什么是http-only？这个是干什么用的？
+`http-only`能够有效地防止`XSS`攻击。<br/>
+1、什么是`http-only`？<br/>
+`HttpOnly`是包含在`http`返回头`Set-Cookie`里面的一个附加的`flag`，所以它是后端服务器对`cookie`设置的一个附加的属性，在生成`cookie`时使用`HttpOnly`标志有助于减轻客户端脚本访问受保护`cookie`的风险（如果浏览器支持的话）
+通过`js`脚本将无法读取到c`ookie`信息，这样能有效的防止`XSS`攻击。<br/>
+
+2、这个是干什么用的？其他相关点!<br/>
+大多数`XSS`攻击都是针对会话`cookie`的盗窃。后端服务器可以通过在其创建的`cookie`上设置`HttpOnly`标志来帮助缓解此问题，这表明该`cookie`在客户端上不可访问。<br/>
+如果支持`HttpOnly`的浏览器检测到包含`HttpOnly`标志的`cookie`，并且客户端脚本代码尝试读取该`cookie`，则浏览器将返回一个空字符串作为结果。这会通过阻止恶意代码（通常是XSS）将数据发送到攻击者的网站来使攻击失败。<br/>
+
+#### 前后端交互的数据交换格式是什么？
+json、xml、form表单
+
 #### 如何实现浏览器内多个标签页之间的通信?
 `WebSocket、SharedWorker`。 也可以调用`localstorge、cookies`等本地存储方式。<br/>
 `localStorage`另一个浏览上下文里被添加、修改或删除时，它都会触发一个事件， 我们通过监听事件，控制它的值来进行页面信息通信。<br/>

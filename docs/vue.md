@@ -464,6 +464,10 @@ oldS > oldE
 
 <img width="500" src="/Frontend-Interview-Question/images/diff3.png" />
 
+#### vue 和 react diff 算法的区别
+vue的diff算法：简单来说，就是vue的diff算法在对新老虚拟daom进行对比时，是从节点的两侧向中间对比；如果节点的key值与元素类型相同，属性值不同，就会认为是不同节点，就会删除重建；<br>
+react的diff算法：react的diff算法在对新老虚拟dom进行对比是，是从节点左侧开始对比，就好比将新老虚拟dom放入两个栈中，一对多依次对比；如果节点的key值与元素类型相同，属性值不同，react会认为是同类型节点，只是修改节点属性
+
 #### `computed` 和 `watch` 的区别
 `computed` 监控的数据在 `data` 中没有声明；<br/>
 `computed`： 是计算属性，依赖其它属性值，并且 `computed` 的值有缓存，只有它依赖的属性值发生改变，下一次获取 `computed` 的值时才会重新计算 `computed` 的值；<br>
