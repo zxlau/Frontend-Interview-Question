@@ -1580,6 +1580,13 @@ element.clientHeight = content + padding
   }
 })();
 ```
+#### requestAnimationFrame 为什么可以保证调用频率？
+requestAnimationFrame 相对于 setTimeout 最大的优势是 由系统来决定回调函数的执行时机。
+如果刷新率是 60 Hz，那么回调函数就是每 16.7ms 执行一次，如果是 75Hz，那么就是每 13.3ms 执行一次。
+
+它能保证回调函数在屏幕每一次绘制的间隔中被执行一次，这样就不会丢帧，也不会卡顿。
+
+
 #### 下面代码输出结果？为什么？
 ```js
 Function.prototype.a = 'a';
