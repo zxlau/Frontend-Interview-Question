@@ -1,5 +1,8 @@
 # CSS相关
 #### `BFC(Block Formatting Context))`块级格式化上下文
+
+BFC(Block Formatting Context)块级格式化上下文，是Web页面一块独立的渲染区域，内部元素的渲染不会影响边界以外的元素。 <br>
+
 `BFC`有以下特性：<br/>
 1、内部的Box会在垂直方向，从顶部开始一个接一个地放置。<br/>
 2、Box垂直方向的距离由margin决定。属于同一个BFC的两个相邻Box的margin会发生叠加。<br/>
@@ -19,6 +22,29 @@
 2、`overflow`除了`visible`之外的属性`(auto, hidden, scroll)`。
 3、`display` `(table-cell，table-caption，inline-block, flex, inline-flex)`
 4、`position` `(abslute、fixed)`
+
+BFC解决能的问题：清除浮动 <br>
+
+BFC的方式都能清除浮动，但是常使用的清除浮动的BFC方式只有`overflow:hidden`,原因是使用float或者position方式清除浮动，虽然父级盒子内部浮动被清除了，但是父级本身又脱离文档流了，会对父级后面的兄弟盒子的布局造成影响。如果设置父级为`display:flex`，内部的浮动就会失效。所以通常只是用`overflow: hidden`清除浮动。 <br>
+`IFC（Inline formatting contexts）`：内联格式上下文。IFC的高度由其包含行内元素中最高的实际高度计算而来（不受到竖直方向的padding/margin影响)，IFC中的line box一般左右都贴紧整个IFC，但是会因为float元素而扰乱。 <br>
+`GFC（GrideLayout formatting contexts）`：网格布局格式化上下文。当为一个元素设置display值为grid的时候，此元素将会获得一个独立的渲染区域。 <br>
+`FFC（Flex formatting contexts）`：自适应格式上下文。display值为flex或者inline-flex的元素将会生成自适应容器。
+
+#### 说一说样式优先级的规则是什么？
+CSS样式的优先级应该分成四大类 
+- 第一类`!important`，无论引入方式是什么，选择器是什么，它的优先级都是最高的。 
+- 第二类引入方式，行内样式的优先级要高于嵌入和外链，嵌入和外链如果使用的选择器相同就看他们在页面中插入的顺序，在后面插入的会覆盖前面的。 
+- 第三类选择器，选择器优先级：id选择器>（类选择器 | 伪类选择器 | 属性选择器 ）> （后代选择器 | 伪元素选择器 ）> （子选择器 | 相邻选择器） > 通配符选择器 。 
+- 第四类继承样式，是所有样式中优先级比较低的。 
+- 第五类浏览器默认样式优先级最低。 
+
+加分回答 使用`!important`要谨慎 
+- 一定要优先考虑使用样式规则的优先级来解决问题而不是 `!important` 
+- 只有在需要覆盖全站或外部 CSS 的特定页面中使用 `!important` 
+- 永远不要在你的插件中使用 `!important` 
+- 永远不要在全站范围的 CSS 代码中使用 `!important` 优先级的比较指的是相同的样式属性，不同样式属性优先级比较失效
+
+
 #### `link`和`@import`的区别
 两者都是外部引用 `CSS` 的方式，但是存在一定的区别：<br/>
 1、`link`是`XHTML`标签，除了能够加载`CSS`，还可以定义`RSS`等其他事务；而`@import`属于`CSS`范畴，只可以加载`CSS`。<br/>

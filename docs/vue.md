@@ -172,22 +172,21 @@ const router = new VueRouter({
 
 
 #### `vuex`是什么？怎么使用？哪种功能场景使用它？
-`vuex`就是一个仓库，仓库里放了很多对象。其中`state`就是数据源存放地，对应于一般`vue`对象里面的`data`<br>
-`state`里面存放的数据是响应式的，`vue` 组件从 `store` 读取数据，若是 `store` 中的数据发生改变，依赖这项数据的组件也会发生更新<br/>
-```js
-import { mapGetters, mapActions } from 'vuex'
-
-computed() {
-  ...mapGetters({
-    // getter数据
-  })
-}
-methods: {
-  ...mapActions({
-    // action方法
-  })
-}
-```
+`Vuex`是集中管理项目公共数据的。<br>
+`Vuex` 有`state、mutations 、getters、actions、module`属性。 <br>
+`state` 属性用来存储公共管理的数据。 <br>
+`mutations` 属性定义改变state中数据的方法， 注意：不要在`mutation`中的方法中写异步方法ajax，那样数据就不可跟踪了 。 <br>
+`getters` 属性可以认为是定义 `store` 的计算属性。就像计算属性一样，`getter` 的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算。 <br>
+`action` 属性类似于 `mutation`，不同在于：`Action` 提交的是 `mutation`，而不是直接变更状态。`Action` 可以包含任意异步操作。<br>
+`moudle`属性是将`store`分割成模块。每个模块拥有自己的 `state、mutation、action、getter`、甚至是嵌套子模块，从上至下进行同样方式的分割 
+使用方法： <br>
+`state` ：直接以对象方式添加属性 <br>
+`mutations` ：通过`store.commit`调用 <br>
+`action` ：通过 `store.dispatch` 方法触发<br> 
+`getters` ：直接通过 `store.getters`调用 <br>
+加分回答 <br>
+可以使用`mapState、mapMutations、mapAction、mapGetters`一次性获取每个属性下对应的多个方法。 <br>
+VueX在大型项目中比较常用，非关系组件传递数据比较方便。
 #### `Vuex`的设计思想
 每一个`Vuex`里面有一个全局的`Store`，包含着应用中的状态`State`，这个`State`只是需要在组件中共享的数据，不用放所有的`State`，没必要。这个`State`是单一的，和 `Redux` 类似，所以，一个应用仅会包含一个 `Store` 实例。单一状态树的好处是能够直接地定位任一特定的状态片段，在调试的过程中也能轻易地取得整个当前应用状态的快照。<br>
 `Vuex`通过 `store` 选项，把 `state` 注入到了整个应用中，这样子组件能通过 `this.$store` 访问到 `state`了。

@@ -48,6 +48,20 @@ A.__proto__ === Function.prototype;
 A.prototype.__proto__ === Object.prototype;
 
 ```
+#### 说一说JavaScript有几种方法判断变量的类型？
+`JavaScript`有4种方法判断变量的类型，分别是`typeof、instanceof、Object.prototype.toString.call()（对象原型链判断方法）、 constructor (用于引用数据类型) `
+`typeof`：常用于判断基本数据类型，对于引用数据类型除了`function`返回`'function'`，其余全部返回`'object'`。 
+
+`instanceof`：主要用于区分引用数据类型，检测方法是检测的类型在当前实例的原型链上，用其检测出来的结果都是`true`，不太适合用于简单数据类型的检测，检测过程繁琐且对于简单数据类型中的`undefined, null, symbol`检测不出来。 
+
+`constructor`：用于检测引用数据类型，检测方法是获取实例的构造函数判断和某个类是否相同，如果相同就说明该数据是符合那个数据类型的，这种方法不会把原型链上的其他类也加入进来，避免了原型链的干扰。 
+
+`Object.prototype.toString.call()`：适用于所有类型的判断检测，检测方法是`Object.prototype.toString.call(数据)` 返回的是该数据类型的字符串。 这四种判断数据类型的方法中，各种数据类型都能检测且检测精准的就是`Object.prototype.toString.call()`这种方法。 
+
+加分回答 `instanceof`的实现原理：验证当前类的原型`prototype`是否会出现在实例的原型链`__proto__`上，只要在它的原型链上，则结果都为`true`。因此，`instanceof` 在查找的过程中会遍历左边变量的原型链，直到找到右边变量的 `prototype`，找到返回`true`，未找到返回`false`。 
+
+`Object.prototype.toString.call()`原理：`Object.prototype.toString` 表示一个返回对象类型的字符串，`call()`方法可以改变this的指向，那么把`Object.prototype.toString()`方法指向不同的数据类型上面，返回不同的结果
+
 #### 如何实现数组的随机排序？
 ```js
 let arr = [1,2,3,4,5,6,7,8,9,10]; 
@@ -821,24 +835,11 @@ Promise.prototype.retry = function(fn, times, delay) {
   })
 }
 ```
-#### 绕不过去的闭包
-闭包就是能够读取其他函数内部变量的函数<br/>
-闭包是指有权访问另一个函数作用域中变量的函数，创建闭包的最常见的方式就是在一个函数内创建另一个函数，通过另一个函数访问这个函数的局部变量,利用闭包可以突破作用链域<br/>
-闭包的特性：<br/>
-函数内再嵌套函数<br/>
-内部函数可以引用外层的参数和变量<br/>
-参数和变量不会被垃圾回收机制回收<br/>
-优点：能够实现封装和缓存等<br/>
-缺点：消耗内存、使用不当会内存溢出，<br/>
-解决方法：在退出函数之前，将不使用的局部变量全部删除<br/>
-
-其余的解释：<br/>
-闭包是指有权访问另一个函数作用域中的变量的函数 ——《JavaScript高级程序设计》<br/>
-当函数可以记住并访问所在的词法作用域时，就产生了闭包，即使函数是在当前词法作用域之外执行 ——《你不知道的JavaScript》
-
-闭包形成的条件：<br/>
-函数的嵌套<br/>
-内部函数引用外部函数的局部变量，延长外部函数的变量生命周期
+#### 说说对闭包的理解
+闭包形成的原理：作用域链，当前作用域可以访问上级作用域中的变量 
+闭包解决的问题：能够让函数作用域中的变量在函数执行结束之后不被销毁，同时也能在函数外部可以访问函数内部的局部变量。 
+闭包带来的问题：由于垃圾回收器不会将闭包中变量销毁，于是就造成了内存泄露，内存泄露积累多了就容易导致内存溢出。 
+加分回答：闭包的应用，能够模仿块级作用域，能够实现柯里化，在构造函数中定义特权方法、Vue中数据响应式Observer中使用闭包等。
 
 
 
@@ -911,6 +912,22 @@ Array.prototype.findDuplicate = function(count) {
   return result.filter(item => item.count > count).map(item => item.name);
 }
 ```
+#### promise是什么与使用方法
+Promise的作用：Promise是异步微任务，解决了异步多层嵌套回调的问题，让代码的可读性更高，更容易维护 
+Promise使用：Promise是ES6提供的一个构造函数，可以使用Promise构造函数new一个实例，Promise构造函数接收一个函数作为参数，这个函数有两个参数，分别是两个函数 `resolve`和`reject`，`resolve`将Promise的状态由等待变为成功，将异步操作的结果作为参数传递过去；`reject`则将状态由等待转变为失败，在异步操作失败时调用，将异步操作报出的错误作为参数传递过去。实例创建完成后，可以使用`then`方法分别指定成功或失败的回调函数，也可以使用catch捕获失败，then和catch最终返回的也是一个Promise，所以可以链式调用。 <br/>
+
+**Promise的特点：**<br/>
+1. 对象的状态不受外界影响（Promise对象代表一个异步操作，有三种状态）。 - pending（执行中） - Resolved（成功，又称Fulfilled） - rejected（拒绝） 其中pending为初始状态，fulfilled和rejected为结束状态（结束状态表示promise的生命周期已结束）。 <br/>
+2. 一旦状态改变，就不会再变，任何时候都可以得到这个结果。 Promise对象的状态改变，只有两种可能（状态凝固了，就不会再变了，会一直保持这个结果）： - 从Pending变为Resolved - 从Pending变为Rejected <br/>
+3. resolve 方法的参数是then中回调函数的参数，reject 方法中的参数是catch中的参数 <br/>
+4. then 方法和 catch方法 只要不报错，返回的都是一个fullfilled状态的promise <br/>
+加分回答 Promise的其他方法： <br/>
+Promise.resolve() :返回的Promise对象状态为fulfilled，并且将该value传递给对应的then方法。 <br/>
+Promise.reject()：返回一个状态为失败的Promise对象，并将给定的失败信息传递给对应的处理方法。 
+Promise.all()：返回一个新的promise对象，该promise对象在参数对象里所有的promise对象都成功的时候才会触发成功，一旦有任何一个iterable里面的promise对象失败则立即触发该promise对象的失败。 <br/>
+Promise.any()：接收一个Promise对象的集合，当其中的一个 promise 成功，就返回那个成功的promise的值。<br/> 
+Promise.race()：当参数里的任意一个子promise被成功或失败后，父promise马上也会用子promise的成功返回值或失败详情作为参数调用父promise绑定的相应句柄，并返回该promise对象。
+
 #### 实现一个`promise`
 ```js
 function Promise(fn) {
