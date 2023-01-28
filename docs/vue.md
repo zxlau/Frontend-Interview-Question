@@ -272,9 +272,17 @@ mutations: {
 }
 ```
 #### `Vue` 的响应式原理中 `Object.defineProperty` 有什么缺陷？为什么在 `Vue3.0` 采用了 `Proxy`，抛弃了 `Object.defineProperty`？
-`Object.defineProperty`无法监控到数组下标的变化，导致通过数组下标添加元素，不能实时响应；无法监控到对象属性的添加和删除；<br>
+`Object.defineProperty`无法监控到对象属性的添加和删除；<br>一次性递归到底开销很大，如果数据很大，大量的递归导致调用栈溢出；<br/>不能监听对象的新增属性和删除属性；<br/>无法正确的监听数组的方法，当监听的下标对应的数据发生改变时。
 `Object.defineProperty`只能劫持对象的属性，从而需要对每个对象，每个属性进行遍历，如果，属性值是对象，还需要深度遍历。`Proxy`可以劫持整个对象，并返回一个新的对象。<br>
 `Proxy`不仅可以代理对象，还可以代理数组。还可以代理动态增加的属性。
+
+#### 说一说Vue3.0 实现数据双向绑定的方法 ？
+Vue3.0 是通过Proxy实现的数据双向绑定，Proxy是ES6中新增的一个特性，实现的过程是在目标对象之前设置了一层“拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写。 
+
+用法： ES6 原生提供 Proxy 构造函数，用来生成 Proxy 实例。 `var proxy = new Proxy(target, handler)` 
+target: 是用Proxy包装的被代理对象（可以是任何类型的对象，包括原生数组，函数，甚至另一个代理）。 
+handler: 是一个对象，其声明了代理target 的一些操作，其属性是当执行一个操作时定义代理的行为的函数。
+
 #### `vue` 中父组件和子组件的生命周期函数的执行顺序
 **加载渲染过程**<br>
 父 `beforeCreate` -> 父 `created` -> 父 `beforeMount` -> 子 `beforeCreate` -> 子 `created` -> 子 `beforeMount` -> 子 `mounted` -> 父 `mounted` 
